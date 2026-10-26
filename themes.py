@@ -18,6 +18,10 @@ THEMES = {
     "Guerre":             {"wd": ["war"], "steam": ["War", "Military", "World War II"]},
     "Western":            {"wd": ["western"], "steam": ["Western"]},
     "Comédie":            {"wd": ["comedy", "sitcom", "parody"], "steam": ["Comedy", "Funny"]},
+    # Le ton et le public : sans eux, The Witcher et La Reine des neiges sont « pareils » (fantasy + histoire forte)
+    "Animation, famille": {"wd": ["animat", "family", "children", "musical film", "fairy tale"], "steam": ["Family Friendly", "Cute", "Cartoony", "Cartoon"]},
+    "Sombre, adulte":     {"wd": ["dark fantasy", "neo-noir", "gore", "erotic", "splatter", "black comedy", "psychological horror"], "steam": ["Dark", "Mature", "Gore", "Violent", "Dark Fantasy", "Dark Humor"]},
+    "Romance":            {"wd": ["romance", "romantic"], "steam": ["Romance", "Dating Sim"]},
     "Histoire forte":     {"wd": ["drama"], "steam": ["Story Rich", "Emotional", "Choices Matter"]},
     "Historique":         {"wd": ["historical", "period", "epic film"], "steam": ["Historical"]},
     "Anime":              {"wd": ["anime"], "steam": ["Anime"]},

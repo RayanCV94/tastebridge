@@ -4,16 +4,23 @@ const Moteur = (() => {
   const NOTES = {adore: 2, aime: 1, regarde: 0.5, vu: 0, bof: -1, deteste: -2};
   const CLE = "tastebridge-profil";
   const CELEBRES = {
-    film: ["Inception", "Interstellar", "The Dark Knight", "Avengers: Endgame", "Spider-Man: Into the Spider-Verse", "Joker", "Parasite", "Dune",
-      "Mad Max: Fury Road", "Get Out", "John Wick", "The Batman", "Oppenheimer", "Top Gun: Maverick", "Everything Everywhere All at Once",
-      "The Wolf of Wall Street", "Whiplash", "La La Land", "Black Panther", "Gravity", "Django Unchained", "Coco", "Toy Story 3", "Arrival"],
-    serie: ["Breaking Bad", "Stranger Things", "Game of Thrones", "The Last of Us", "Squid Game", "The Boys", "Arcane", "Peaky Blinders",
-      "Money Heist", "The Witcher", "Wednesday", "Dark", "Sherlock", "The Office", "Better Call Saul", "The Mandalorian", "Chernobyl",
-      "True Detective", "Black Mirror", "Succession", "The Bear", "Severance", "Lupin", "Attack on Titan"],
-    jeu: ["Red Dead Redemption 2", "The Witcher 3: Wild Hunt — Remastered", "ELDEN RING", "Baldur's Gate 3", "Cyberpunk 2077", "Hades",
-      "Hollow Knight", "God of War", "Portal 2", "Stardew Valley", "Grand Theft Auto V Legacy", "Resident Evil 4", "DOOM Eternal",
-      "Sekiro: Shadows Die Twice - GOTY Edition", "Celeste", "Terraria", "Disco Elysium - The Final Cut", "Half-Life: Alyx",
-      "It Takes Two", "Hogwarts Legacy", "Ghost of Tsushima DIRECTOR'S CUT", "Dead Cells", "Outer Wilds", "Inscryption"],
+    // Volontairement mélangés par genre (action, horreur, comédie, animation, drame, SF...) pour que les premiers choix couvrent tout
+    film: ["Inception", "The Conjuring", "Superbad", "Spider-Man: Into the Spider-Verse", "The Dark Knight", "La La Land", "Get Out", "Interstellar",
+      "The Hangover", "Your Name", "John Wick", "Titanic", "Parasite", "Shrek", "Mad Max: Fury Road", "Hereditary", "The Wolf of Wall Street",
+      "Spirited Away", "Gladiator", "The Notebook", "Dune", "It", "Deadpool", "Coco", "Joker", "A Quiet Place", "Pulp Fiction", "Toy Story 3",
+      "The Matrix", "Whiplash", "Fast & Furious 7", "Intouchables", "Avengers: Endgame", "Mean Girls", "Oppenheimer", "Harry Potter and the Philosopher's Stone",
+      "Top Gun: Maverick", "Knives Out", "Everything Everywhere All at Once", "The Lord of the Rings: The Fellowship of the Ring"],
+    serie: ["Breaking Bad", "Stranger Things", "The Office", "Attack on Titan", "Game of Thrones", "Friends", "The Haunting of Hill House",
+      "Squid Game", "Brooklyn Nine-Nine", "Arcane", "Peaky Blinders", "Bridgerton", "The Walking Dead", "Rick and Morty", "Money Heist",
+      "The Witcher", "Sex Education", "Dark", "One Piece", "The Boys", "Modern Family", "Sherlock", "Grey's Anatomy", "Chernobyl",
+      "Death Note", "Wednesday", "How I Met Your Mother", "Narcos", "The Last of Us", "Lupin", "Black Mirror", "The Simpsons",
+      "Euphoria", "Prison Break", "The Mandalorian", "Demon Slayer: Kimetsu no Yaiba", "Succession", "Kaamelott", "True Detective", "Severance"],
+    jeu: ["Red Dead Redemption 2", "Stardew Valley", "ELDEN RING", "It Takes Two", "Resident Evil 4", "Hades", "The Witcher 3: Wild Hunt — Remastered",
+      "Portal 2", "Counter-Strike 2", "Hollow Knight", "Baldur's Gate 3", "Phasmophobia", "Rocket League", "Cyberpunk 2077", "Terraria",
+      "Grand Theft Auto V Legacy", "Celeste", "Forza Horizon 5", "Dead by Daylight", "God of War", "Sekiro: Shadows Die Twice - GOTY Edition",
+      "Cities: Skylines", "Lethal Company", "Hogwarts Legacy", "DOOM Eternal", "Among Us", "Disco Elysium - The Final Cut", "Euro Truck Simulator 2",
+      "Ghost of Tsushima DIRECTOR'S CUT", "Outer Wilds", "Sid Meier's Civilization VI", "Left 4 Dead 2", "Valheim", "Inscryption", "Dead Cells",
+      "Minecraft Dungeons", "Half-Life: Alyx", "Persona 5 Royal", "Subnautica", "Monster Hunter: World"],
   };
   let CAT, INDEX, PAR_IMDB, VEC;
 
@@ -70,12 +77,24 @@ const Moteur = (() => {
     for (const [i, note] of Object.entries(p.notes)) if (CAT[i] && NOTES[note] && sources.includes(CAT[i].dom)) poids[i] = NOTES[note];
     const [res, prof] = classer(poids, cible, new Set(Object.keys(p.notes)));
     const dot = (a, b) => Object.entries(VEC[a]).reduce((s, [th, x]) => s + (VEC[b][th] || 0) * x, 0);
-    return res.filter(r => r[2] > 0.25).slice(0, n).map(([, i, sim]) => {
+    // Un seul profil additionné laisse un titre aux thèmes rares tout écraser (un Disney => que du Disney).
+    // Chaque titre aimé a donc sa propre liste, et on pioche à tour de rôle (les « adoré » et les plus récents d'abord).
+    const ok = res.filter(r => r[2] > 0.15);
+    const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim]));
+    const ancres = Object.keys(poids).filter(j => poids[j] > 0).reverse().sort((a, b) => poids[b] - poids[a]).slice(0, 15);
+    const listes = ancres.map(j => ok.map(([, i]) => [dot(i, j) * qual.get(i), i]).filter(([s]) => s > 0.12).sort((a, b) => b[0] - a[0]).map(([, i]) => i));
+    const choix = [], pris = new Set();
+    for (let tour = 0; choix.length < n && listes.some(l => l.length); tour++)
+      for (const l of listes) {
+        while (l.length && pris.has(l[0])) l.shift();
+        if (l.length && choix.length < n) { const i = l.shift(); pris.add(i); choix.push(ok.find(r => r[1] === i)); }
+      }
+    return choix.map(([, i, sim]) => {
       const it = CAT[i];
       const pourquoi = Object.keys(poids).filter(j => poids[j] > 0).map(j => [dot(i, j), j]).sort((a, b) => b[0] - a[0]).slice(0, 2);
       const communs = Object.keys(VEC[i]).sort((a, b) => (prof[b] || 0) * VEC[i][b] - (prof[a] || 0) * VEC[i][a]).slice(0, 3);
       return {id: i, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki,
-        themes: communs.filter(t => (prof[t] || 0) > 0), parce_que: pourquoi.filter(([s]) => s > 0).map(([, j]) => CAT[j].titre), match: Math.round(sim * 100)};
+        themes: communs.filter(t => (prof[t] || 0) > 0), parce_que: pourquoi.filter(([s]) => s > 0).map(([, j]) => CAT[j].titre), match: Math.round(Math.max(sim, pourquoi[0]?.[0] || 0) * 100)};
     });
   }
 

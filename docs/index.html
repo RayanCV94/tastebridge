@@ -340,7 +340,7 @@ function accueil(){
  const m = $("#main"); m.className = "";
  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
  const mur = ["film","serie","film","jeu"].flatMap(d => Moteur.populaires(d, 12)).filter(x => x.image).slice(0, 40);
- const rang = (d, nom) => `<section class="section"><div class="tete"><h3>${nom}</h3></div><div class="rail">${Moteur.populaires(d, 18).map(x=>`<button class="pop" onclick="choisir('${x.id}', this)" aria-label="${esc(x.titre)}"><div class="cadre"><div class="sans-image">${ico(ICONE[d])}${esc(x.titre)}</div>${image(x)}<span class="coche">${ico("ok")}</span></div><span>${esc(x.titre)}</span></button>`).join("")}</div></section>`;
+ const rang = (d, nom) => `<section class="section"><div class="tete"><h3>${nom}</h3></div><div class="rail">${Moteur.populaires(d, 40).map(x=>`<button class="pop" onclick="choisir('${x.id}', this)" aria-label="${esc(x.titre)}"><div class="cadre"><div class="sans-image">${ico(ICONE[d])}${esc(x.titre)}</div>${image(x)}<span class="coche">${ico("ok")}</span></div><span>${esc(x.titre)}</span></button>`).join("")}</div></section>`;
  m.innerHTML = `<section class="accueil">
    <div class="mur" aria-hidden="true">${mur.map(x=>`<img src="${esc(visuel(x))}" alt="" onerror="this.remove()">`).join("")}</div>
    <h2>Tes films, séries et jeux, <em>enfin reliés.</em></h2>

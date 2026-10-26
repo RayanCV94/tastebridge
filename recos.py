@@ -143,16 +143,32 @@ def classer(poids, cible, deja):
 def recos(p, cible, sources, n=12):
     poids = {i: x for i, x in poids_profil(p).items() if CAT[i]["dom"] in sources}
     res, prof = classer(poids, cible, set(p["notes"]) | set(p["exclus"]) | EXCLUS_AUTO)
+    dot = lambda a, b: sum(VEC[b].get(th, 0) * x for th, x in VEC[a].items())
+    # Un seul profil additionné laisse un titre aux thèmes rares tout écraser (un Disney => que du Disney).
+    # Chaque titre aimé a donc sa propre liste, et on pioche à tour de rôle (les « adoré » et les plus récents d'abord).
+    ok = [r for r in res if r[2] > 0.15]
+    qual = {i: s / sim for s, i, sim in ok}
+    ancres = sorted([j for j, w in reversed(list(poids.items())) if w > 0], key=lambda j: -poids[j])[:15]
+    listes = [[i for s, i in sorted(((dot(i, j) * qual[i], i) for _, i, _ in ok), reverse=True) if s > 0.12] for j in ancres]
+    par_id = {r[1]: r for r in ok}
+    choix, pris = [], set()
+    while len(choix) < n and any(listes):
+        for l in listes:
+            while l and l[0] in pris:
+                l.pop(0)
+            if l and len(choix) < n:
+                i = l.pop(0)
+                pris.add(i)
+                choix.append(par_id[i])
     sortie = []
-    for score, i, sim in [r for r in res if r[2] > 0.25][:n]:
+    for score, i, sim in choix:
         it = CAT[i]
-        pourquoi = sorted(((sum(VEC[j].get(th, 0) * x for th, x in VEC[i].items()), j)
-                           for j, w in poids.items() if w > 0), reverse=True)[:2]
+        pourquoi = sorted(((dot(i, j), j) for j, w in poids.items() if w > 0), reverse=True)[:2]
         communs = sorted(VEC[i], key=lambda th: -prof.get(th, 0) * VEC[i][th])[:3]
         sortie.append({**{k: it.get(k) for k in ("id", "dom", "titre", "annee", "image", "avis", "steam", "wiki")},
                        "themes": [t for t in communs if prof.get(t, 0) > 0],
                        "parce_que": [CAT[j]["titre"] for s, j in pourquoi if s > 0],
-                       "match": round(sim * 100)})
+                       "match": round(max(sim, pourquoi[0][0] if pourquoi else 0) * 100)})
     return sortie
 
 
