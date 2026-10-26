@@ -3,6 +3,18 @@
 const Moteur = (() => {
   const NOTES = {adore: 2, aime: 1, regarde: 0.5, vu: 0, bof: -1, deteste: -2};
   const CLE = "tastebridge-profil";
+  const CELEBRES = {
+    film: ["Inception", "Interstellar", "The Dark Knight", "Avengers: Endgame", "Spider-Man: Into the Spider-Verse", "Joker", "Parasite", "Dune",
+      "Mad Max: Fury Road", "Get Out", "John Wick", "The Batman", "Oppenheimer", "Top Gun: Maverick", "Everything Everywhere All at Once",
+      "The Wolf of Wall Street", "Whiplash", "La La Land", "Black Panther", "Gravity", "Django Unchained", "Coco", "Toy Story 3", "Arrival"],
+    serie: ["Breaking Bad", "Stranger Things", "Game of Thrones", "The Last of Us", "Squid Game", "The Boys", "Arcane", "Peaky Blinders",
+      "Money Heist", "The Witcher", "Wednesday", "Dark", "Sherlock", "The Office", "Better Call Saul", "The Mandalorian", "Chernobyl",
+      "True Detective", "Black Mirror", "Succession", "The Bear", "Severance", "Lupin", "Attack on Titan"],
+    jeu: ["Red Dead Redemption 2", "The Witcher 3: Wild Hunt — Remastered", "ELDEN RING", "Baldur's Gate 3", "Cyberpunk 2077", "Hades",
+      "Hollow Knight", "God of War", "Portal 2", "Stardew Valley", "Grand Theft Auto V Legacy", "Resident Evil 4", "DOOM Eternal",
+      "Sekiro: Shadows Die Twice - GOTY Edition", "Celeste", "Terraria", "Disco Elysium - The Final Cut", "Half-Life: Alyx",
+      "It Takes Two", "Hogwarts Legacy", "Ghost of Tsushima DIRECTOR'S CUT", "Dead Cells", "Outer Wilds", "Inscryption"],
+  };
   let CAT, INDEX, PAR_IMDB, VEC;
 
   const simple = t => (t || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
@@ -138,10 +150,13 @@ const Moteur = (() => {
         .slice(0, 20).map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image}));
     },
     // Titres les plus acclamés d'un domaine, pour qu'un nouveau visiteur note quelques titres d'entrée
+    // Titres très connus d'abord (choisis à la main), complétés par les mieux notés du catalogue
     populaires(dom, n = 18) {
       const notes = profil().notes;
-      return Object.values(CAT).filter(it => it.dom === dom && it.image && !notes[it.id] && (it.annee || 0) >= 2008)
-        .sort((a, b) => b.qualite - a.qualite).slice(0, n).map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image}));
+      const connus = (CELEBRES[dom] || []).map(t => trouver(dom, t)).filter(Boolean).map(i => CAT[i]);
+      const reste = Object.values(CAT).filter(it => it.dom === dom && it.image && (it.annee || 0) >= 2008).sort((a, b) => b.qualite - a.qualite);
+      return [...new Set([...connus, ...reste])].filter(it => it.image && !notes[it.id]).slice(0, n)
+        .map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam}));
     },
     noter(id, note) {
       const p = profil(); if (!CAT[id]) return;

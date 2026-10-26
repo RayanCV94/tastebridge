@@ -3,111 +3,208 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mes recos</title>
+<title>Tastebridge : tes films, séries et jeux, reliés</title>
+<meta name="description" content="Des recommandations de films, séries et jeux vidéo qui passent d'un écran à l'autre. Sans compte, tes goûts restent chez toi.">
+<meta name="theme-color" content="#0b0b0f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e8a33d'/%3E%3Cpath d='M7 10v13M25 10v13M7 14c4 0 6 4 9 4s5-4 9-4' stroke='%230b0b0f' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Gloock&display=swap" rel="stylesheet">
 <style>
-:root{--fond:#0d0e12;--carte:#16181f;--carte2:#1e2029;--trait:#2a2d38;--trait2:#3a3e4c;--texte:#ece9e2;--doux:#a3a2ad;--accent:#e8a33d;--vert:#5fbf8a;--rouge:#e06464;--bleu:#6aa3e8;--dom:var(--accent);
- --ombre:0 14px 34px -12px rgba(0,0,0,.65),0 2px 6px rgba(0,0,0,.3);--sortie:cubic-bezier(.16,1,.3,1)}
-main.serie{--dom:#9b8cf2} main.jeu{--dom:#4fc59a}
+:root{
+ --fond:#0b0b0f;--surface:#14151b;--surface2:#1c1e26;--trait:#262833;--trait2:#363948;
+ --texte:#eeebe4;--doux:#a8a7b2;--pale:#7d7c88;
+ --ambre:#e8a33d;--violet:#a093f5;--menthe:#4fc59a;--rouge:#e5706b;--bleu:#73a7ea;
+ --dom:var(--ambre);
+ --ombre:0 18px 40px -14px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.35);
+ --sortie:cubic-bezier(.16,1,.3,1);
+ --marge:clamp(16px,4vw,48px);
+}
+main.serie{--dom:var(--violet)} main.jeu{--dom:var(--menthe)}
 *{box-sizing:border-box}
-html{scrollbar-color:var(--trait2) var(--fond)}
-body{margin:0;min-height:100vh;color:var(--texte);font:15px/1.5 Onest,system-ui,sans-serif;caret-color:var(--accent);
- background:radial-gradient(1100px 520px at 12% -8%,rgba(232,163,61,.09),transparent 60%),radial-gradient(900px 480px at 100% 0%,rgba(155,140,242,.06),transparent 60%),var(--fond);background-attachment:fixed}
-::selection{background:rgba(232,163,61,.35);color:#fff}
-::-webkit-scrollbar{width:10px;height:10px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:var(--trait2);border-radius:10px;border:2px solid var(--fond)}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
-a{text-underline-offset:3px}
-header{position:sticky;top:0;z-index:5;background:rgba(13,14,18,.78);backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid rgba(255,255,255,.06)}
-.barre{max-width:1400px;margin:auto;padding:12px 24px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
-h1{font:400 25px/1 Gloock,serif;margin:0;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
-h1 svg{width:26px;height:26px;color:var(--accent)}
-h1 span{color:var(--accent)}
-nav{display:flex;gap:2px;background:rgba(255,255,255,.035);padding:4px;border-radius:12px;border:1px solid rgba(255,255,255,.05)}
-nav button{background:none;border:0;color:var(--doux);font:500 14px Onest,sans-serif;padding:8px 15px;border-radius:9px;cursor:pointer;display:flex;gap:8px;align-items:center;transition:color .2s,background .2s}
+html{scrollbar-color:var(--trait2) var(--fond);-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--fond);color:var(--texte);font:15px/1.55 Onest,system-ui,sans-serif;caret-color:var(--ambre);display:flex;flex-direction:column}
+::selection{background:rgba(232,163,61,.38);color:#fff}
+::-webkit-scrollbar{width:10px;height:8px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:var(--trait2);border-radius:10px;border:2px solid var(--fond)}
+:focus-visible{outline:2px solid var(--ambre);outline-offset:3px;border-radius:10px}
+a{color:inherit;text-underline-offset:3px}
+button{font-family:inherit}
+svg{flex:none}
+
+/* En-tête */
+header{position:sticky;top:0;z-index:20;background:linear-gradient(rgba(11,11,15,.92),rgba(11,11,15,.72));backdrop-filter:blur(16px) saturate(150%);border-bottom:1px solid rgba(255,255,255,.06)}
+.barre{max-width:1480px;margin:auto;padding:12px var(--marge);display:flex;align-items:center;gap:28px}
+.logo{display:flex;align-items:center;gap:10px;font:400 25px/1 Gloock,serif;letter-spacing:-.01em;text-decoration:none;color:var(--texte);white-space:nowrap}
+.logo b{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:var(--ambre);color:var(--fond)}
+.logo b svg{width:20px;height:20px;stroke-width:2.6}
+nav{display:flex;gap:2px;padding:4px;border-radius:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+nav button{position:relative;background:none;border:0;color:var(--doux);font:500 14px Onest;padding:8px 15px;border-radius:10px;cursor:pointer;display:flex;gap:8px;align-items:center;transition:color .2s,background .2s}
+nav button svg{width:16px;height:16px}
 nav button:hover{color:var(--texte)}
-nav button.on{background:var(--carte2);color:var(--texte);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 2px 8px rgba(0,0,0,.35)}
-nav button.on svg{color:var(--accent)}
-nav svg{width:16px;height:16px}
-main{max-width:1400px;margin:auto;padding:8px 24px 72px}
-h2{font:400 26px/1.15 Gloock,serif;letter-spacing:-.01em;margin:44px 0 6px;text-wrap:balance}
-.sous{color:var(--doux);font-size:13.5px;margin-bottom:18px;max-width:70ch}
-.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
-.jeu .grille{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
-/* Carte */
-.c{background:var(--carte);border:1px solid var(--trait);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .35s var(--sortie),box-shadow .35s var(--sortie),border-color .2s}
-.c:hover{transform:translateY(-4px);box-shadow:var(--ombre);border-color:var(--trait2)}
-.img{aspect-ratio:2/3;background:linear-gradient(150deg,#262a37,#14161c);position:relative;display:flex;align-items:center;justify-content:center;color:#8d92a3;font:400 19px/1.25 Gloock,serif;padding:18px;text-align:center;overflow:hidden}
-.jeu .img{aspect-ratio:460/215}
-.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.02);transition:opacity .5s var(--sortie),transform .6s var(--sortie)}
-.img img.ok{opacity:1;transform:none}
-.c:hover .img img.ok{transform:scale(1.045)}
-.img::after{content:"";position:absolute;inset:auto 0 0;height:38%;background:linear-gradient(transparent,rgba(13,14,18,.55));pointer-events:none}
-.pct{position:absolute;z-index:1;top:10px;right:10px;display:flex;align-items:center;gap:6px;background:rgba(10,10,14,.78);backdrop-filter:blur(6px);color:var(--texte);font:600 12px Onest,sans-serif;font-variant-numeric:tabular-nums;padding:4px 9px 4px 7px;border-radius:20px;border:1px solid rgba(255,255,255,.08)}
+nav button.on{background:var(--surface2);color:var(--texte);box-shadow:0 1px 0 rgba(255,255,255,.07) inset,0 4px 12px rgba(0,0,0,.35)}
+nav button[data-o="film"].on svg{color:var(--ambre)} nav button[data-o="serie"].on svg{color:var(--violet)} nav button[data-o="jeu"].on svg{color:var(--menthe)} nav button[data-o="gouts"].on svg{color:var(--rouge)}
+.compte{margin-left:auto;font-size:13px;color:var(--doux);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.compte b{color:var(--texte);font-weight:600;font-variant-numeric:tabular-nums}
+.gh{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;color:var(--doux);border:1px solid var(--trait);transition:color .2s,border-color .2s}
+.gh:hover{color:var(--texte);border-color:var(--trait2)}
+.gh svg{width:18px;height:18px}
+
+main{flex:1;width:100%;max-width:1480px;margin:auto;padding:0 var(--marge) 80px}
+
+/* Grande affiche (meilleure reco) */
+.scene{position:relative;margin:24px 0 8px;border-radius:22px;overflow:hidden;isolation:isolate;min-height:clamp(380px,52vh,560px);display:grid;grid-template-columns:1fr auto;align-items:end;gap:40px;padding:clamp(24px,4vw,56px);border:1px solid rgba(255,255,255,.07)}
+.scene .fondu{position:absolute;inset:-60px;z-index:-2;background:center/cover;filter:blur(50px) saturate(160%) brightness(.8);transform:scale(1.15)}
+.scene::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,rgba(11,11,15,.94) 0%,rgba(11,11,15,.7) 45%,rgba(11,11,15,.15) 100%),linear-gradient(0deg,rgba(11,11,15,.6),transparent 40%)}
+.scene .texte{max-width:640px;display:flex;flex-direction:column;gap:14px;animation:entre .9s var(--sortie) both}
+.etiquette{align-self:flex-start;display:flex;align-items:center;gap:8px;font:600 12.5px Onest;color:var(--texte);padding:6px 12px 6px 10px;border-radius:30px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px)}
+.etiquette i{width:8px;height:8px;border-radius:50%;background:var(--dom);box-shadow:0 0 0 3px color-mix(in srgb,var(--dom) 25%,transparent)}
+.scene h2{font:400 clamp(36px,5.4vw,72px)/1 Gloock,serif;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.scene h2 span{color:var(--doux);font-size:.5em;letter-spacing:0;margin-left:10px;font-variant-numeric:tabular-nums}
+.scene .pq{font-size:16px;color:#d9d6ce;max-width:56ch}
+.scene .pq b{color:#fff;font-weight:600}
+.scene .affiche{width:clamp(170px,19vw,270px);aspect-ratio:2/3;border-radius:14px;overflow:hidden;box-shadow:0 30px 60px -18px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.08);animation:monte 1s .1s var(--sortie) both;background:var(--surface2)}
+.scene .affiche img{width:100%;height:100%;object-fit:cover;display:block}
+@keyframes entre{from{opacity:0;transform:translateY(14px)}}
+@keyframes monte{from{opacity:0;transform:translateY(24px) scale(.97)}}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:3px 11px;border-radius:30px;background:rgba(255,255,255,.06);color:#d2d0d8;border:1px solid rgba(255,255,255,.08)}
+.avis{font-size:13px;color:var(--menthe);font-variant-numeric:tabular-nums}
+
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.bt{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:var(--texte);font:600 14px Onest;cursor:pointer;text-decoration:none;transition:background .2s,border-color .2s,transform .15s}
+.bt svg{width:17px;height:17px}
+.bt:hover{background:rgba(255,255,255,.13)}
+.bt:active{transform:scale(.96)}
+.bt.plein{background:var(--texte);color:var(--fond);border-color:transparent}
+.bt.plein:hover{background:#fff}
+
+/* Sections */
+.section{margin-top:52px}
+.tete{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.tete h3{font:400 clamp(24px,2.4vw,32px)/1.1 Gloock,serif;letter-spacing:-.01em;margin:0}
+.tete p{margin:0;color:var(--doux);font-size:14px;max-width:62ch}
+
+/* Grille d'affiches */
+.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:26px 18px}
+.c{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0}
+.c.note{opacity:.3;pointer-events:none;transition:opacity .3s}
+.cadre{position:relative;aspect-ratio:2/3;border-radius:14px;overflow:hidden;background:linear-gradient(155deg,#252835,#121319);box-shadow:0 0 0 1px rgba(255,255,255,.06);transition:transform .45s var(--sortie),box-shadow .45s var(--sortie)}
+.c:hover .cadre,.c:focus-within .cadre{transform:translateY(-5px);box-shadow:var(--ombre),0 0 0 1px rgba(255,255,255,.12)}
+.cadre img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s var(--sortie),transform .7s var(--sortie)}
+.cadre img.ok{opacity:1}
+.c:hover .cadre img.ok{transform:scale(1.05)}
+.sans-image{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;padding:16px;font:400 21px/1.15 Gloock,serif;color:#cfccd6;background:radial-gradient(120% 80% at 0% 0%,color-mix(in srgb,var(--dom) 22%,transparent),transparent 60%)}
+.sans-image svg{width:26px;height:26px;color:var(--dom);opacity:.8}
+.pct{position:absolute;z-index:2;top:10px;left:10px;display:flex;align-items:center;gap:6px;font:600 12px Onest;font-variant-numeric:tabular-nums;color:#fff;padding:4px 9px 4px 8px;border-radius:30px;background:rgba(8,8,12,.72);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)}
 .pct i{width:7px;height:7px;border-radius:50%;background:var(--dom)}
-.corps{padding:13px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
-.t{font-weight:600;font-size:15px;line-height:1.3;color:var(--texte);text-decoration:none}
-.t:hover{color:var(--dom)}
-.an{color:var(--doux);font-weight:400;font-variant-numeric:tabular-nums}
-.pq{font-size:12.5px;color:var(--doux);line-height:1.45}
-.pq b{color:#d6d3cb;font-weight:500}
-.chips{display:flex;flex-wrap:wrap;gap:5px}
-.chip{font-size:11px;padding:2px 9px;border-radius:20px;background:rgba(255,255,255,.04);color:#c3c2cb;border:1px solid var(--trait)}
-.avis{font-size:11.5px;color:var(--vert);font-variant-numeric:tabular-nums}
-.act{display:flex;gap:6px;margin-top:auto;padding-top:6px}
-.act button{flex:1;background:var(--carte2);border:1px solid var(--trait);color:var(--doux);border-radius:9px;padding:8px 0;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:7px;font:500 13px Onest,sans-serif;transition:color .15s,border-color .15s,background .15s,transform .15s}
-.act button svg{width:16px;height:16px}
-.act button:hover{color:var(--texte);border-color:var(--trait2)}
-.act button:active{transform:scale(.94)}
-.act .a1:hover{color:var(--rouge);background:rgba(224,100,100,.08)} .act .a2:hover{color:var(--vert);background:rgba(95,191,138,.08)} .act .a3:hover{color:var(--bleu);background:rgba(106,163,232,.08)} .act .a4:hover{color:#d0956a;background:rgba(208,149,106,.08)}
-.c.note{opacity:.35;transform:scale(.98);transition:opacity .3s,transform .3s}
-/* Mise en avant : la meilleure reco de la section */
-.une{position:relative;display:grid;grid-template-columns:minmax(180px,250px) 1fr;gap:34px;align-items:center;padding:28px;margin-bottom:22px;border-radius:18px;overflow:hidden;border:1px solid var(--trait);background:var(--carte);isolation:isolate}
-.jeu .une{grid-template-columns:minmax(260px,440px) 1fr}
-.une .fondu{position:absolute;inset:-40px;z-index:-1;background:center/cover;filter:blur(46px) saturate(150%);opacity:.38;transform:scale(1.1)}
-.une::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(13,14,18,.25),rgba(13,14,18,.82) 55%)}
-.une .img{border-radius:12px;box-shadow:0 24px 48px -16px rgba(0,0,0,.8)}
-.une .img::after{display:none}
-.une .corps{padding:0;gap:12px;max-width:62ch}
-.une .t{font:400 clamp(26px,3.2vw,40px)/1.08 Gloock,serif;letter-spacing:-.015em}
-.une .pq{font-size:15px}
-.une .pct{position:static;align-self:flex-start;font-size:13px}
-.une .chip{font-size:12px;padding:3px 11px}
-.une .act{max-width:520px;margin-top:8px}
-.une .act button{padding:10px 0}
-/* États */
-.vide{color:var(--doux);padding:24px;background:rgba(255,255,255,.02);border-radius:14px;border:1px dashed var(--trait2);max-width:70ch}
-.squelette{border-radius:14px;aspect-ratio:2/3.9;background:linear-gradient(100deg,var(--carte) 30%,#1d2029 50%,var(--carte) 70%) 0 0/300% 100%;animation:luit 1.4s linear infinite}
-@keyframes luit{to{background-position:-150% 0}}
+/* Survol : la raison et les avis apparaissent sur l'affiche */
+.voile{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;padding:14px;background:linear-gradient(transparent 25%,rgba(8,8,12,.94) 78%);opacity:0;transition:opacity .3s var(--sortie)}
+.c:hover .voile,.c:focus-within .voile{opacity:1}
+.voile .pq{font-size:12.5px;line-height:1.4;color:#dcd9d1}
+.voile .pq b{color:#fff;font-weight:600}
+.mini-act{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mini-act button{display:grid;place-items:center;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;transition:background .15s,color .15s,transform .15s}
+.mini-act button svg{width:16px;height:16px}
+.mini-act button:active{transform:scale(.92)}
+.mini-act .a1:hover{background:var(--rouge)} .mini-act .a2:hover{background:var(--menthe);color:var(--fond)} .mini-act .a3:hover{background:var(--bleu);color:var(--fond)} .mini-act .a4:hover{background:#3a3d4b}
+.legende{display:flex;flex-direction:column;gap:2px;padding:0 2px}
+.legende a{font-weight:600;font-size:14.5px;line-height:1.3;text-decoration:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.legende a:hover{color:var(--dom)}
+.legende span{font-size:12.5px;color:var(--pale);font-variant-numeric:tabular-nums}
+@media(hover:none){.voile{opacity:1;background:linear-gradient(transparent 55%,rgba(8,8,12,.92))}.voile .pq{display:none}.mini-act button{height:32px}}
+
+/* Accueil (premier passage, version site) */
+.accueil{position:relative;margin:24px 0 0;border-radius:24px;overflow:hidden;isolation:isolate;padding:clamp(36px,7vw,96px) clamp(24px,5vw,72px);border:1px solid rgba(255,255,255,.07);min-height:clamp(420px,60vh,620px);display:flex;flex-direction:column;justify-content:center}
+.mur{position:absolute;inset:-10%;z-index:-2;display:grid;grid-template-columns:repeat(8,1fr);gap:12px;transform:rotate(-8deg) scale(1.15);opacity:.5;animation:defile 60s linear infinite alternate}
+.mur img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:10px}
+@keyframes defile{to{transform:rotate(-8deg) scale(1.15) translateY(-12%)}}
+.accueil::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(90% 120% at 0% 50%,rgba(11,11,15,.97) 30%,rgba(11,11,15,.75) 65%,rgba(11,11,15,.45))}
+.accueil h2{font:400 clamp(40px,6.4vw,88px)/.98 Gloock,serif;letter-spacing:-.025em;margin:0 0 20px;max-width:12ch}
+.accueil h2 em{font-style:normal;color:var(--ambre)}
+.accueil p{font-size:clamp(16px,1.4vw,19px);color:#d3d0c8;max-width:52ch;margin:0 0 28px}
+.preuves{display:flex;gap:22px;flex-wrap:wrap;margin-top:30px;color:var(--doux);font-size:13.5px}
+.preuves span{display:flex;align-items:center;gap:8px}
+.preuves svg{width:16px;height:16px;color:var(--ambre)}
+
+/* Démarrage rapide */
+.rail{display:flex;gap:14px;overflow-x:auto;padding:6px 2px 16px;scroll-snap-type:x proximity;scrollbar-width:thin}
+.pop{flex:none;width:136px;scroll-snap-align:start;background:none;border:0;padding:0;cursor:pointer;color:var(--texte);text-align:left;display:flex;flex-direction:column;gap:8px}
+.pop .cadre{box-shadow:0 0 0 2px transparent}
+.pop:hover .cadre{transform:translateY(-4px)}
+.pop span{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pop .coche{position:absolute;z-index:2;top:8px;right:8px;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgba(8,8,12,.7);border:1px solid rgba(255,255,255,.2);opacity:0;transform:scale(.6);transition:opacity .2s,transform .3s var(--sortie)}
+.pop .coche svg{width:15px;height:15px}
+.pop[data-n="aime"] .cadre{box-shadow:0 0 0 3px var(--menthe)} .pop[data-n="adore"] .cadre{box-shadow:0 0 0 3px var(--rouge)}
+.pop[data-n="aime"] .coche,.pop[data-n="adore"] .coche{opacity:1;transform:none}
+.pop[data-n="aime"] .coche{background:var(--menthe);color:var(--fond)} .pop[data-n="adore"] .coche{background:var(--rouge)}
+.progres{position:sticky;bottom:18px;z-index:10;margin:28px auto 0;width:min(560px,100%);display:flex;align-items:center;gap:16px;padding:12px 12px 12px 20px;border-radius:16px;background:rgba(28,30,38,.9);backdrop-filter:blur(14px);border:1px solid var(--trait2);box-shadow:var(--ombre)}
+.progres .barre-p{flex:1;height:6px;border-radius:6px;background:var(--trait);overflow:hidden}
+.progres .barre-p i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ambre),var(--rouge));border-radius:6px;transition:width .4s var(--sortie)}
+.progres small{color:var(--doux);font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.progres .bt[disabled]{opacity:.4;pointer-events:none}
+
 /* Mes goûts */
-.cherche{display:flex;gap:10px;margin:18px 0 10px}
-.cherche input{flex:1;max-width:560px;background:var(--carte);border:1px solid var(--trait);color:var(--texte);font:15px Onest,sans-serif;padding:12px 15px;border-radius:12px;outline:none;transition:border-color .15s,box-shadow .15s}
-.cherche input::placeholder{color:#7c7c88}
-.cherche input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(232,163,61,.12)}
-.lignes{display:flex;flex-direction:column;gap:8px;max-width:900px}
-.l{display:flex;align-items:center;gap:12px;background:var(--carte);border:1px solid var(--trait);border-radius:12px;padding:8px 10px;transition:border-color .15s}
-.l:hover{border-color:var(--trait2)}
-.l .mini{width:44px;height:44px;border-radius:8px;background:var(--carte2) center/cover;flex:none}
-.l .nom{flex:1;min-width:0}
-.l .dom{font-size:11px;color:var(--doux);text-transform:uppercase;letter-spacing:.06em}
-.l select{background:var(--carte2);color:var(--texte);border:1px solid var(--trait);border-radius:8px;padding:7px 9px;font:13px Onest,sans-serif;cursor:pointer}
-.depot{display:flex;flex-direction:column;align-items:center;gap:8px;max-width:900px;margin:10px 0 6px;padding:28px;text-align:center;border:1.5px dashed var(--trait2);border-radius:14px;color:var(--doux);cursor:pointer;transition:border-color .2s,color .2s,background .2s}
-.depot svg{width:22px;height:22px}
-.depot:hover,.depot.sur{border-color:var(--accent);color:var(--texte);background:rgba(232,163,61,.05)}
-.outils{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 16px}
-.outils button,.outils label{background:var(--carte2);border:1px solid var(--trait);color:var(--texte);font:13px Onest,sans-serif;padding:8px 13px;border-radius:9px;cursor:pointer;transition:border-color .15s}
-.outils button:hover,.outils label:hover{border-color:var(--accent)}
-.mini-grille{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;margin-bottom:6px;scroll-snap-type:x proximity}
-.pop{flex:none;width:112px;scroll-snap-align:start;background:var(--carte);border:2px solid var(--trait);border-radius:11px;padding:0;overflow:hidden;cursor:pointer;color:var(--texte);text-align:left;position:relative;transition:border-color .2s,transform .2s var(--sortie)}
-.pop:hover{transform:translateY(-2px)}
-.pop img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
-.pop span{display:block;font-size:11.5px;padding:5px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pop[data-n="aime"]{border-color:var(--vert)} .pop[data-n="adore"]{border-color:var(--rouge)}
-h3{font:600 13px Onest,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--doux);margin:18px 0 8px}
-.toast{position:fixed;z-index:9;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);background:#262a35;border:1px solid var(--trait2);box-shadow:var(--ombre);padding:10px 18px;border-radius:12px;transition:transform .4s var(--sortie);font-size:14px}
+.colonnes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;margin-top:28px;align-items:start}
+.panneau{background:var(--surface);border:1px solid var(--trait);border-radius:20px;padding:24px}
+.panneau h3{font:400 26px/1.1 Gloock,serif;margin:0 0 6px}
+.panneau .aide{color:var(--doux);font-size:13.5px;margin:0 0 16px}
+.panneau + .panneau{margin-top:20px}
+.champ{position:relative}
+.champ svg{position:absolute;left:14px;top:50%;translate:0 -50%;width:18px;height:18px;color:var(--pale)}
+.champ input{width:100%;background:var(--fond);border:1px solid var(--trait2);color:var(--texte);font:15px Onest;padding:13px 14px 13px 42px;border-radius:12px;outline:none;transition:border-color .15s,box-shadow .15s}
+.champ input::placeholder{color:var(--pale)}
+.champ input:focus{border-color:var(--ambre);box-shadow:0 0 0 4px rgba(232,163,61,.14)}
+.lignes{display:flex;flex-direction:column;gap:6px}
+#res:not(:empty){margin-top:12px}
+.l{display:flex;align-items:center;gap:12px;padding:7px 8px;border-radius:12px;transition:background .15s}
+.l:hover{background:rgba(255,255,255,.04)}
+.l .mini{width:38px;height:56px;border-radius:7px;background:var(--surface2) center/cover;flex:none;box-shadow:0 0 0 1px rgba(255,255,255,.06)}
+.l .nom{flex:1;min-width:0;font-weight:500;line-height:1.3}
+.l .nom small{display:block;font-weight:400;font-size:12px;color:var(--pale)}
+.l select{background:var(--surface2);color:var(--texte);border:1px solid var(--trait2);border-radius:9px;padding:7px 9px;font:13px Onest;cursor:pointer;max-width:150px}
+.l .h{font-size:12px;color:var(--pale);white-space:nowrap}
+.depot{display:flex;flex-direction:column;align-items:center;gap:8px;padding:30px 20px;text-align:center;border:1.5px dashed var(--trait2);border-radius:14px;color:var(--doux);cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.depot svg{width:24px;height:24px;color:var(--ambre)}
+.depot strong{color:var(--texte);font-weight:600}
+.depot:hover,.depot.sur{border-color:var(--ambre);color:var(--texte);background:rgba(232,163,61,.05)}
+.sources{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+#bilan{margin-top:12px;font-size:13.5px;color:var(--menthe)}
+.outils{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.outils .bt{padding:8px 13px;font-size:13px;font-weight:500}
+.liste-gouts{max-height:640px;overflow-y:auto;margin:0 -8px;padding:0 8px}
+.filtres{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.filtres button{background:none;border:1px solid var(--trait2);color:var(--doux);font:500 12.5px Onest;padding:5px 12px;border-radius:30px;cursor:pointer}
+.filtres button.on{background:var(--texte);color:var(--fond);border-color:transparent}
+
+/* États */
+.vide{display:flex;align-items:center;gap:18px;color:var(--doux);padding:26px;border-radius:18px;border:1px dashed var(--trait2);background:rgba(255,255,255,.015)}
+.vide svg{width:28px;height:28px;color:var(--dom)}
+.squelette{border-radius:14px;aspect-ratio:2/3;background:linear-gradient(100deg,var(--surface) 30%,#1d1f28 50%,var(--surface) 70%) 0 0/300% 100%;animation:luit 1.4s linear infinite}
+.scene.chargement{background:linear-gradient(100deg,var(--surface) 30%,#1b1d26 50%,var(--surface) 70%) 0 0/300% 100%;animation:luit 1.6s linear infinite}
+@keyframes luit{to{background-position:-150% 0}}
+
+footer{border-top:1px solid rgba(255,255,255,.06);color:var(--pale);font-size:13px}
+footer div{max-width:1480px;margin:auto;padding:26px var(--marge);display:flex;gap:18px;justify-content:space-between;flex-wrap:wrap}
+footer a{color:var(--doux)}
+
+.toast{position:fixed;z-index:30;bottom:24px;left:50%;display:flex;align-items:center;gap:10px;transform:translateX(-50%) translateY(120px);background:#22242e;border:1px solid var(--trait2);box-shadow:var(--ombre);padding:11px 18px 11px 14px;border-radius:14px;transition:transform .45s var(--sortie);font-size:14px;font-weight:500}
+.toast svg{width:17px;height:17px;color:var(--menthe)}
 .toast.v{transform:translateX(-50%) translateY(0)}
-@media(max-width:760px){.une,.jeu .une{grid-template-columns:1fr;gap:18px;padding:18px}.une .img{max-width:200px}.jeu .une .img{max-width:none}}
-@media(max-width:600px){.barre,main{padding-left:16px;padding-right:16px}.barre{gap:12px}nav{width:100%;justify-content:space-between}nav button{padding:8px 9px;font-size:13px;white-space:nowrap;gap:6px}.une .act button{font-size:0;gap:0}.grille{grid-template-columns:repeat(2,1fr);gap:12px}.jeu .grille{grid-template-columns:1fr}h2{font-size:22px}}
+
+@media(max-width:980px){.colonnes{grid-template-columns:1fr}.compte{display:none}}
+@media(max-width:760px){
+ .barre{flex-wrap:wrap;gap:12px;padding-top:10px;padding-bottom:10px}
+ nav{order:3;width:100%;justify-content:space-between}
+ nav button{padding:8px 9px;font-size:13px;gap:6px;white-space:nowrap}
+ .gh{margin-left:auto}
+ .scene{grid-template-columns:1fr;min-height:0;gap:22px;padding:22px}
+ .scene .affiche{order:-1;width:150px}
+ .scene .actions .bt{padding:10px 13px}
+ .grille{grid-template-columns:repeat(2,1fr);gap:20px 12px}
+ .mur{grid-template-columns:repeat(4,1fr)}
+ .accueil{padding:32px 22px}
+}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -120,27 +217,39 @@ h3{font:600 13px Onest,sans-serif;text-transform:uppercase;letter-spacing:.08em;
  <symbol id="pouce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></symbol>
  <symbol id="oeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></symbol>
  <symbol id="non" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></symbol>
- <symbol id="pont" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6v12M20 6v12M4 10c3 0 5 3 8 3s5-3 8-3M8 12.5V18M16 12.5V18M12 13v5"/></symbol>
+ <symbol id="pont" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6v12M20 6v12M4 10c3 0 5 3 8 3s5-3 8-3"/></symbol>
  <symbol id="televerse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
  <symbol id="etoile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 2.3a.53.53 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.1l5.2.8a.53.53 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.53.53 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.53.53 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.8a.53.53 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.1z"/></symbol>
+ <symbol id="loupe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+ <symbol id="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+ <symbol id="lien" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+ <symbol id="cadenas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+ <symbol id="eclair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+ <symbol id="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+ <symbol id="telecharge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 10l5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
+ <symbol id="github" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
 </svg>
 <header><div class="barre">
- <h1><svg aria-hidden="true"><use href="#pont"/></svg>Mes <span>recos</span></h1>
- <nav id="nav">
+ <a class="logo" href="#" onclick="aller('film');return false"><b><svg aria-hidden="true"><use href="#pont"/></svg></b>Tastebridge</a>
+ <nav id="nav" aria-label="Sections">
   <button data-o="film" class="on"><svg><use href="#film"/></svg>Films</button>
   <button data-o="serie"><svg><use href="#tv"/></svg>Séries</button>
   <button data-o="jeu"><svg><use href="#manette"/></svg>Jeux</button>
   <button data-o="gouts"><svg><use href="#etoile"/></svg>Mes goûts</button>
  </nav>
+ <span class="compte" id="compte"></span>
+ <a class="gh" href="https://github.com/RayanCV94/tastebridge" target="_blank" rel="noopener" title="Le projet sur GitHub" aria-label="Le projet sur GitHub"><svg><use href="#github"/></svg></a>
 </div></header>
 <main id="main"></main>
-<div class="toast" id="toast"></div>
+<footer><div><span>Tastebridge : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="https://github.com/RayanCV94/tastebridge#how-it-works" target="_blank" rel="noopener">Comment ça marche</a></div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 let onglet = "film", data = null;
 const $ = s => document.querySelector(s);
-const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const ico = n => `<svg><use href="#${n}"/></svg>`;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ico = n => `<svg aria-hidden="true"><use href="#${n}"/></svg>`;
 const NOM = {film:"Film", serie:"Série", jeu:"Jeu"};
+const ICONE = {film:"film", serie:"tv", jeu:"manette"};
 const TEXTE = {adore:"Adoré", aime:"Aimé", regarde:"Regardé", vu:"Vu, sans plus", bof:"Pas pour moi", deteste:"Détesté"};
 const VERBE = {film:"vu", serie:"vu", jeu:"joué"};
 
@@ -157,100 +266,140 @@ const api = WEB ? {
  noter: (id, note) => poster("/api/note",{id,note}),
  importer: async (nom, texte) => (await poster("/api/import",{nom, texte})).json(),
 };
-function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("v");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("v"),1800)}
-function lien(r){return r.steam?`https://store.steampowered.com/app/${r.steam}`:r.wiki?`https://fr.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`:"#"}
+function toast(t){const e=$("#toast");e.innerHTML=ico("ok")+esc(t);e.classList.add("v");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("v"),1900)}
+function lien(r){return r.steam?`https://store.steampowered.com/app/${r.steam}`:`https://fr.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`}
+// Jeux : jaquette verticale Steam si elle existe, sinon le bandeau
+const visuel = r => r.dom === "jeu" && r.steam ? `https://cdn.akamai.steamstatic.com/steam/apps/${r.steam}/library_600x900.jpg` : r.image;
+const repli = r => r.dom === "jeu" && r.image ? `this.onerror=()=>this.remove();this.src='${esc(r.image)}'` : "this.remove()";
+const image = (r, charge = "lazy") => r.image ? `<img src="${esc(visuel(r))}" loading="${charge}" alt="" onload="this.classList.add('ok')" onerror="${repli(r)}">` : "";
+const raisons = r => r.parce_que.length ? `<div class="pq">Parce que tu as aimé <b>${r.parce_que.map(esc).join("</b> et <b>")}</b></div>` : "";
 
-function carte(r, une){
- const img = r.image ? `<img src="${esc(r.image)}" loading="${une ? "eager" : "lazy"}" alt="" onload="this.classList.add('ok')" onerror="this.remove()">` : "";
- const bouton = (cls, note, icone, texte) => `<button class="${cls}" title="${texte}" aria-label="${texte} : ${esc(r.titre)}" onclick="noter('${r.id}','${note}')">${ico(icone)}${une ? texte : ""}</button>`;
- const pq = r.parce_que.length ? `<div class="pq">Parce que tu as aimé <b>${r.parce_que.map(esc).join("</b> et <b>")}</b></div>` : "";
- return `<div class="c" id="c-${r.id}">
-  <div class="img">${esc(r.titre)}${img}${une ? "" : `<span class="pct"><i></i>${r.match} %</span>`}</div>
-  <div class="corps">
-   ${une ? `<span class="pct"><i></i>${r.match} % de correspondance</span>` : ""}
-   <a class="t" href="${lien(r)}" target="_blank">${esc(r.titre)} <span class="an">${r.annee ?? ""}</span></a>
-   ${pq}
+function carte(r){
+ const b = (cls, note, icone, texte) => `<button class="${cls}" title="${texte}" aria-label="${texte} : ${esc(r.titre)}" onclick="noter('${r.id}','${note}')">${ico(icone)}</button>`;
+ return `<article class="c" id="c-${r.id}">
+  <div class="cadre">
+   <div class="sans-image">${ico(ICONE[r.dom])}${esc(r.titre)}</div>${image(r)}
+   <span class="pct"><i></i>${r.match} %</span>
+   <div class="voile">${raisons(r)}<div class="mini-act">${b("a1","adore","coeur","J'adore")}${b("a2","aime","pouce","J'aime")}${b("a3","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("a4","bof","non","Pas pour moi")}</div></div>
+  </div>
+  <div class="legende"><a href="${lien(r)}" target="_blank" rel="noopener">${esc(r.titre)}</a><span>${r.annee ?? ""}${r.annee && r.themes[0] ? " · " : ""}${esc(r.themes[0] ?? "")}</span></div>
+ </article>`;
+}
+
+// La meilleure reco de l'onglet, en grand, sur un fond flouté tiré de son image
+function scene(r){
+ const b = (cls, note, icone, texte) => `<button class="bt ${cls}" onclick="noter('${r.id}','${note}')">${ico(icone)}${texte}</button>`;
+ return `<section class="scene" id="c-${r.id}">
+  ${r.image ? `<div class="fondu" style="background-image:url('${esc(r.image)}')"></div>` : ""}
+  <div class="texte">
+   <span class="etiquette"><i></i>Notre meilleur choix pour toi · ${r.match} %</span>
+   <h2>${esc(r.titre)}<span>${r.annee ?? ""}</span></h2>
+   ${raisons(r)}
    <div class="chips">${r.themes.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div>
    ${r.avis ? `<div class="avis">${esc(r.avis)}</div>` : ""}
-   <div class="act">
-    ${bouton("a1","adore","coeur","J'adore")}${bouton("a2","aime","pouce","J'aime")}${bouton("a3","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${bouton("a4","bof","non","Pas pour moi")}
-   </div>
-  </div></div>`;
-}
-// La meilleure reco de chaque première section, en grand, sur un fond flouté tiré de son image
-function une(r){
- return `<div class="une" id="c-${r.id}">${r.image ? `<div class="fondu" style="background-image:url('${esc(r.image)}')"></div>` : ""}${carte(r, true).replace(/^<div class="c" id="c-[^"]+">/, "").replace(/<\/div>$/, "")}</div>`;
+   <div class="actions">${b("plein","aime","pouce","J'aime")}${b("","adore","coeur","J'adore")}${b("","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("","bof","non","Pas pour moi")}
+    <a class="bt" href="${lien(r)}" target="_blank" rel="noopener">${ico("lien")}${r.steam ? "Sur Steam" : "En savoir plus"}</a></div>
+  </div>
+  <div class="affiche">${image(r, "eager")}</div>
+ </section>`;
 }
 
 function rendre(){
  const m = $("#main");
  if (onglet === "gouts") return gouts();
- if (!data){ m.innerHTML = `<h2>&nbsp;</h2><div class="grille">${'<div class="squelette"></div>'.repeat(10)}</div>`; charger(); return; }
  m.className = onglet;
- m.innerHTML = data[onglet].map(([titre, liste], k) => `
-  <h2>${titre}</h2>
-  <div class="sous">${k===0 ? "Le plus proche de ce que tu aimes déjà, les titres récents et acclamés en premier." : "Pour sortir de tes habitudes : mêmes ambiances, autre support."}</div>
-  ${!liste.length ? `<div class="vide">Pas encore assez de goûts notés ici. Ajoute-en dans « Mes goûts ».</div>`
-   : k===0 ? une(liste[0]) + `<div class="grille">${liste.slice(1).map(r => carte(r)).join("")}</div>`
-   : `<div class="grille">${liste.map(r => carte(r)).join("")}</div>`}`).join("");
+ if (!data){ m.innerHTML = `<div class="scene chargement"></div><div class="section"><div class="grille">${'<div class="squelette"></div>'.repeat(12)}</div></div>`; charger(); return; }
+ const [[t1, l1], [t2, l2]] = data[onglet];
+ const autre = onglet === "jeu" ? "tes films et séries" : "tes jeux";
+ const vide = `<div class="vide">${ico(ICONE[onglet])}<span>Pas encore assez de goûts notés pour ça. <a href="#" onclick="aller('gouts');return false">Ajoute quelques titres</a> et les recos apparaissent.</span></div>`;
+ m.innerHTML = `${l1.length ? scene(l1[0]) : `<div class="section">${vide}</div>`}
+  ${l1.length > 1 ? `<section class="section"><div class="tete"><h3>${t1}</h3><p>Ce qui ressemble le plus à ce que tu aimes, les titres récents et acclamés d'abord.</p></div><div class="grille">${l1.slice(1).map(carte).join("")}</div></section>` : ""}
+  <section class="section"><div class="tete"><h3>${t2}</h3><p>Mêmes ambiances, autre support : ce que ${autre} disent de toi.</p></div>
+   ${l2.length ? `<div class="grille">${l2.map(carte).join("")}</div>` : vide}</section>`;
 }
 
 let enCours = false;
 async function charger(){ if (enCours) return; enCours = true; try { data = await api.recos(); } finally { enCours = false; } rendre(); }
 
+async function compter(){ const n = (await api.gouts()).length; $("#compte").innerHTML = n ? `<b>${n}</b> titres notés` : ""; return n; }
+
 async function noter(id, note){
  await api.noter(id, note);
  data = null;
  const c = document.getElementById("c-"+id); if (c) c.classList.add("note");
- toast(note==="bof" ? "Noté, il ne reviendra plus" : "Noté, recos mises à jour");
+ toast(note==="bof" ? "Noté, il ne reviendra plus" : note ? "Noté, recos mises à jour" : "Retiré");
+ compter();
  if (onglet !== "gouts") charger(); else gouts();
 }
 
+// Premier passage sur le site : présentation + titres connus à cocher
+function accueil(){
+ const m = $("#main"); m.className = "";
+ document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+ const mur = ["film","serie","film","jeu"].flatMap(d => Moteur.populaires(d, 12)).filter(x => x.image).slice(0, 40);
+ const rang = (d, nom) => `<section class="section"><div class="tete"><h3>${nom}</h3></div><div class="rail">${Moteur.populaires(d, 18).map(x=>`<button class="pop" onclick="choisir('${x.id}', this)" aria-label="${esc(x.titre)}"><div class="cadre"><div class="sans-image">${ico(ICONE[d])}${esc(x.titre)}</div>${image(x)}<span class="coche">${ico("ok")}</span></div><span>${esc(x.titre)}</span></button>`).join("")}</div></section>`;
+ m.innerHTML = `<section class="accueil">
+   <div class="mur" aria-hidden="true">${mur.map(x=>`<img src="${esc(visuel(x))}" alt="" onerror="this.remove()">`).join("")}</div>
+   <h2>Tes films, séries et jeux, <em>enfin reliés.</em></h2>
+   <p>Dis ce que tu as aimé, et Tastebridge te recommande quoi regarder et à quoi jouer, même d'un écran à l'autre : des jeux d'après tes films, des films d'après tes jeux.</p>
+   <div class="actions"><button class="bt plein" onclick="document.getElementById('choix').scrollIntoView({behavior:'smooth'})">Commencer ${ico("fleche")}</button><button class="bt" onclick="aller('gouts')">${ico("televerse")}Importer Netflix, IMDb, Letterboxd</button></div>
+   <div class="preuves"><span>${ico("cadenas")}Aucun compte, tes goûts restent dans ton navigateur</span><span>${ico("eclair")}Recos instantanées, sans IA lourde</span></div>
+  </section>
+  <div id="choix">${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}</div>
+  <div class="progres"><div class="barre-p"><i id="jauge"></i></div><small id="nb">0 / 5</small><button class="bt plein" id="voir" disabled onclick="aller('film')">Voir mes recos ${ico("fleche")}</button></div>`;
+ majProgres();
+}
+async function majProgres(){ const n = await compter(); if (!$("#jauge")) return;
+ $("#jauge").style.width = Math.min(100, n / 5 * 100) + "%"; $("#nb").textContent = `${Math.min(n,5)} / 5`; $("#voir").disabled = n < 5; }
+// Un clic sur une affiche = « J'aime », un second = « J'adore », un troisième = retiré
+function choisir(id, el){ const n = el.dataset.n === "aime" ? "adore" : el.dataset.n === "adore" ? "" : "aime";
+ el.dataset.n = n; api.noter(id, n); data = null; majProgres(); }
+
+let filtre = "tout";
 async function gouts(){
  const m = $("#main"); m.className = "";
  const liste = await api.gouts();
- const sel = r => `${r.heures ? `<span class="sous" style="margin:0">${r.heures} h sur Steam</span>` : ""}<select onchange="noter('${r.id}',this.value)">${r.note ? "" : `<option value="">Ton avis...</option>`}${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}" ${k===r.note?"selected":""}>${v}</option>`).join("")}</select>`;
- m.innerHTML = `${WEB && liste.length < 5 ? `<h2>Pour démarrer</h2><div class="sous">Clique sur les titres que tu connais et aimes (un clic : aimé, deux : adoré). Au moins 5, puis ouvre Films, Séries ou Jeux.</div>${[["film","Films"],["serie","Séries"],["jeu","Jeux"]].map(([d,nom])=>`<h3>${nom}</h3><div class="mini-grille">${Moteur.populaires(d, 14).map(x=>`<button class="pop" title="${esc(x.titre)}" onclick="choisir('${x.id}', this)"><img src="${esc(x.dom === "jeu" ? `https://cdn.akamai.steamstatic.com/steam/apps/${x.id.slice(5)}/library_600x900.jpg` : x.image)}" loading="lazy" alt="" onerror="this.src='${esc(x.image)}';this.onerror=null"><span>${esc(x.titre)}</span></button>`).join("")}</div>`).join("")}` : ""}
-  <h2>Ajouter un titre</h2>
-  <div class="sous">Tape un film, une série ou un jeu que tu as vu ou fait, puis dis ce que tu en as pensé.</div>
-  <div class="cherche"><input id="q" placeholder="Ex. Interstellar, The Last of Us, Elden Ring" autocomplete="off"></div>
-  <div class="lignes" id="res"></div>
-  <h2>Importer ton historique</h2>
-  <div class="sous">Netflix (Compte, Activité de visionnage, Tout télécharger), IMDb (export de tes notes), Letterboxd (export), ou tout CSV avec une colonne Title. Le fichier est lu sur ton PC, rien n'est envoyé.</div>
-  <label class="depot" id="depot"><input type="file" accept=".csv" multiple hidden id="fichier">${ico("televerse")}Glisse un fichier CSV ici ou clique pour le choisir</label>
-  <div class="sous" id="bilan"></div>
-  <h2>Ce que je sais de tes goûts (${liste.length})</h2>
-  <div class="sous">${WEB ? "Tes goûts restent dans ce navigateur, sur cet appareil : rien n'est envoyé, aucun compte." : "Tes jeux Steam joués plus de 15 h sont listés : donne ton avis pour qu'ils comptent."}</div>
-  ${WEB ? `<div class="outils"><button id="sauve">Sauvegarder mes goûts (fichier)</button><label><input type="file" accept=".json" hidden id="restaure">Charger un fichier de goûts</label><button id="vide">Tout effacer</button></div>` : ""}
-  <div class="lignes">${liste.map(r=>`<div class="l"><div class="mini" style="background-image:url('${esc(r.image||"")}')"></div>
-   <div class="nom">${esc(r.titre)} <span class="an">${r.annee??""}</span><div class="dom">${NOM[r.dom]}</div></div>${sel(r)}</div>`).join("")}</div>`;
+ const sel = r => `<select aria-label="Ton avis sur ${esc(r.titre)}" onchange="noter('${r.id}',this.value)">${r.note ? "" : `<option value="">Ton avis...</option>`}${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}" ${k===r.note?"selected":""}>${v}</option>`).join("")}${r.note ? `<option value="">Retirer</option>` : ""}</select>`;
+ const ligne = r => `<div class="l"><div class="mini" style="background-image:url('${esc(visuel(r)||"")}')"></div><div class="nom">${esc(r.titre)}<small>${NOM[r.dom]}${r.annee ? " · " + r.annee : ""}</small></div>${r.heures ? `<span class="h">${r.heures} h</span>` : ""}${sel(r)}</div>`;
+ const vus = liste.filter(r => filtre === "tout" || r.dom === filtre);
+ m.innerHTML = `<div class="colonnes">
+  <div>
+   <section class="panneau"><h3>Ajouter un titre</h3><p class="aide">Un film, une série ou un jeu que tu as vu ou fait.</p>
+    <div class="champ">${ico("loupe")}<input id="q" placeholder="Interstellar, The Last of Us, Elden Ring..." autocomplete="off"></div>
+    <div class="lignes" id="res"></div></section>
+   <section class="panneau"><h3>Importer ton historique</h3><p class="aide">Le fichier est lu ${WEB ? "dans ton navigateur" : "sur ton PC"}, rien n'est envoyé.</p>
+    <label class="depot" id="depot"><input type="file" accept=".csv" multiple hidden id="fichier">${ico("televerse")}<strong>Glisse un fichier CSV ici</strong>ou clique pour le choisir</label>
+    <div class="sources"><span class="chip">Netflix : netflix.com/viewingactivity, Tout télécharger</span><span class="chip">IMDb : export de tes notes</span><span class="chip">Letterboxd : export</span><span class="chip">Tout CSV avec une colonne Title</span></div>
+    <div id="bilan" role="status"></div></section>
+  </div>
+  <section class="panneau"><h3>Tes goûts</h3><p class="aide">${WEB ? "Ils restent dans ce navigateur, sur cet appareil. Sauvegarde-les dans un fichier pour les retrouver ailleurs." : "Tes jeux Steam joués plus de 15 h sont listés : donne ton avis pour qu'ils comptent."}</p>
+   ${WEB ? `<div class="outils"><button class="bt" id="sauve">${ico("telecharge")}Sauvegarder</button><label class="bt"><input type="file" accept=".json" hidden id="restaure">${ico("televerse")}Charger</label><button class="bt" id="vide">${ico("non")}Tout effacer</button></div>` : ""}
+   <div class="filtres">${[["tout","Tout"],["film","Films"],["serie","Séries"],["jeu","Jeux"]].map(([k,v])=>`<button class="${k===filtre?"on":""}" onclick="filtre='${k}';gouts()">${v} ${k==="tout" ? liste.length : liste.filter(r=>r.dom===k).length}</button>`).join("")}</div>
+   <div class="lignes liste-gouts">${vus.length ? vus.map(ligne).join("") : `<p class="aide">Rien ici pour l'instant.</p>`}</div>
+  </section></div>`;
  const envoyer = async fichiers => { for (const f of fichiers) {
   const r = await api.importer(f.name, await f.text());
   $("#bilan").textContent = r.erreur ? `${f.name} : ${r.erreur}` : `${f.name} (${r.source}) : ${r.reconnus} titres ajoutés, ${r.inconnus} absents du catalogue.`;
- } setTimeout(gouts, 2500); };
+ } data = null; compter(); setTimeout(gouts, 2500); };
  $("#fichier").onchange = e => envoyer(e.target.files);
  const d = $("#depot"); d.ondragover = e => { e.preventDefault(); d.classList.add("sur"); }; d.ondragleave = () => d.classList.remove("sur");
+ d.ondrop = e => { e.preventDefault(); d.classList.remove("sur"); envoyer(e.dataTransfer.files); };
  if (WEB) {
   $("#sauve").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([Moteur.exporter()],{type:"application/json"})); a.download = "mes-gouts-tastebridge.json"; a.click(); };
-  $("#restaure").onchange = async e => { try { Moteur.restaurer(await e.target.files[0].text()); toast("Goûts chargés"); gouts(); } catch (x) { toast(x.message); } };
-  $("#vide").onclick = () => { if (confirm("Effacer tous tes goûts de ce navigateur ?")) { Moteur.vider(); gouts(); } };
+  $("#restaure").onchange = async e => { try { Moteur.restaurer(await e.target.files[0].text()); data = null; toast("Goûts chargés"); compter(); gouts(); } catch (x) { toast(x.message); } };
+  $("#vide").onclick = () => { if (confirm("Effacer tous tes goûts de ce navigateur ?")) { Moteur.vider(); data = null; compter(); gouts(); } };
  }
- d.ondrop = e => { e.preventDefault(); d.classList.remove("sur"); envoyer(e.dataTransfer.files); };
  let t; $("#q").oninput = e => { clearTimeout(t); t = setTimeout(async () => {
   const r = await api.cherche(e.target.value);
-  $("#res").innerHTML = r.map(x=>`<div class="l"><div class="mini" style="background-image:url('${esc(x.image||"")}')"></div>
-   <div class="nom">${esc(x.titre)} <span class="an">${x.annee??""}</span><div class="dom">${NOM[x.dom]}</div></div>
-   <select onchange="noter('${x.id}',this.value)"><option value="">Ton avis...</option>${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>`).join("");
+  $("#res").innerHTML = r.map(x=>`<div class="l"><div class="mini" style="background-image:url('${esc(visuel(x)||"")}')"></div><div class="nom">${esc(x.titre)}<small>${NOM[x.dom]}${x.annee ? " · " + x.annee : ""}</small></div>
+   <select aria-label="Ton avis sur ${esc(x.titre)}" onchange="noter('${x.id}',this.value)"><option value="">Ton avis...</option>${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>`).join("");
  }, 200); };
 }
 
-// Démarrage rapide : un clic sur une affiche = « J'aime », un second = « J'adore », un troisième = retiré
-function choisir(id, el){ const n = el.dataset.n === "aime" ? "adore" : el.dataset.n === "adore" ? "" : "aime";
- el.dataset.n = n; api.noter(id, n); data = null; toast(n ? TEXTE[n] : "Retiré"); }
-$("#nav").onclick = e => { const b = e.target.closest("button"); if (!b) return;
- document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on", x===b)); onglet = b.dataset.o; rendre(); window.scrollTo(0,0); };
-if (WEB) Moteur.charger().then(() => { if (!Moteur.gouts().length) $('nav button[data-o="gouts"]').click(); else charger(); });
-else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); charger(); }
+function aller(o){ onglet = o; document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on", x.dataset.o===o)); rendre(); window.scrollTo(0,0); }
+$("#nav").onclick = e => { const b = e.target.closest("button"); if (b) aller(b.dataset.o); };
+if (WEB) Moteur.charger().then(async () => { if (await compter() < 5) accueil(); else charger(); });
+else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); compter(); charger(); }
 </script>
 </body>
 </html>
