@@ -5,59 +5,110 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mes recos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Gloock&display=swap" rel="stylesheet">
 <style>
-:root{--fond:#0e0f13;--carte:#171920;--carte2:#1e2029;--trait:#2a2d38;--texte:#e9e7e2;--doux:#9a9aa6;--accent:#e8a33d;--vert:#5fbf8a;--rouge:#e06464;--bleu:#6aa3e8}
+:root{--fond:#0d0e12;--carte:#16181f;--carte2:#1e2029;--trait:#2a2d38;--trait2:#3a3e4c;--texte:#ece9e2;--doux:#a3a2ad;--accent:#e8a33d;--vert:#5fbf8a;--rouge:#e06464;--bleu:#6aa3e8;--dom:var(--accent);
+ --ombre:0 14px 34px -12px rgba(0,0,0,.65),0 2px 6px rgba(0,0,0,.3);--sortie:cubic-bezier(.16,1,.3,1)}
+main.serie{--dom:#9b8cf2} main.jeu{--dom:#4fc59a}
 *{box-sizing:border-box}
-body{margin:0;background:var(--fond);color:var(--texte);font:15px/1.45 Inter,system-ui,sans-serif}
-header{position:sticky;top:0;z-index:5;background:rgba(14,15,19,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--trait)}
-.barre{max-width:1400px;margin:auto;padding:14px 24px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
-h1{font:600 24px Fraunces,serif;margin:0;letter-spacing:.2px}
+html{scrollbar-color:var(--trait2) var(--fond)}
+body{margin:0;min-height:100vh;color:var(--texte);font:15px/1.5 Onest,system-ui,sans-serif;caret-color:var(--accent);
+ background:radial-gradient(1100px 520px at 12% -8%,rgba(232,163,61,.09),transparent 60%),radial-gradient(900px 480px at 100% 0%,rgba(155,140,242,.06),transparent 60%),var(--fond);background-attachment:fixed}
+::selection{background:rgba(232,163,61,.35);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:var(--trait2);border-radius:10px;border:2px solid var(--fond)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+a{text-underline-offset:3px}
+header{position:sticky;top:0;z-index:5;background:rgba(13,14,18,.78);backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid rgba(255,255,255,.06)}
+.barre{max-width:1400px;margin:auto;padding:12px 24px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+h1{font:400 25px/1 Gloock,serif;margin:0;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+h1 svg{width:26px;height:26px;color:var(--accent)}
 h1 span{color:var(--accent)}
-nav{display:flex;gap:4px;background:var(--carte);padding:4px;border-radius:12px}
-nav button{background:none;border:0;color:var(--doux);font:500 14px Inter;padding:8px 16px;border-radius:9px;cursor:pointer;display:flex;gap:8px;align-items:center}
-nav button.on{background:var(--carte2);color:var(--texte)}
+nav{display:flex;gap:2px;background:rgba(255,255,255,.035);padding:4px;border-radius:12px;border:1px solid rgba(255,255,255,.05)}
+nav button{background:none;border:0;color:var(--doux);font:500 14px Onest,sans-serif;padding:8px 15px;border-radius:9px;cursor:pointer;display:flex;gap:8px;align-items:center;transition:color .2s,background .2s}
+nav button:hover{color:var(--texte)}
+nav button.on{background:var(--carte2);color:var(--texte);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 2px 8px rgba(0,0,0,.35)}
+nav button.on svg{color:var(--accent)}
 nav svg{width:16px;height:16px}
-main{max-width:1400px;margin:auto;padding:8px 24px 60px}
-h2{font:600 18px Inter;margin:30px 0 4px}
-.sous{color:var(--doux);font-size:13px;margin-bottom:14px}
-.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-.jeu .grille{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
-.c{background:var(--carte);border:1px solid var(--trait);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,border-color .15s}
-.c:hover{transform:translateY(-2px);border-color:#3a3e4c}
-.img{aspect-ratio:2/3;background:linear-gradient(135deg,#232633,#15171d);position:relative;display:flex;align-items:center;justify-content:center;color:#555a6a;font:600 18px Fraunces;padding:16px;text-align:center}
+main{max-width:1400px;margin:auto;padding:8px 24px 72px}
+h2{font:400 26px/1.15 Gloock,serif;letter-spacing:-.01em;margin:44px 0 6px;text-wrap:balance}
+.sous{color:var(--doux);font-size:13.5px;margin-bottom:18px;max-width:70ch}
+.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
+.jeu .grille{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+/* Carte */
+.c{background:var(--carte);border:1px solid var(--trait);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .35s var(--sortie),box-shadow .35s var(--sortie),border-color .2s}
+.c:hover{transform:translateY(-4px);box-shadow:var(--ombre);border-color:var(--trait2)}
+.img{aspect-ratio:2/3;background:linear-gradient(150deg,#262a37,#14161c);position:relative;display:flex;align-items:center;justify-content:center;color:#8d92a3;font:400 19px/1.25 Gloock,serif;padding:18px;text-align:center;overflow:hidden}
 .jeu .img{aspect-ratio:460/215}
-.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.pct{position:absolute;top:10px;right:10px;background:rgba(10,10,14,.82);color:var(--accent);font:700 12px Inter;padding:4px 8px;border-radius:8px}
-.corps{padding:12px 14px 14px;display:flex;flex-direction:column;gap:7px;flex:1}
-.t{font-weight:600;font-size:15px;color:var(--texte);text-decoration:none}
-.t:hover{color:var(--accent)}
-.an{color:var(--doux);font-weight:400}
-.pq{font-size:12.5px;color:var(--doux)}
-.pq b{color:#cfcdc6;font-weight:500}
+.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.02);transition:opacity .5s var(--sortie),transform .6s var(--sortie)}
+.img img.ok{opacity:1;transform:none}
+.c:hover .img img.ok{transform:scale(1.045)}
+.img::after{content:"";position:absolute;inset:auto 0 0;height:38%;background:linear-gradient(transparent,rgba(13,14,18,.55));pointer-events:none}
+.pct{position:absolute;z-index:1;top:10px;right:10px;display:flex;align-items:center;gap:6px;background:rgba(10,10,14,.78);backdrop-filter:blur(6px);color:var(--texte);font:600 12px Onest,sans-serif;font-variant-numeric:tabular-nums;padding:4px 9px 4px 7px;border-radius:20px;border:1px solid rgba(255,255,255,.08)}
+.pct i{width:7px;height:7px;border-radius:50%;background:var(--dom)}
+.corps{padding:13px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.t{font-weight:600;font-size:15px;line-height:1.3;color:var(--texte);text-decoration:none}
+.t:hover{color:var(--dom)}
+.an{color:var(--doux);font-weight:400;font-variant-numeric:tabular-nums}
+.pq{font-size:12.5px;color:var(--doux);line-height:1.45}
+.pq b{color:#d6d3cb;font-weight:500}
 .chips{display:flex;flex-wrap:wrap;gap:5px}
-.chip{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--carte2);color:#bdbcc6;border:1px solid var(--trait)}
-.avis{font-size:11.5px;color:var(--vert)}
+.chip{font-size:11px;padding:2px 9px;border-radius:20px;background:rgba(255,255,255,.04);color:#c3c2cb;border:1px solid var(--trait)}
+.avis{font-size:11.5px;color:var(--vert);font-variant-numeric:tabular-nums}
 .act{display:flex;gap:6px;margin-top:auto;padding-top:6px}
-.act button{flex:1;background:var(--carte2);border:1px solid var(--trait);color:var(--doux);border-radius:9px;padding:7px 0;cursor:pointer;display:flex;justify-content:center;align-items:center}
+.act button{flex:1;background:var(--carte2);border:1px solid var(--trait);color:var(--doux);border-radius:9px;padding:8px 0;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:7px;font:500 13px Onest,sans-serif;transition:color .15s,border-color .15s,background .15s,transform .15s}
 .act button svg{width:16px;height:16px}
-.act button:hover{color:var(--texte);border-color:#454a5a}
-.act .a1:hover{color:var(--rouge)} .act .a2:hover{color:var(--vert)} .act .a3:hover{color:var(--bleu)} .act .a4:hover{color:#c58b5a}
-.vide{color:var(--doux);padding:20px;background:var(--carte);border-radius:12px;border:1px dashed var(--trait)}
-.cherche{display:flex;gap:10px;margin:22px 0 8px}
-.cherche input{flex:1;max-width:520px;background:var(--carte);border:1px solid var(--trait);color:var(--texte);font:15px Inter;padding:11px 14px;border-radius:11px;outline:none}
-.cherche input:focus{border-color:var(--accent)}
+.act button:hover{color:var(--texte);border-color:var(--trait2)}
+.act button:active{transform:scale(.94)}
+.act .a1:hover{color:var(--rouge);background:rgba(224,100,100,.08)} .act .a2:hover{color:var(--vert);background:rgba(95,191,138,.08)} .act .a3:hover{color:var(--bleu);background:rgba(106,163,232,.08)} .act .a4:hover{color:#d0956a;background:rgba(208,149,106,.08)}
+.c.note{opacity:.35;transform:scale(.98);transition:opacity .3s,transform .3s}
+/* Mise en avant : la meilleure reco de la section */
+.une{position:relative;display:grid;grid-template-columns:minmax(180px,250px) 1fr;gap:34px;align-items:center;padding:28px;margin-bottom:22px;border-radius:18px;overflow:hidden;border:1px solid var(--trait);background:var(--carte);isolation:isolate}
+.jeu .une{grid-template-columns:minmax(260px,440px) 1fr}
+.une .fondu{position:absolute;inset:-40px;z-index:-1;background:center/cover;filter:blur(46px) saturate(150%);opacity:.38;transform:scale(1.1)}
+.une::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(13,14,18,.25),rgba(13,14,18,.82) 55%)}
+.une .img{border-radius:12px;box-shadow:0 24px 48px -16px rgba(0,0,0,.8)}
+.une .img::after{display:none}
+.une .corps{padding:0;gap:12px;max-width:62ch}
+.une .t{font:400 clamp(26px,3.2vw,40px)/1.08 Gloock,serif;letter-spacing:-.015em}
+.une .pq{font-size:15px}
+.une .pct{position:static;align-self:flex-start;font-size:13px}
+.une .chip{font-size:12px;padding:3px 11px}
+.une .act{max-width:520px;margin-top:8px}
+.une .act button{padding:10px 0}
+/* États */
+.vide{color:var(--doux);padding:24px;background:rgba(255,255,255,.02);border-radius:14px;border:1px dashed var(--trait2);max-width:70ch}
+.squelette{border-radius:14px;aspect-ratio:2/3.9;background:linear-gradient(100deg,var(--carte) 30%,#1d2029 50%,var(--carte) 70%) 0 0/300% 100%;animation:luit 1.4s linear infinite}
+@keyframes luit{to{background-position:-150% 0}}
+/* Mes goûts */
+.cherche{display:flex;gap:10px;margin:18px 0 10px}
+.cherche input{flex:1;max-width:560px;background:var(--carte);border:1px solid var(--trait);color:var(--texte);font:15px Onest,sans-serif;padding:12px 15px;border-radius:12px;outline:none;transition:border-color .15s,box-shadow .15s}
+.cherche input::placeholder{color:#7c7c88}
+.cherche input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(232,163,61,.12)}
 .lignes{display:flex;flex-direction:column;gap:8px;max-width:900px}
-.l{display:flex;align-items:center;gap:12px;background:var(--carte);border:1px solid var(--trait);border-radius:11px;padding:8px 10px}
-.l .mini{width:44px;height:44px;border-radius:7px;background:var(--carte2) center/cover;flex:none}
-.l .nom{flex:1}
-.l .dom{font-size:11px;color:var(--doux);text-transform:uppercase;letter-spacing:.5px}
-.l select{background:var(--carte2);color:var(--texte);border:1px solid var(--trait);border-radius:8px;padding:6px 8px;font:13px Inter}
-.depot{display:block;max-width:900px;margin:10px 0 6px;padding:26px;text-align:center;border:1.5px dashed var(--trait);border-radius:12px;color:var(--doux);cursor:pointer;transition:border-color .15s,color .15s}
-.depot:hover,.depot.sur{border-color:var(--accent);color:var(--texte)}
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#262a35;padding:10px 18px;border-radius:10px;transition:transform .25s;font-size:14px}
+.l{display:flex;align-items:center;gap:12px;background:var(--carte);border:1px solid var(--trait);border-radius:12px;padding:8px 10px;transition:border-color .15s}
+.l:hover{border-color:var(--trait2)}
+.l .mini{width:44px;height:44px;border-radius:8px;background:var(--carte2) center/cover;flex:none}
+.l .nom{flex:1;min-width:0}
+.l .dom{font-size:11px;color:var(--doux);text-transform:uppercase;letter-spacing:.06em}
+.l select{background:var(--carte2);color:var(--texte);border:1px solid var(--trait);border-radius:8px;padding:7px 9px;font:13px Onest,sans-serif;cursor:pointer}
+.depot{display:flex;flex-direction:column;align-items:center;gap:8px;max-width:900px;margin:10px 0 6px;padding:28px;text-align:center;border:1.5px dashed var(--trait2);border-radius:14px;color:var(--doux);cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.depot svg{width:22px;height:22px}
+.depot:hover,.depot.sur{border-color:var(--accent);color:var(--texte);background:rgba(232,163,61,.05)}
+.outils{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 16px}
+.outils button,.outils label{background:var(--carte2);border:1px solid var(--trait);color:var(--texte);font:13px Onest,sans-serif;padding:8px 13px;border-radius:9px;cursor:pointer;transition:border-color .15s}
+.outils button:hover,.outils label:hover{border-color:var(--accent)}
+.mini-grille{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;margin-bottom:6px;scroll-snap-type:x proximity}
+.pop{flex:none;width:112px;scroll-snap-align:start;background:var(--carte);border:2px solid var(--trait);border-radius:11px;padding:0;overflow:hidden;cursor:pointer;color:var(--texte);text-align:left;position:relative;transition:border-color .2s,transform .2s var(--sortie)}
+.pop:hover{transform:translateY(-2px)}
+.pop img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+.pop span{display:block;font-size:11.5px;padding:5px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pop[data-n="aime"]{border-color:var(--vert)} .pop[data-n="adore"]{border-color:var(--rouge)}
+h3{font:600 13px Onest,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--doux);margin:18px 0 8px}
+.toast{position:fixed;z-index:9;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);background:#262a35;border:1px solid var(--trait2);box-shadow:var(--ombre);padding:10px 18px;border-radius:12px;transition:transform .4s var(--sortie);font-size:14px}
 .toast.v{transform:translateX(-50%) translateY(0)}
-@media(max-width:600px){.barre,main{padding-left:16px;padding-right:16px}.grille{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.une,.jeu .une{grid-template-columns:1fr;gap:18px;padding:18px}.une .img{max-width:200px}.jeu .une .img{max-width:none}}
+@media(max-width:600px){.barre,main{padding-left:16px;padding-right:16px}.barre{gap:12px}nav{width:100%;justify-content:space-between}nav button{padding:8px 9px;font-size:13px;white-space:nowrap;gap:6px}.une .act button{font-size:0;gap:0}.grille{grid-template-columns:repeat(2,1fr);gap:12px}.jeu .grille{grid-template-columns:1fr}h2{font-size:22px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
@@ -69,10 +120,12 @@ h2{font:600 18px Inter;margin:30px 0 4px}
  <symbol id="pouce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></symbol>
  <symbol id="oeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></symbol>
  <symbol id="non" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></symbol>
+ <symbol id="pont" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6v12M20 6v12M4 10c3 0 5 3 8 3s5-3 8-3M8 12.5V18M16 12.5V18M12 13v5"/></symbol>
+ <symbol id="televerse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
  <symbol id="etoile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 2.3a.53.53 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.1l5.2.8a.53.53 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.53.53 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.53.53 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.8a.53.53 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.1z"/></symbol>
 </svg>
 <header><div class="barre">
- <h1>Mes <span>recos</span></h1>
+ <h1><svg aria-hidden="true"><use href="#pont"/></svg>Mes <span>recos</span></h1>
  <nav id="nav">
   <button data-o="film" class="on"><svg><use href="#film"/></svg>Films</button>
   <button data-o="serie"><svg><use href="#tv"/></svg>Séries</button>
@@ -92,83 +145,112 @@ const TEXTE = {adore:"Adoré", aime:"Aimé", regarde:"Regardé", vu:"Vu, sans pl
 const VERBE = {film:"vu", serie:"vu", jeu:"joué"};
 
 const poster = (url, corps) => fetch(url,{method:"POST",headers:{"X-Recos":"1"},body:JSON.stringify(corps)});
+const json = async url => (await fetch(url)).json();
+// Même page pour les deux versions : serveur local (recos.py) ou site sans serveur (moteur.js, profil dans le navigateur)
+const WEB = typeof Moteur !== "undefined";
+const api = WEB ? {
+ recos: async () => Moteur.recos(), gouts: async () => Moteur.gouts(), cherche: async q => Moteur.cherche(q),
+ noter: async (id, note) => Moteur.noter(id, note),
+ importer: async (nom, texte) => { try { return Moteur.importer(texte); } catch (e) { return {erreur: e.message}; } },
+} : {
+ recos: () => json("/api/recos"), gouts: () => json("/api/gouts"), cherche: q => json("/api/cherche?q="+encodeURIComponent(q)),
+ noter: (id, note) => poster("/api/note",{id,note}),
+ importer: async (nom, texte) => (await poster("/api/import",{nom, texte})).json(),
+};
 function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("v");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("v"),1800)}
 function lien(r){return r.steam?`https://store.steampowered.com/app/${r.steam}`:r.wiki?`https://fr.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`:"#"}
 
-function carte(r){
- const img = r.image ? `<img src="${esc(r.image)}" loading="lazy" alt="" onerror="this.remove()">` : "";
+function carte(r, une){
+ const img = r.image ? `<img src="${esc(r.image)}" loading="${une ? "eager" : "lazy"}" alt="" onload="this.classList.add('ok')" onerror="this.remove()">` : "";
+ const bouton = (cls, note, icone, texte) => `<button class="${cls}" title="${texte}" aria-label="${texte} : ${esc(r.titre)}" onclick="noter('${r.id}','${note}')">${ico(icone)}${une ? texte : ""}</button>`;
  const pq = r.parce_que.length ? `<div class="pq">Parce que tu as aimé <b>${r.parce_que.map(esc).join("</b> et <b>")}</b></div>` : "";
  return `<div class="c" id="c-${r.id}">
-  <div class="img">${esc(r.titre)}${img}<span class="pct">${r.match} %</span></div>
+  <div class="img">${esc(r.titre)}${img}${une ? "" : `<span class="pct"><i></i>${r.match} %</span>`}</div>
   <div class="corps">
+   ${une ? `<span class="pct"><i></i>${r.match} % de correspondance</span>` : ""}
    <a class="t" href="${lien(r)}" target="_blank">${esc(r.titre)} <span class="an">${r.annee ?? ""}</span></a>
    ${pq}
    <div class="chips">${r.themes.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div>
    ${r.avis ? `<div class="avis">${esc(r.avis)}</div>` : ""}
    <div class="act">
-    <button class="a1" title="J'adore" onclick="noter('${r.id}','adore')">${ico("coeur")}</button>
-    <button class="a2" title="J'aime" onclick="noter('${r.id}','aime')">${ico("pouce")}</button>
-    <button class="a3" title="Déjà ${VERBE[r.dom]}, sans plus" onclick="noter('${r.id}','vu')">${ico("oeil")}</button>
-    <button class="a4" title="Pas pour moi" onclick="noter('${r.id}','bof')">${ico("non")}</button>
+    ${bouton("a1","adore","coeur","J'adore")}${bouton("a2","aime","pouce","J'aime")}${bouton("a3","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${bouton("a4","bof","non","Pas pour moi")}
    </div>
   </div></div>`;
+}
+// La meilleure reco de chaque première section, en grand, sur un fond flouté tiré de son image
+function une(r){
+ return `<div class="une" id="c-${r.id}">${r.image ? `<div class="fondu" style="background-image:url('${esc(r.image)}')"></div>` : ""}${carte(r, true).replace(/^<div class="c" id="c-[^"]+">/, "").replace(/<\/div>$/, "")}</div>`;
 }
 
 function rendre(){
  const m = $("#main");
  if (onglet === "gouts") return gouts();
- if (!data){ m.innerHTML = `<p class="sous" style="margin-top:30px">Calcul en cours...</p>`; return; }
+ if (!data){ m.innerHTML = `<h2>&nbsp;</h2><div class="grille">${'<div class="squelette"></div>'.repeat(10)}</div>`; charger(); return; }
  m.className = onglet;
  m.innerHTML = data[onglet].map(([titre, liste], k) => `
   <h2>${titre}</h2>
   <div class="sous">${k===0 ? "Le plus proche de ce que tu aimes déjà, les titres récents et acclamés en premier." : "Pour sortir de tes habitudes : mêmes ambiances, autre support."}</div>
-  ${liste.length ? `<div class="grille">${liste.map(carte).join("")}</div>` : `<div class="vide">Pas encore assez de goûts notés ici. Ajoute-en dans « Mes goûts ».</div>`}`).join("");
+  ${!liste.length ? `<div class="vide">Pas encore assez de goûts notés ici. Ajoute-en dans « Mes goûts ».</div>`
+   : k===0 ? une(liste[0]) + `<div class="grille">${liste.slice(1).map(r => carte(r)).join("")}</div>`
+   : `<div class="grille">${liste.map(r => carte(r)).join("")}</div>`}`).join("");
 }
 
-async function charger(){ data = await (await fetch("/api/recos")).json(); rendre(); }
+let enCours = false;
+async function charger(){ if (enCours) return; enCours = true; try { data = await api.recos(); } finally { enCours = false; } rendre(); }
 
 async function noter(id, note){
- await poster("/api/note",{id,note});
- const c = document.getElementById("c-"+id); if (c) c.style.opacity=.3;
+ await api.noter(id, note);
+ data = null;
+ const c = document.getElementById("c-"+id); if (c) c.classList.add("note");
  toast(note==="bof" ? "Noté, il ne reviendra plus" : "Noté, recos mises à jour");
  if (onglet !== "gouts") charger(); else gouts();
 }
 
 async function gouts(){
  const m = $("#main"); m.className = "";
- const liste = await (await fetch("/api/gouts")).json();
+ const liste = await api.gouts();
  const sel = r => `${r.heures ? `<span class="sous" style="margin:0">${r.heures} h sur Steam</span>` : ""}<select onchange="noter('${r.id}',this.value)">${r.note ? "" : `<option value="">Ton avis...</option>`}${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}" ${k===r.note?"selected":""}>${v}</option>`).join("")}</select>`;
- m.innerHTML = `<h2>Ajouter un titre</h2>
+ m.innerHTML = `${WEB && liste.length < 5 ? `<h2>Pour démarrer</h2><div class="sous">Clique sur les titres que tu connais et aimes (un clic : aimé, deux : adoré). Au moins 5, puis ouvre Films, Séries ou Jeux.</div>${[["film","Films"],["serie","Séries"],["jeu","Jeux"]].map(([d,nom])=>`<h3>${nom}</h3><div class="mini-grille">${Moteur.populaires(d, 14).map(x=>`<button class="pop" title="${esc(x.titre)}" onclick="choisir('${x.id}', this)"><img src="${esc(x.dom === "jeu" ? `https://cdn.akamai.steamstatic.com/steam/apps/${x.id.slice(5)}/library_600x900.jpg` : x.image)}" loading="lazy" alt="" onerror="this.src='${esc(x.image)}';this.onerror=null"><span>${esc(x.titre)}</span></button>`).join("")}</div>`).join("")}` : ""}
+  <h2>Ajouter un titre</h2>
   <div class="sous">Tape un film, une série ou un jeu que tu as vu ou fait, puis dis ce que tu en as pensé.</div>
   <div class="cherche"><input id="q" placeholder="Ex. Interstellar, The Last of Us, Elden Ring" autocomplete="off"></div>
   <div class="lignes" id="res"></div>
   <h2>Importer ton historique</h2>
   <div class="sous">Netflix (Compte, Activité de visionnage, Tout télécharger), IMDb (export de tes notes), Letterboxd (export), ou tout CSV avec une colonne Title. Le fichier est lu sur ton PC, rien n'est envoyé.</div>
-  <label class="depot" id="depot"><input type="file" accept=".csv" multiple hidden id="fichier">Glisse un fichier CSV ici ou clique pour le choisir</label>
+  <label class="depot" id="depot"><input type="file" accept=".csv" multiple hidden id="fichier">${ico("televerse")}Glisse un fichier CSV ici ou clique pour le choisir</label>
   <div class="sous" id="bilan"></div>
   <h2>Ce que je sais de tes goûts (${liste.length})</h2>
-  <div class="sous">Tes jeux Steam joués plus de 15 h sont listés : donne ton avis pour qu'ils comptent.</div>
+  <div class="sous">${WEB ? "Tes goûts restent dans ce navigateur, sur cet appareil : rien n'est envoyé, aucun compte." : "Tes jeux Steam joués plus de 15 h sont listés : donne ton avis pour qu'ils comptent."}</div>
+  ${WEB ? `<div class="outils"><button id="sauve">Sauvegarder mes goûts (fichier)</button><label><input type="file" accept=".json" hidden id="restaure">Charger un fichier de goûts</label><button id="vide">Tout effacer</button></div>` : ""}
   <div class="lignes">${liste.map(r=>`<div class="l"><div class="mini" style="background-image:url('${esc(r.image||"")}')"></div>
    <div class="nom">${esc(r.titre)} <span class="an">${r.annee??""}</span><div class="dom">${NOM[r.dom]}</div></div>${sel(r)}</div>`).join("")}</div>`;
  const envoyer = async fichiers => { for (const f of fichiers) {
-  const r = await (await poster("/api/import",{nom:f.name, texte: await f.text()})).json();
+  const r = await api.importer(f.name, await f.text());
   $("#bilan").textContent = r.erreur ? `${f.name} : ${r.erreur}` : `${f.name} (${r.source}) : ${r.reconnus} titres ajoutés, ${r.inconnus} absents du catalogue.`;
  } setTimeout(gouts, 2500); };
  $("#fichier").onchange = e => envoyer(e.target.files);
  const d = $("#depot"); d.ondragover = e => { e.preventDefault(); d.classList.add("sur"); }; d.ondragleave = () => d.classList.remove("sur");
+ if (WEB) {
+  $("#sauve").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([Moteur.exporter()],{type:"application/json"})); a.download = "mes-gouts-tastebridge.json"; a.click(); };
+  $("#restaure").onchange = async e => { try { Moteur.restaurer(await e.target.files[0].text()); toast("Goûts chargés"); gouts(); } catch (x) { toast(x.message); } };
+  $("#vide").onclick = () => { if (confirm("Effacer tous tes goûts de ce navigateur ?")) { Moteur.vider(); gouts(); } };
+ }
  d.ondrop = e => { e.preventDefault(); d.classList.remove("sur"); envoyer(e.dataTransfer.files); };
  let t; $("#q").oninput = e => { clearTimeout(t); t = setTimeout(async () => {
-  const r = await (await fetch("/api/cherche?q="+encodeURIComponent(e.target.value))).json();
+  const r = await api.cherche(e.target.value);
   $("#res").innerHTML = r.map(x=>`<div class="l"><div class="mini" style="background-image:url('${esc(x.image||"")}')"></div>
    <div class="nom">${esc(x.titre)} <span class="an">${x.annee??""}</span><div class="dom">${NOM[x.dom]}</div></div>
    <select onchange="noter('${x.id}',this.value)"><option value="">Ton avis...</option>${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>`).join("");
  }, 200); };
 }
 
+// Démarrage rapide : un clic sur une affiche = « J'aime », un second = « J'adore », un troisième = retiré
+function choisir(id, el){ const n = el.dataset.n === "aime" ? "adore" : el.dataset.n === "adore" ? "" : "aime";
+ el.dataset.n = n; api.noter(id, n); data = null; toast(n ? TEXTE[n] : "Retiré"); }
 $("#nav").onclick = e => { const b = e.target.closest("button"); if (!b) return;
  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on", x===b)); onglet = b.dataset.o; rendre(); window.scrollTo(0,0); };
-setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000);
-charger();
+if (WEB) Moteur.charger().then(() => { if (!Moteur.gouts().length) $('nav button[data-o="gouts"]').click(); else charger(); });
+else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); charger(); }
 </script>
 </body>
 </html>

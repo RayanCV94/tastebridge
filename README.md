@@ -2,7 +2,8 @@
 
 **Movie, TV show and video game recommendations that cross the line between screens.**
 Liked *The Dark Knight*? Here are crime-noir superhero games. Played *Dying Light*? Here are zombie films.
-Runs 100 % locally, no account, no API key, no tracking.
+**Try it in your browser: https://rayancv94.github.io/tastebridge/** (no account: your ratings stay in your browser).
+Or run it locally, no account, no API key, no tracking.
 
 *Version française plus bas.*
 
@@ -68,6 +69,11 @@ Optional, in `donnees/config.json` (never committed):
 
 ## Run it
 
+The website (`docs/`, GitHub Pages) runs the same engine in JavaScript (`moteur.js`) with no server: your ratings live in your browser's storage, and you can save them to a file and load them on another device. I chose no accounts on purpose: no password stored anywhere means nothing to leak. `python site.py` regenerates it.
+
+The local version adds automatic Steam and Jellyfin detection:
+
+
 ```bash
 pip install -r requirements.txt
 python recos.py
@@ -99,6 +105,7 @@ Code: MIT. Wikidata content is CC0. Game data comes from SteamSpy. Posters are n
 - Méthode : 27 thèmes communs (horreur, cyberpunk, braquage, monde ouvert...), vecteurs TF-IDF, similarité cosinus, pondérée par la qualité (avis Steam, couverture Wikipédia) et la récence.
 - Pour vérifier que ça marche, j'ai fait une évaluation « leave-one-out » sur mon propre profil : je cache un titre que j'ai aimé, et il ressort dans le top 10 dans 35 % des cas, contre 5 % pour « les plus populaires d'abord » et 0 % au hasard. Limites : testé sur moi seul, et pas encore de filtrage collaboratif (prochaine étape).
 - Import d'historique : Netflix (netflix.com/viewingactivity, « Télécharger tout »), IMDb, Letterboxd, ou tout CSV avec une colonne Title ; Steam est lu tout seul. Prime Video : demande de données à Amazon, plusieurs jours.
-- Lancer : `pip install -r requirements.txt` puis `python recos.py` (ou double-clic sur `lancer.vbs` sous Windows). La page s'ouvre, et le serveur s'arrête seul 3 minutes après sa fermeture.
+- Site : https://rayancv94.github.io/tastebridge/ (sans compte : tes goûts restent dans ton navigateur, sauvegardables dans un fichier).
+- Lancer en local : `pip install -r requirements.txt` puis `python recos.py` (ou double-clic sur `lancer.vbs` sous Windows). La page s'ouvre, et le serveur s'arrête seul 3 minutes après sa fermeture.
 
 ![Onglet films](docs/films.jpg)
