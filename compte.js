@@ -30,6 +30,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
 .boite .msg.ok{color:var(--menthe)}`;
   document.head.append(css);
 
+  const ICONE_MAIL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`;
   const bouton = document.createElement("button");
   bouton.className = "connexion";
   document.querySelector(".gh").before(bouton);
@@ -49,7 +50,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
     v.className = "voile-compte";
     v.innerHTML = `<form class="boite">
   <h3>${nouveau ? "Créer un compte" : "Se connecter"}</h3>
-  <p>Tes notes suivent sur tous tes appareils. Pas de compte : elles restent dans ce navigateur.</p>
+  <p>Tes goûts sont sauvegardés et te suivent sur tous tes appareils. Ceux déjà notés ici sont repris dans ton compte.${nouveau ? `<span class="note-mail">${ICONE_MAIL}<span>Tu vas recevoir un e-mail de confirmation envoyé par <b>Supabase</b>, le service qui gère les comptes de Tastebridge (pense à regarder dans les spams).</span></span>` : ""}</p>
   <label for="c-mail">E-mail</label><input id="c-mail" type="email" autocomplete="email" required>
   <label for="c-mdp">Mot de passe${nouveau ? " (8 caractères minimum)" : ""}</label>
   <input id="c-mdp" type="password" minlength="${nouveau ? 8 : 1}" autocomplete="${nouveau ? "new-password" : "current-password"}" required>
@@ -72,7 +73,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
         : await sb.auth.signInWithPassword({ email, password });
       go.disabled = false;
       if (error) { msg.textContent = traduire(error.message); return; }
-      if (nouveau && !data.session) { msg.className = "msg ok"; msg.textContent = "Compte créé. Clique le lien reçu par e-mail pour l'activer."; return; }
+      if (nouveau && !data.session) { msg.className = "msg ok"; msg.textContent = "Compte créé. Clique le lien de l'e-mail « Supabase » pour l'activer (regarde aussi les spams)."; return; }
       fermer();
     };
   }
@@ -205,4 +206,47 @@ ${a.texte ? `<p>${echap(a.texte)}</p>` : ""}${user && a.user_id === user.id ? `<
     if (user && user.id !== avant) setTimeout(recuperer, 0);
   });
   maj();
+
+  // ---------- Invitation douce à créer un compte ----------
+  // Tout marche sans compte. Après 5 recherches ou lancers de dé, une carte propose d'en créer un.
+  // Elle ne bloque rien, se ferme d'un clic et ne revient pas une fois fermée.
+  const SEUIL = 5;
+  const lire = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
+  const ecrire = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+  addEventListener("action-visiteur", () => {
+    const n = +lire("tastebridge-actions", 0) + 1;
+    ecrire("tastebridge-actions", n);
+    if (n >= SEUIL && !user && !lire("tastebridge-invite-fermee", "") && !document.querySelector(".invite")) inviter();
+  });
+  function inviter() {
+    const c = document.createElement("aside");
+    c.className = "invite";
+    c.setAttribute("role", "dialog");
+    c.setAttribute("aria-label", "Créer un compte");
+    c.innerHTML = `<button class="x" aria-label="Fermer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+<h4>Garde tes goûts pour de bon</h4>
+<p>Avec un compte gratuit, tes notes sont sauvegardées et tu les retrouves sur ton téléphone comme sur ton PC. Celles déjà notées ici sont reprises.</p>
+<p class="note-mail">${ICONE_MAIL}<span>L'e-mail de confirmation vient de <b>Supabase</b>, notre service de comptes (vérifie les spams).</span></p>
+<div class="boutons"><button class="principal">Créer mon compte</button><button class="plus-tard">Plus tard</button></div>`;
+    document.body.append(c);
+    const fermerInvite = () => { ecrire("tastebridge-invite-fermee", "1"); c.remove(); };
+    c.querySelector(".x").onclick = fermerInvite;
+    c.querySelector(".plus-tard").onclick = fermerInvite;
+    c.querySelector(".principal").onclick = () => { c.remove(); fenetre("creer"); };
+  }
+  css.textContent += `
+.note-mail{display:flex;gap:8px;align-items:flex-start;margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(232,163,61,.08);border:1px solid rgba(232,163,61,.22);color:var(--texte);font-size:12.5px;line-height:1.45}
+.note-mail svg{width:16px;height:16px;flex:none;margin-top:1px;color:var(--ambre)}
+.invite{position:fixed;z-index:35;right:20px;bottom:20px;width:min(360px,calc(100% - 32px));background:var(--surface);border:1px solid var(--trait2);border-radius:16px;padding:20px;box-shadow:var(--ombre);animation:monte .45s var(--sortie)}
+@keyframes monte{from{opacity:0;transform:translateY(16px)}}
+.invite h4{margin:0 28px 6px 0;font:400 22px/1.15 Gloock,serif}
+.invite p{margin:0;color:var(--doux);font-size:13.5px}
+.invite .x{position:absolute;top:12px;right:12px;width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:8px;background:none;color:var(--doux);cursor:pointer}
+.invite .x:hover{background:var(--surface2);color:var(--texte)}
+.invite .x svg{width:16px;height:16px}
+.invite .boutons{display:flex;gap:8px;margin-top:14px}
+.invite .principal{flex:1;margin:0;padding:11px;border:0;border-radius:10px;background:var(--ambre);color:#16110a;font:600 14px Onest,sans-serif;cursor:pointer}
+.invite .plus-tard{padding:11px 14px;border:1px solid var(--trait);border-radius:10px;background:none;color:var(--doux);font:500 14px Onest,sans-serif;cursor:pointer}
+@media(max-width:600px){.invite{right:16px;left:16px;bottom:16px;width:auto}}
+@media(prefers-reduced-motion:reduce){.invite{animation:none}}`;
 })();

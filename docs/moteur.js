@@ -159,6 +159,31 @@ const Moteur = (() => {
         jeu: [["D'après tes jeux", recos(p, "jeu", ["jeu"])], ["D'après tes films et séries", recos(p, "jeu", ecrans, 8)]],
       };
     },
+    // Le dé : une œuvre au hasard parmi celles qui collent à tes goûts, hors titres notés, déjà affichés
+    // ou de la même licence qu'un titre aimé (aimer The Witcher 3 ne doit pas sortir The Witcher 2)
+    hasard(type, affiches = []) {
+      const p = profil();
+      const poids = {};
+      for (const [i, note] of Object.entries(p.notes)) if (CAT[i] && NOTES[note]) poids[i] = NOTES[note];
+      const aimes = Object.keys(poids).filter(i => poids[i] > 0);
+      if (!aimes.length) return null;
+      const licence = t => simple(t.split(/[:–(]| - /)[0]).replace(/^the /, "").replace(/ (\d+|ii|iii|iv|v|vi)( .*)?$/, "").trim();
+      const licences = new Set(aimes.flatMap(i => [licence(CAT[i].titre), licence(CAT[i].titre_en)]).filter(l => l.length >= 4));
+      const memeLicence = it => [it.titre, it.titre_en].some(t => { const s = " " + simple(t) + " "; return [...licences].some(l => s.includes(" " + l + " ")); });
+      const exclus = new Set([...Object.keys(p.notes), ...affiches]);
+      const doms = type === "tout" ? ["film", "serie", "jeu"] : [type];
+      const pool = doms.flatMap(d => classer(poids, d, exclus)[0].filter(r => r[2] > 0.2).slice(0, 250))
+        .filter(([, i]) => CAT[i].image && !memeLicence(CAT[i]));
+      if (!pool.length) return null;
+      // Tirage pondéré : les meilleures correspondances sortent plus souvent, sans être systématiques
+      let total = pool.reduce((s, r) => s + r[0], 0), x = Math.random() * total, choix = pool[0];
+      for (const r of pool) { x -= r[0]; if (x <= 0) { choix = r; break; } }
+      const [, i, sim] = choix, it = CAT[i];
+      const dot = j => Object.entries(VEC[i]).reduce((s, [th, v]) => s + (VEC[j][th] || 0) * v, 0);
+      const parce = aimes.map(j => [dot(j), j]).sort((a, b) => b[0] - a[0])[0];
+      return {id: i, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki,
+        themes: it.themes.slice(0, 3), parce_que: parce && parce[0] > 0 ? [CAT[parce[1]].titre] : [], match: Math.round(sim * 100)};
+    },
     gouts() {
       return Object.entries(profil().notes).filter(([i]) => CAT[i]).map(([i, note]) => ({id: i, dom: CAT[i].dom, titre: CAT[i].titre, annee: CAT[i].annee, image: CAT[i].image, note}))
         .sort((a, b) => (a.dom + a.titre).localeCompare(b.dom + b.titre));
