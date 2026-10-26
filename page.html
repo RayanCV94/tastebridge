@@ -304,6 +304,8 @@ function scene(r){
  </section>`;
 }
 
+// compte.js a fusionné les notes du compte : on recalcule tout
+addEventListener("profil-recharge", () => { data = null; compter(); onglet === "gouts" ? gouts() : rendre(); });
 function rendre(){
  const m = $("#main");
  if (onglet === "gouts") return gouts();

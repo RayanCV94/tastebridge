@@ -22,10 +22,13 @@ def sparql(q):
     return []
 
 
-REQ_ECRAN = """SELECT ?i ?en ?fr ?sl ?imdb ?art (MIN(?y0) AS ?y)
+# En deux temps : la liste des identifiants (requête légère), puis les détails par paquets.
+# En une seule requête, Wikidata dépasse son délai dès que le catalogue grossit.
+REQ_IDS = """SELECT ?i ?sl WHERE { VALUES ?type { %s } ?i wdt:P31 ?type; wikibase:sitelinks ?sl. FILTER(?sl >= %d) }"""
+
+REQ_ECRAN = """SELECT ?i ?en ?fr ?imdb ?art (MIN(?y0) AS ?y)
  (GROUP_CONCAT(DISTINCT ?gl;separator="|") AS ?g) (GROUP_CONCAT(DISTINCT ?ml;separator="|") AS ?m) WHERE {
- VALUES ?type { %s }
- ?i wdt:P31 ?type; wikibase:sitelinks ?sl. FILTER(?sl >= %d)
+ VALUES ?i { %s }
  { ?i wdt:P577 ?d } UNION { ?i wdt:P580 ?d } BIND(YEAR(?d) AS ?y0) FILTER(?y0 >= 1975)
  ?i rdfs:label ?en FILTER(lang(?en)="en")
  OPTIONAL { ?i rdfs:label ?fr FILTER(lang(?fr)="fr") }
@@ -33,26 +36,35 @@ REQ_ECRAN = """SELECT ?i ?en ?fr ?sl ?imdb ?art (MIN(?y0) AS ?y)
  OPTIONAL { ?art schema:about ?i; schema:isPartOf <https://en.wikipedia.org/> }
  OPTIONAL { ?i wdt:P136 ?ge. ?ge rdfs:label ?gl FILTER(lang(?gl)="en") }
  OPTIONAL { ?i wdt:P921 ?ms. ?ms rdfs:label ?ml FILTER(lang(?ml)="en") }
-} GROUP BY ?i ?en ?fr ?sl ?imdb ?art"""
+} GROUP BY ?i ?en ?fr ?imdb ?art"""
 
 REQ_ANNEES_JEUX = """SELECT ?steam (MIN(YEAR(?d)) AS ?y) WHERE { ?i wdt:P1733 ?steam; wdt:P577 ?d } GROUP BY ?steam"""
 
 
 def ecran(types, seuil, dom):
     out = {}
-    for b in sparql(REQ_ECRAN % (types, seuil)):
+    sl = {b["i"]["value"].rsplit("/", 1)[1]: int(b["sl"]["value"]) for b in sparql(REQ_IDS % (types, seuil))}
+    print(f"   {len(sl)} identifiants")
+    ids = list(sl)
+    lignes = []
+    for k in range(0, len(ids), 300):
+        lignes += sparql(REQ_ECRAN % " ".join("wd:" + q for q in ids[k:k + 300]))
+        if k % 3000 == 0:
+            print(f"   détails {k}/{len(ids)}")
+    for b in lignes:
         qid = b["i"]["value"].rsplit("/", 1)[1]
         mots = b.get("g", {}).get("value", "") + "|" + b.get("m", {}).get("value", "")
         th = themes_wd(mots)
         if not th:
             continue
-        sl = int(b["sl"]["value"])
+        if qid in out or "y" not in b:
+            continue
         out[qid] = {
             "id": qid, "dom": dom,
             "titre": b.get("fr", b["en"])["value"], "titre_en": b["en"]["value"],
             "annee": int(b["y"]["value"]), "imdb": b.get("imdb", {}).get("value"),
             "wiki": b.get("art", {}).get("value", "").rsplit("/", 1)[-1] or None,
-            "qualite": min(1.0, math.log(sl) / math.log(150)), "themes": th,
+            "qualite": min(1.0, math.log(sl[qid]) / math.log(150)), "themes": th,
         }
     return out
 
@@ -70,7 +82,7 @@ def jeux():
             continue
         for a in d.values():
             pos, neg = a.get("positive", 0), a.get("negative", 0)
-            if pos < 3000 or pos / (pos + neg) < 0.75:
+            if pos < 800 or pos / (pos + neg) < 0.72:
                 continue
             j = vus.setdefault(a["appid"], {"tags": set(), "a": a})
             j["tags"].add(tag)
@@ -158,16 +170,18 @@ elif __name__ == "__main__" and sys.argv[1:] == ["--jeux"]:
 elif __name__ == "__main__":
     t0 = time.time()
     print("Films (Wikidata)...")
-    films = ecran("wd:Q11424 wd:Q24869 wd:Q202866", 30, "film")
+    films = ecran("wd:Q11424 wd:Q24869 wd:Q202866", 12, "film")
     print(" ", len(films))
     print("Séries (Wikidata)...")
-    series = ecran("wd:Q5398426 wd:Q581714 wd:Q1259759 wd:Q63952888 wd:Q117467246", 15, "serie")
+    series = ecran("wd:Q5398426 wd:Q581714 wd:Q1259759 wd:Q63952888 wd:Q117467246", 6, "serie")
     print(" ", len(series))
     print("Jeux (SteamSpy)...")
     js = jeux()
     print(" ", len(js))
     print("Affiches (Wikipédia)...")
     affiches(list(films.values()) + list(series.values()))
+    if len(films) < 3000 or len(series) < 2000 or len(js) < 2000:
+        sys.exit("Catalogue incomplet (Wikidata ou SteamSpy en panne) : ancien catalogue gardé.")
     cat = {**films, **series, **js}
     (ICI / "catalogue.json").write_text(json.dumps(cat, ensure_ascii=False), encoding="utf-8")
     print(f"Fini : {len(cat)} titres en {round(time.time() - t0)} s")

@@ -43,7 +43,8 @@ const Moteur = (() => {
   function profil() {
     try { return JSON.parse(localStorage.getItem(CLE)) || {notes: {}}; } catch { return {notes: {}}; }
   }
-  function sauver(p) { try { localStorage.setItem(CLE, JSON.stringify(p)); } catch {} }
+  // Prévient compte.js (synchro du compte, s'il est connecté) à chaque changement
+  function sauver(p) { try { localStorage.setItem(CLE, JSON.stringify(p)); } catch {} dispatchEvent(new CustomEvent("profil-change")); }
 
   function classer(poids, cible, deja) {
     const prof = {};
