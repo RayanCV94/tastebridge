@@ -1,20 +1,34 @@
 # Prépare la version site (GitHub Pages, dossier docs/) : même page que la version locale,
 # avec le moteur JavaScript et le catalogue. À relancer après construire.py ou une modif de page.html.
-import shutil
+import hashlib
 from pathlib import Path
 
 ICI = Path(__file__).parent
 DOCS = ICI / "docs"
+
+
+# GitHub Pages garde chaque fichier 10 min en cache : un nom qui change avec le contenu
+# (?v=empreinte) évite qu'un navigateur mélange ancienne et nouvelle version.
+def v(contenu):
+    return hashlib.sha1(contenu).hexdigest()[:10]
+
+
+cat = (ICI / "catalogue.json").read_bytes()
+moteur = (ICI / "moteur.js").read_text(encoding="utf-8").replace('fetch("catalogue.json")', f'fetch("catalogue.json?v={v(cat)}")', 1)
+assert "catalogue.json?v=" in moteur
+compte = (ICI / "compte.js").read_bytes()
+langue = (ICI / "langue.js").read_bytes()
+
 page = (ICI / "page.html").read_text(encoding="utf-8")
-page = page.replace("<script>\nlet onglet", '<script src="moteur.js"></script>\n<script>\nlet onglet', 1)
+page = page.replace("<script>\nlet onglet", f'<script src="moteur.js?v={v(moteur.encode())}"></script>\n<script>\nlet onglet', 1)
 assert "moteur.js" in page
 # Compte optionnel (Supabase) : uniquement sur le site, chargé après la page
-page = page.replace("</body>", '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>\n<script src="compte.js"></script>\n<script src="langue.js"></script>\n</body>', 1)
+page = page.replace("</body>", f'<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>\n<script src="compte.js?v={v(compte)}"></script>\n<script src="langue.js?v={v(langue)}"></script>\n</body>', 1)
 assert "compte.js" in page and "langue.js" in page
 (DOCS / "index.html").write_text(page, encoding="utf-8")
-shutil.copy(ICI / "moteur.js", DOCS / "moteur.js")
-shutil.copy(ICI / "compte.js", DOCS / "compte.js")
-shutil.copy(ICI / "langue.js", DOCS / "langue.js")
-shutil.copy(ICI / "catalogue.json", DOCS / "catalogue.json")
+(DOCS / "moteur.js").write_text(moteur, encoding="utf-8")
+(DOCS / "compte.js").write_bytes(compte)
+(DOCS / "langue.js").write_bytes(langue)
+(DOCS / "catalogue.json").write_bytes(cat)
 (DOCS / ".nojekyll").touch()
 print("Site prêt dans docs/")

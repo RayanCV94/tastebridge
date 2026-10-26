@@ -295,7 +295,7 @@ footer a{color:var(--doux)}
 <main id="main"></main>
 <footer><div><span>Tastebridge : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="https://github.com/RayanCV94/tastebridge#how-it-works" target="_blank" rel="noopener">Comment ça marche</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="moteur.js"></script>
+<script src="moteur.js?v=5eba44eeeb"></script>
 <script>
 let onglet = "film", data = null;
 const $ = s => document.querySelector(s);
@@ -333,7 +333,7 @@ const fiche = r => (FICHES[r.id] = r, `ouvrirFiche('${r.id}')`);
 function ouvrirFiche(id){ const r = FICHES[id]; if (WEB) ouvrirAvis({dataset: {id, t: r.titre}}); else open(lien(r), "_blank"); }
 const clicAffiche = r => `onclick="if(!event.target.closest('button'))${fiche(r)}"`;
 // Moyennes des avis de tout le monde (compte.js remplit window.NOTES : id -> [moyenne, nombre])
-const etoile = r => { const n = window.NOTES?.[r.id]; return n ? `<span class="moy">${ico("etoile")}${n[0].toFixed(1).replace(".", ",")}</span>` : ""; };
+const etoile = r => { const n = window.NOTES?.[r.id]; return n ? `<span class="moy">${ico("etoile")}${(document.documentElement.lang === "en" ? n[0].toFixed(1) : n[0].toFixed(1).replace(".", ","))}</span>` : ""; };
 let tri = "toi"; try { tri = localStorage.getItem("tastebridge-tri") || "toi"; } catch {}
 const trier = l => tri === "toi" ? l : [...l].sort((a, b) => ((window.NOTES?.[b.id]?.[0] || 0) - (window.NOTES?.[a.id]?.[0] || 0)) || ((window.NOTES?.[b.id]?.[1] || 0) - (window.NOTES?.[a.id]?.[1] || 0)));
 function choisirTri(k){ tri = k; try { localStorage.setItem("tastebridge-tri", k); } catch {} rendre(); }
@@ -525,7 +525,7 @@ if (WEB) Moteur.charger().then(async () => { if (await compter() < 5) accueil();
 else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); compter(); charger(); }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="compte.js"></script>
-<script src="langue.js"></script>
+<script src="compte.js?v=5417ac00f8"></script>
+<script src="langue.js?v=be1fd8ad99"></script>
 </body>
 </html>

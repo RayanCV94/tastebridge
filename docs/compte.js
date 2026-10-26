@@ -129,6 +129,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
   // ---------- Avis et commentaires ----------
   // Tout texte venant d'un visiteur passe par echap() avant d'entrer dans la page (pas d'injection de HTML)
   const echap = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
+  const en = () => document.documentElement.lang === "en";  // langue.js passe la page en anglais
   const etoiles = n => "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n);
   css.textContent += `
 .avis-boite{position:relative;width:min(640px,100%);max-height:90vh;display:flex;flex-direction:column;overflow:auto}
@@ -140,7 +141,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
 .fiche .aff{box-shadow:0 12px 30px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.1)}
 .avis-boite .resume{flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
 .moyenne{display:flex;align-items:baseline;gap:8px}
-.histo{display:flex;align-items:flex-end;gap:3px;height:34px;width:90px}
+.histo{display:flex;align-items:flex-end;gap:3px;height:38px;width:110px}
 .histo i{flex:1;background:var(--ambre);opacity:.75;border-radius:2px 2px 0 0}
 .fiche .aff{aspect-ratio:2/3;border-radius:12px;overflow:hidden;background:var(--surface2)}
 .fiche .aff img{width:100%;height:100%;object-fit:cover;display:block}
@@ -192,9 +193,9 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
     if (error) { res.textContent = "Avis indisponibles pour le moment."; return; }
     const moy = data.length ? data.reduce((s, a) => s + a.note, 0) / data.length : 0;
     const par = [1, 2, 3, 4, 5].map(n => data.filter(a => a.note === n).length), haut = Math.max(1, ...par);
-    res.innerHTML = data.length ? `<div class="moyenne"><b>${moy.toFixed(1).replace(".", ",")}</b><span>sur 5 · ${data.length} avis</span></div>
+    res.innerHTML = data.length ? `<div class="moyenne"><b>${en() ? moy.toFixed(1) : moy.toFixed(1).replace(".", ",")}</b><span>sur 5 · ${data.length} avis</span></div>
 <div class="histo" aria-label="Répartition des notes">${par.map((c, i) => `<i style="height:${Math.max(4, c / haut * 100)}%" title="${i + 1} sur 5"></i>`).join("")}</div>` : "<span>Aucun avis pour l'instant. Sois le premier.</span>";
-    liste.innerHTML = data.map(a => `<div class="un-avis"><div class="haut"><span><strong>${echap(a.pseudo)}</strong> <span class="st">${etoiles(a.note)}</span></span><span>${new Date(a.cree).toLocaleDateString("fr-FR")}</span></div>
+    liste.innerHTML = data.map(a => `<div class="un-avis"><div class="haut"><span><strong>${echap(a.pseudo)}</strong> <span class="st">${etoiles(a.note)}</span></span><span>${new Date(a.cree).toLocaleDateString(en() ? "en-GB" : "fr-FR")}</span></div>
 ${a.texte ? `<p>${echap(a.texte)}</p>` : ""}${user && a.user_id === user.id ? `<button class="suppr" data-sup="${a.id}">Supprimer mon avis</button>` : ""}</div>`).join("");
     liste.querySelectorAll("[data-sup]").forEach(b => b.onclick = async () => {
       await sb.from("avis").delete().eq("id", b.dataset.sup);

@@ -28,12 +28,16 @@ const Moteur = (() => {
   const trouver = (dom, titre) => INDEX.get(dom + "|" + simple(titre));
 
   async function charger() {
-    CAT = await (await fetch("catalogue.json")).json();
+    CAT = await (await fetch("catalogue.json?v=8e1469cd88")).json();
     INDEX = new Map(); PAR_IMDB = new Map();
     for (const it of Object.values(CAT).sort((a, b) => a.qualite - b.qualite)) {
       INDEX.set(it.dom + "|" + simple(it.titre), it.id); INDEX.set(it.dom + "|" + simple(it.titre_en), it.id);
       if (it.imdb) PAR_IMDB.set(it.imdb, it.id);
     }
+    // Site en anglais (même règle que langue.js) : on affiche le titre anglais, la recherche garde les deux
+    let langue; try { langue = localStorage.getItem("tastebridge-langue"); } catch {}
+    if ((langue || (/^fr/i.test(navigator.language || "fr") ? "fr" : "en")) === "en")
+      for (const it of Object.values(CAT)) if (it.titre_en) [it.titre, it.titre_en] = [it.titre_en, it.titre];
     // Poids des thèmes : un thème présent partout compte moins qu'un thème rare
     const compte = {};
     for (const it of Object.values(CAT)) for (const th of it.themes) compte[th] = (compte[th] || 0) + 1;

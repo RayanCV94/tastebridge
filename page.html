@@ -332,7 +332,7 @@ const fiche = r => (FICHES[r.id] = r, `ouvrirFiche('${r.id}')`);
 function ouvrirFiche(id){ const r = FICHES[id]; if (WEB) ouvrirAvis({dataset: {id, t: r.titre}}); else open(lien(r), "_blank"); }
 const clicAffiche = r => `onclick="if(!event.target.closest('button'))${fiche(r)}"`;
 // Moyennes des avis de tout le monde (compte.js remplit window.NOTES : id -> [moyenne, nombre])
-const etoile = r => { const n = window.NOTES?.[r.id]; return n ? `<span class="moy">${ico("etoile")}${n[0].toFixed(1).replace(".", ",")}</span>` : ""; };
+const etoile = r => { const n = window.NOTES?.[r.id]; return n ? `<span class="moy">${ico("etoile")}${(document.documentElement.lang === "en" ? n[0].toFixed(1) : n[0].toFixed(1).replace(".", ","))}</span>` : ""; };
 let tri = "toi"; try { tri = localStorage.getItem("tastebridge-tri") || "toi"; } catch {}
 const trier = l => tri === "toi" ? l : [...l].sort((a, b) => ((window.NOTES?.[b.id]?.[0] || 0) - (window.NOTES?.[a.id]?.[0] || 0)) || ((window.NOTES?.[b.id]?.[1] || 0) - (window.NOTES?.[a.id]?.[1] || 0)));
 function choisirTri(k){ tri = k; try { localStorage.setItem("tastebridge-tri", k); } catch {} rendre(); }
