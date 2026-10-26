@@ -28,7 +28,7 @@ const Moteur = (() => {
   const trouver = (dom, titre) => INDEX.get(dom + "|" + simple(titre));
 
   async function charger() {
-    CAT = await (await fetch("catalogue.json?v=8e1469cd88")).json();
+    CAT = await (await fetch("catalogue.json?v=68c1fa2ccb")).json();
     INDEX = new Map(); PAR_IMDB = new Map();
     for (const it of Object.values(CAT).sort((a, b) => a.qualite - b.qualite)) {
       INDEX.set(it.dom + "|" + simple(it.titre), it.id); INDEX.set(it.dom + "|" + simple(it.titre_en), it.id);
@@ -86,7 +86,10 @@ const Moteur = (() => {
     const ok = res.filter(r => r[2] > 0.15 && CAT[r[1]].image);  // sans affiche, une reco donne une carte vide
     const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim]));
     const ancres = Object.keys(poids).filter(j => poids[j] > 0).reverse().sort((a, b) => poids[b] - poids[a]).slice(0, 15);
-    const listes = ancres.map(j => ok.map(([, i]) => [dot(i, j) * qual.get(i), i]).filter(([s]) => s > 0.12).sort((a, b) => b[0] - a[0]).map(([, i]) => i));
+    // Le ton compte : un dessin animé familial colle mal à The Witcher même s'ils partagent « Fantasy »
+    const TONS = ["Animation, famille", "Sombre, adulte"];
+    const ton = (i, j) => TONS.some(t => (t in VEC[i]) !== (t in VEC[j])) ? 0.4 : 1;
+    const listes = ancres.map(j => ok.map(([, i]) => [dot(i, j) * qual.get(i) * ton(i, j), i]).filter(([s]) => s > 0.12).sort((a, b) => b[0] - a[0]).map(([, i]) => i));
     const choix = [], pris = new Set();
     for (let tour = 0; choix.length < n && listes.some(l => l.length); tour++)
       for (const l of listes) {

@@ -22,7 +22,7 @@ So I built **one taste profile across films, series and games** that recommends 
 
 I wanted something simple, explainable and light (no local LLM eating my GPU), so I went with a content-based approach:
 
-1. **Catalogue** (`construire.py`): ~3,600 films and ~2,400 series from [Wikidata](https://www.wikidata.org) (genres and main subjects), ~2,500 well-reviewed Steam games from [SteamSpy](https://steamspy.com) (community tags, review ratio), posters from Wikipedia. All free, open sources, no key.
+1. **Catalogue** (`construire.py`): ~14,500 films and ~8,000 series from [Wikidata](https://www.wikidata.org) (genres, main subjects, and whether a title is animated, so that tone counts: liking The Witcher should not bring cartoons), ~5,400 well-reviewed Steam games from [SteamSpy](https://steamspy.com) (community tags, review ratio), posters from Wikipedia. `animation.py` then tags animated films and series. All free, open sources, no key.
 2. **Shared theme vocabulary** (`themes.py`): Wikidata genres and Steam tags are mapped onto 27 common themes (horror, cyberpunk, heist, open world, souls-like...). This is the bridge between media.
 3. **Vectors**: each title becomes a TF-IDF-weighted theme vector, so rare themes (Western) weigh more than ubiquitous ones (Action).
 4. **Profile**: weighted sum of the vectors of what you rated (loved +2, liked +1, watched +0.5, disliked -1, hated -2).
