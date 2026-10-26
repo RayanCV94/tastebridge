@@ -103,11 +103,11 @@ main{flex:1;width:100%;max-width:1480px;margin:auto;padding:0 var(--marge) 80px}
 .c:hover .voile,.c:focus-within .voile{opacity:1}
 .voile .pq{font-size:12.5px;line-height:1.4;color:#dcd9d1}
 .voile .pq b{color:#fff;font-weight:600}
-.mini-act{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mini-act{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
 .mini-act button{display:grid;place-items:center;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;transition:background .15s,color .15s,transform .15s}
 .mini-act button svg{width:16px;height:16px}
 .mini-act button:active{transform:scale(.92)}
-.mini-act .a1:hover{background:var(--rouge)} .mini-act .a2:hover{background:var(--menthe);color:var(--fond)} .mini-act .a3:hover{background:var(--bleu);color:var(--fond)} .mini-act .a4:hover{background:#3a3d4b}
+.mini-act .a1:hover{background:var(--rouge)} .mini-act .a2:hover{background:var(--menthe);color:var(--fond)} .mini-act .a3:hover{background:var(--bleu);color:var(--fond)} .mini-act .a4:hover{background:#3a3d4b} .mini-act .a5:hover{background:var(--ambre);color:var(--fond)}
 .legende{display:flex;flex-direction:column;gap:2px;padding:0 2px}
 .legende a{font-weight:600;font-size:14.5px;line-height:1.3;text-decoration:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .legende a:hover{color:var(--dom)}
@@ -206,6 +206,17 @@ footer a{color:var(--doux)}
  .accueil{padding:32px 22px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.chercher{margin-left:auto;display:flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:10px;border:1px solid var(--trait);background:var(--surface);color:var(--doux);font:500 13px Onest,sans-serif;cursor:pointer;transition:color .2s,border-color .2s}
+.chercher:hover{color:var(--texte);border-color:var(--ambre)}
+.chercher svg{width:16px;height:16px}
+.chercher+.compte{margin-left:0}
+.fond-recherche{position:fixed;inset:0;z-index:30;background:rgba(5,5,8,.82);backdrop-filter:blur(8px);overflow:auto;padding:clamp(16px,6vh,64px) var(--marge)}
+.panneau-recherche{max-width:1200px;margin:auto}
+.panneau-recherche .champ{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--trait2);border-radius:16px;padding:0 18px;margin-bottom:24px}
+.panneau-recherche .champ svg{width:22px;height:22px;color:var(--ambre);flex:none}
+.panneau-recherche input{flex:1;min-width:0;background:none;border:0;outline:none;color:var(--texte);font:400 clamp(20px,3vw,28px) Gloock,serif;padding:16px 0}
+.panneau-recherche .indice{color:var(--doux);grid-column:1/-1}
+@media(max-width:600px){.chercher span{display:none}.chercher{padding:0 10px}}
 </style>
 </head>
 <body>
@@ -219,6 +230,7 @@ footer a{color:var(--doux)}
  <symbol id="non" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></symbol>
  <symbol id="pont" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6v12M20 6v12M4 10c3 0 5 3 8 3s5-3 8-3"/></symbol>
  <symbol id="televerse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
+ <symbol id="bulle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
  <symbol id="etoile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 2.3a.53.53 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.1l5.2.8a.53.53 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.53.53 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.53.53 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.8a.53.53 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.1z"/></symbol>
  <symbol id="loupe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
  <symbol id="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
@@ -237,6 +249,7 @@ footer a{color:var(--doux)}
   <button data-o="jeu"><svg><use href="#manette"/></svg>Jeux</button>
   <button data-o="gouts"><svg><use href="#etoile"/></svg>Mes goûts</button>
  </nav>
+ <button class="chercher" id="chercher" title="Rechercher un film, une série ou un jeu" aria-label="Rechercher"><svg><use href="#loupe"/></svg><span>Rechercher</span></button>
  <span class="compte" id="compte"></span>
  <a class="gh" href="https://github.com/RayanCV94/tastebridge" target="_blank" rel="noopener" title="Le projet sur GitHub" aria-label="Le projet sur GitHub"><svg><use href="#github"/></svg></a>
 </div></header>
@@ -274,13 +287,17 @@ const repli = r => r.dom === "jeu" && r.image ? `this.onerror=()=>this.remove();
 const image = (r, charge = "lazy") => r.image ? `<img src="${esc(visuel(r))}" loading="${charge}" alt="" onload="this.classList.add('ok')" onerror="${repli(r)}">` : "";
 const raisons = r => r.parce_que.length ? `<div class="pq">Parce que tu as aimé <b>${r.parce_que.map(esc).join("</b> et <b>")}</b></div>` : "";
 
+// Avis et commentaires des visiteurs : site uniquement (compte.js définit ouvrirAvis)
+function boutonAvis(r, cls = "a5", texte = ""){
+ return WEB ? `<button class="${cls}" title="Avis et commentaires" aria-label="Avis sur ${esc(r.titre)}" data-id="${r.id}" data-t="${esc(r.titre)}" onclick="ouvrirAvis(this)">${ico("bulle")}${texte}</button>` : "";
+}
 function carte(r){
  const b = (cls, note, icone, texte) => `<button class="${cls}" title="${texte}" aria-label="${texte} : ${esc(r.titre)}" onclick="noter('${r.id}','${note}')">${ico(icone)}</button>`;
  return `<article class="c" id="c-${r.id}">
   <div class="cadre">
    <div class="sans-image">${ico(ICONE[r.dom])}${esc(r.titre)}</div>${image(r)}
    <span class="pct"><i></i>${r.match} %</span>
-   <div class="voile">${raisons(r)}<div class="mini-act">${b("a1","adore","coeur","J'adore")}${b("a2","aime","pouce","J'aime")}${b("a3","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("a4","bof","non","Pas pour moi")}</div></div>
+   <div class="voile">${raisons(r)}<div class="mini-act">${b("a1","adore","coeur","J'adore")}${b("a2","aime","pouce","J'aime")}${b("a3","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("a4","bof","non","Pas pour moi")}${boutonAvis(r)}</div></div>
   </div>
   <div class="legende"><a href="${lien(r)}" target="_blank" rel="noopener">${esc(r.titre)}</a><span>${r.annee ?? ""}${r.annee && r.themes[0] ? " · " : ""}${esc(r.themes[0] ?? "")}</span></div>
  </article>`;
@@ -298,7 +315,7 @@ function scene(r){
    <div class="chips">${r.themes.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div>
    ${r.avis ? `<div class="avis">${esc(r.avis)}</div>` : ""}
    <div class="actions">${b("plein","aime","pouce","J'aime")}${b("","adore","coeur","J'adore")}${b("","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("","bof","non","Pas pour moi")}
-    <a class="bt" href="${lien(r)}" target="_blank" rel="noopener">${ico("lien")}${r.steam ? "Sur Steam" : "En savoir plus"}</a></div>
+    ${boutonAvis(r, "bt", "Avis")}<a class="bt" href="${lien(r)}" target="_blank" rel="noopener">${ico("lien")}${r.steam ? "Sur Steam" : "En savoir plus"}</a></div>
   </div>
   <div class="affiche">${image(r, "eager")}</div>
  </section>`;
@@ -397,6 +414,26 @@ async function gouts(){
    <select aria-label="Ton avis sur ${esc(x.titre)}" onchange="noter('${x.id}',this.value)"><option value="">Ton avis...</option>${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>`).join("");
  }, 200); };
 }
+
+// Recherche globale : n'importe quel titre du catalogue, à noter ou à commenter directement
+function recherche(){
+ const v = document.createElement("div"); v.className = "fond-recherche";
+ v.innerHTML = `<div class="panneau-recherche"><label class="champ">${ico("loupe")}<input id="qg" placeholder="Un film, une série, un jeu..." autocomplete="off"></label><div class="grille" id="rg"><p class="indice">Tape au moins 2 lettres.</p></div></div>`;
+ document.body.append(v); document.body.style.overflow = "hidden";
+ const fermer = () => { v.remove(); document.body.style.overflow = ""; };
+ v.onclick = e => { if (e.target === v) fermer(); };
+ v.onkeydown = e => { if (e.key === "Escape") fermer(); };
+ const q = v.querySelector("#qg"); q.focus();
+ let t; q.oninput = () => { clearTimeout(t); t = setTimeout(async () => {
+  if (q.value.trim().length < 2) return;
+  const r = await api.cherche(q.value);
+  const b = (x, cls, note, icone, texte) => `<button class="${cls}" title="${texte}" aria-label="${texte} : ${esc(x.titre)}" onclick="noter('${x.id}','${note}')">${ico(icone)}</button>`;
+  v.querySelector("#rg").innerHTML = r.length ? r.map(x => `<article class="c" id="c-${x.id}"><div class="cadre"><div class="sans-image">${ico(ICONE[x.dom])}${esc(x.titre)}</div>${image(x)}
+   <div class="voile"><div class="mini-act">${b(x,"a1","adore","coeur","J'adore")}${b(x,"a2","aime","pouce","J'aime")}${b(x,"a3","vu","oeil",`Déjà ${VERBE[x.dom]}`)}${b(x,"a4","bof","non","Pas pour moi")}${boutonAvis(x)}</div></div></div>
+   <div class="legende"><a href="${lien(x)}" target="_blank" rel="noopener">${esc(x.titre)}</a><span>${NOM[x.dom]}${x.annee ? " · " + x.annee : ""}</span></div></article>`).join("") : `<p class="indice">Rien trouvé pour « ${esc(q.value)} ».</p>`;
+ }, 200); };
+}
+$("#chercher").onclick = recherche;
 
 function aller(o){ onglet = o; document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on", x.dataset.o===o)); rendre(); window.scrollTo(0,0); }
 $("#nav").onclick = e => { const b = e.target.closest("button"); if (b) aller(b.dataset.o); };
