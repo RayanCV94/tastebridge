@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tastebridge : tes films, séries et jeux, reliés</title>
-<meta name="description" content="Des recommandations de films, séries et jeux vidéo qui passent d'un écran à l'autre. Sans compte, tes goûts restent chez toi.">
+<meta name="description" content="Des recommandations de films, séries et jeux vidéo qui passent d'un écran à l'autre. Sans inscription obligatoire, compte gratuit si tu veux les retrouver partout.">
 <meta name="theme-color" content="#0b0b0f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e8a33d'/%3E%3Cpath d='M7 10v13M25 10v13M7 14c4 0 6 4 9 4s5-4 9-4' stroke='%230b0b0f' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,6 +59,9 @@ main{flex:1;width:100%;max-width:1480px;margin:auto;padding:0 var(--marge) 80px}
 .etiquette{align-self:flex-start;display:flex;align-items:center;gap:8px;font:600 12.5px Onest;color:var(--texte);padding:6px 12px 6px 10px;border-radius:30px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px)}
 .etiquette i{width:8px;height:8px;border-radius:50%;background:var(--dom);box-shadow:0 0 0 3px color-mix(in srgb,var(--dom) 25%,transparent)}
 .scene h2{font:400 clamp(36px,5.4vw,72px)/1 Gloock,serif;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.scene h2.long{font-size:clamp(30px,3.8vw,52px);line-height:1.05}
+/* Affiche chargée : on masque le titre de secours (sinon il transparaît derrière les logos PNG) */
+.cadre:has(img.ok) .sans-image{visibility:hidden}
 .scene h2 span{color:var(--doux);font-size:.5em;letter-spacing:0;margin-left:10px;font-variant-numeric:tabular-nums}
 .scene .pq{font-size:16px;color:#d9d6ce;max-width:56ch}
 .scene .pq b{color:#fff;font-weight:600}
@@ -109,8 +112,12 @@ main{flex:1;width:100%;max-width:1480px;margin:auto;padding:0 var(--marge) 80px}
 .mini-act button:active{transform:scale(.92)}
 .mini-act .a1:hover{background:var(--rouge)} .mini-act .a2:hover{background:var(--menthe);color:var(--fond)} .mini-act .a3:hover{background:var(--bleu);color:var(--fond)} .mini-act .a4:hover{background:#3a3d4b} .mini-act .a5:hover{background:var(--ambre);color:var(--fond)}
 .legende{display:flex;flex-direction:column;gap:2px;padding:0 2px}
-.legende a{font-weight:600;font-size:14.5px;line-height:1.3;text-decoration:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.legende a:hover{color:var(--dom)}
+.legende .titre,.tirage h3 .titre{all:unset;cursor:pointer}.legende .titre:focus-visible,.tirage h3 .titre:focus-visible{outline:2px solid var(--ambre);outline-offset:2px;border-radius:4px}
+.cadre,.affiche{cursor:pointer}
+.moy{position:absolute;top:10px;right:10px;z-index:2;display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:99px;background:rgba(10,10,14,.78);backdrop-filter:blur(6px);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}.moy svg{width:12px;height:12px;color:var(--ambre);fill:var(--ambre)}
+.tete .tri{display:inline-flex;margin-top:14px}
+.legende .titre,.legende a{font-weight:600;font-size:14.5px;line-height:1.3;text-decoration:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.legende .titre:hover,.legende a:hover,.tirage h3 .titre:hover{color:var(--dom)}
 .legende span{font-size:12.5px;color:var(--pale);font-variant-numeric:tabular-nums}
 @media(hover:none){.voile{opacity:1;background:linear-gradient(transparent 55%,rgba(8,8,12,.92))}.voile .pq{display:none}.mini-act button{height:32px}}
 
@@ -197,7 +204,9 @@ footer a{color:var(--doux)}
  .barre{flex-wrap:wrap;gap:12px;padding-top:10px;padding-bottom:10px}
  nav{order:3;width:100%;justify-content:space-between}
  nav button{padding:8px 9px;font-size:13px;gap:6px;white-space:nowrap}
- .gh{margin-left:auto}
+ .gh{display:none}
+ header .connexion{padding:0 11px}
+ .logo{font-size:22px}
  .scene{grid-template-columns:1fr;min-height:0;gap:22px;padding:22px}
  .scene .affiche{order:-1;width:150px}
  .scene .actions .bt{padding:10px 13px}
@@ -213,14 +222,14 @@ footer a{color:var(--doux)}
 .fond-recherche{position:fixed;inset:0;z-index:30;background:rgba(5,5,8,.82);backdrop-filter:blur(8px);overflow:auto;padding:clamp(16px,6vh,64px) var(--marge)}
 .panneau-recherche{max-width:1200px;margin:auto}
 .panneau-recherche .champ{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--trait2);border-radius:16px;padding:0 18px;margin-bottom:24px}
-.panneau-recherche .champ svg{width:22px;height:22px;color:var(--ambre);flex:none}
+.panneau-recherche .champ svg{position:static;width:22px;height:22px;color:var(--ambre);flex:none}
 .panneau-recherche input{flex:1;min-width:0;background:none;border:0;outline:none;color:var(--texte);font:400 clamp(20px,3vw,28px) Gloock,serif;padding:16px 0}
 .panneau-recherche .indice{color:var(--doux);grid-column:1/-1}
 @media(max-width:600px){.chercher span{display:none}.chercher{padding:0 10px}}
 .zone-de{padding-top:8px}
 .barre-de{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .barre-de p{margin:0;color:var(--doux);font-size:13.5px}
-.lancer{display:flex;align-items:center;gap:10px;height:44px;padding:0 20px 0 16px;border:0;border-radius:12px;background:var(--ambre);color:#16110a;font:600 15px Onest,sans-serif;cursor:pointer;box-shadow:0 8px 24px -10px rgba(232,163,61,.6);transition:transform .15s}
+.lancer{display:flex;align-items:center;gap:10px;height:44px;padding:0 20px 0 16px;border:0;border-radius:12px;background:var(--ambre);color:#16110a;font:600 15px Onest,sans-serif;cursor:pointer;box-shadow:0 6px 16px -8px rgba(0,0,0,.6);transition:transform .15s}
 .lancer:hover{transform:translateY(-1px)}
 .lancer svg{width:22px;height:22px}
 .lancer.roule svg{animation:roule .45s var(--sortie)}
@@ -242,7 +251,7 @@ footer a{color:var(--doux)}
 .tirage .parce{margin:0;color:var(--doux)}
 .tirage .parce b{color:var(--texte);font-weight:600}
 .tirage .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-@media(max-width:600px){.tirage{grid-template-columns:96px 1fr;gap:14px;padding:14px}.segments{width:100%}.segments button{flex:1;padding:8px 6px}.lancer{width:100%;justify-content:center}.tirage .actions .bt{flex:1 1 45%}}
+@media(max-width:600px){.tirage{grid-template-columns:1fr;gap:14px;padding:14px}.tirage .cadre{width:120px}.tirage h3{font-size:24px}.tirage .actions .bt{white-space:nowrap;padding:10px 12px;font-size:13.5px}.segments{width:100%}.segments button{flex:1;padding:8px 6px}.lancer{width:100%;justify-content:center}.tirage .actions .bt{flex:1 1 45%}}
 @media(prefers-reduced-motion:reduce){.lancer.roule svg,.tirage{animation:none}}
 </style>
 </head>
@@ -316,19 +325,30 @@ const repli = r => r.dom === "jeu" && r.image ? `this.onerror=()=>this.remove();
 const image = (r, charge = "lazy") => r.image ? `<img src="${esc(visuel(r))}" loading="${charge}" alt="" onload="this.classList.add('ok')" onerror="${repli(r)}">` : "";
 const raisons = r => r.parce_que.length ? `<div class="pq">Parce que tu as aimé <b>${r.parce_que.map(esc).join("</b> et <b>")}</b></div>` : "";
 
-// Avis et commentaires des visiteurs : site uniquement (compte.js définit ouvrirAvis)
+// Fiche d'une œuvre (à la Letterboxd) : affiche, note moyenne, avis. Site uniquement (compte.js définit ouvrirAvis)
+const FICHES = {};
+const fiche = r => (FICHES[r.id] = r, `ouvrirFiche('${r.id}')`);
+function ouvrirFiche(id){ const r = FICHES[id]; if (WEB) ouvrirAvis({dataset: {id, t: r.titre}}); else open(lien(r), "_blank"); }
+const clicAffiche = r => `onclick="if(!event.target.closest('button'))${fiche(r)}"`;
+// Moyennes des avis de tout le monde (compte.js remplit window.NOTES : id -> [moyenne, nombre])
+const etoile = r => { const n = window.NOTES?.[r.id]; return n ? `<span class="moy">${ico("etoile")}${n[0].toFixed(1).replace(".", ",")}</span>` : ""; };
+let tri = "toi"; try { tri = localStorage.getItem("tastebridge-tri") || "toi"; } catch {}
+const trier = l => tri === "toi" ? l : [...l].sort((a, b) => ((window.NOTES?.[b.id]?.[0] || 0) - (window.NOTES?.[a.id]?.[0] || 0)) || ((window.NOTES?.[b.id]?.[1] || 0) - (window.NOTES?.[a.id]?.[1] || 0)));
+function choisirTri(k){ tri = k; try { localStorage.setItem("tastebridge-tri", k); } catch {} rendre(); }
+const barreTri = () => WEB ? `<div class="segments tri" role="radiogroup" aria-label="Trier">${[["toi", "Pour toi"], ["note", "Mieux notés"]].map(([k, v]) => `<button role="radio" aria-checked="${k === tri}" class="${k === tri ? "on" : ""}" onclick="choisirTri('${k}')">${v}</button>`).join("")}</div>` : "";
+addEventListener("notes-moyennes", () => { if (data && onglet !== "gouts") rendre(); });
 function boutonAvis(r, cls = "a5", texte = ""){
- return WEB ? `<button class="${cls}" title="Avis et commentaires" aria-label="Avis sur ${esc(r.titre)}" data-id="${r.id}" data-t="${esc(r.titre)}" onclick="ouvrirAvis(this)">${ico("bulle")}${texte}</button>` : "";
+ return WEB ? `<button class="${cls}" title="Avis et commentaires" aria-label="Avis sur ${esc(r.titre)}" data-id="${r.id}" data-t="${esc(r.titre)}" onclick="${fiche(r)}">${ico("bulle")}${texte}</button>` : "";
 }
 function carte(r){
  const b = (cls, note, icone, texte) => `<button class="${cls}" title="${texte}" aria-label="${texte} : ${esc(r.titre)}" onclick="noter('${r.id}','${note}')">${ico(icone)}</button>`;
  return `<article class="c" id="c-${r.id}">
-  <div class="cadre">
+  <div class="cadre" ${clicAffiche(r)}>
    <div class="sans-image">${ico(ICONE[r.dom])}${esc(r.titre)}</div>${image(r)}
-   <span class="pct"><i></i>${r.match} %</span>
+   <span class="pct"><i></i>${r.match} %</span>${etoile(r)}
    <div class="voile">${raisons(r)}<div class="mini-act">${b("a1","adore","coeur","J'adore")}${b("a2","aime","pouce","J'aime")}${b("a3","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("a4","bof","non","Pas pour moi")}${boutonAvis(r)}</div></div>
   </div>
-  <div class="legende"><a href="${lien(r)}" target="_blank" rel="noopener">${esc(r.titre)}</a><span>${r.annee ?? ""}${r.annee && r.themes[0] ? " · " : ""}${esc(r.themes[0] ?? "")}</span></div>
+  <div class="legende"><button class="titre" onclick="${fiche(r)}">${esc(r.titre)}</button><span>${r.annee ?? ""}${r.annee && r.themes[0] ? " · " : ""}${esc(r.themes[0] ?? "")}</span></div>
  </article>`;
 }
 
@@ -339,14 +359,14 @@ function scene(r){
   ${r.image ? `<div class="fondu" style="background-image:url('${esc(r.image)}')"></div>` : ""}
   <div class="texte">
    <span class="etiquette"><i></i>Notre meilleur choix pour toi · ${r.match} %</span>
-   <h2>${esc(r.titre)}<span>${r.annee ?? ""}</span></h2>
+   <h2 class="${r.titre.length > 26 ? "long" : ""}">${esc(r.titre)}<span>${r.annee ?? ""}</span></h2>
    ${raisons(r)}
    <div class="chips">${r.themes.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div>
    ${r.avis ? `<div class="avis">${esc(r.avis)}</div>` : ""}
    <div class="actions">${b("plein","aime","pouce","J'aime")}${b("","adore","coeur","J'adore")}${b("","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("","bof","non","Pas pour moi")}
-    ${boutonAvis(r, "bt", "Avis")}<a class="bt" href="${lien(r)}" target="_blank" rel="noopener">${ico("lien")}${r.steam ? "Sur Steam" : "En savoir plus"}</a></div>
+    ${boutonAvis(r, "bt", "Fiche et avis")}<a class="bt" href="${lien(r)}" target="_blank" rel="noopener">${ico("lien")}${r.steam ? "Sur Steam" : "En savoir plus"}</a></div>
   </div>
-  <div class="affiche">${image(r, "eager")}</div>
+  <div class="affiche" onclick="${fiche(r)}">${image(r, "eager")}</div>
  </section>`;
 }
 
@@ -362,9 +382,9 @@ function rendre(){
  const vide = `<div class="vide">${ico(ICONE[onglet])}<span>Pas encore assez de goûts notés pour ça. <a href="#" onclick="aller('gouts');return false">Ajoute quelques titres</a> et les recos apparaissent.</span></div>`;
  m.innerHTML = `${l1.length ? scene(l1[0]) : `<div class="section">${vide}</div>`}
   ${WEB && l1.length ? zoneDe() : ""}
-  ${l1.length > 1 ? `<section class="section"><div class="tete"><h3>${t1}</h3><p>Ce qui ressemble le plus à ce que tu aimes, les titres récents et acclamés d'abord.</p></div><div class="grille">${l1.slice(1).map(carte).join("")}</div></section>` : ""}
+  ${l1.length > 1 ? `<section class="section"><div class="tete"><h3>${t1}</h3><p>Ce qui ressemble le plus à ce que tu aimes, les titres récents et acclamés d'abord.</p>${barreTri()}</div><div class="grille">${trier(l1.slice(1)).map(carte).join("")}</div></section>` : ""}
   <section class="section"><div class="tete"><h3>${t2}</h3><p>Mêmes ambiances, autre support : ce que ${autre} disent de toi.</p></div>
-   ${l2.length ? `<div class="grille">${l2.map(carte).join("")}</div>` : vide}</section>`;
+   ${l2.length ? `<div class="grille">${trier(l2).map(carte).join("")}</div>` : vide}</section>`;
 }
 
 // ---------- Le dé : une découverte au hasard, mais qui te ressemble ----------
@@ -389,12 +409,12 @@ function lancerDe(){
  if (!r){ z.innerHTML = `<div class="vide">${ico("de")}<span>Rien à tirer ici pour l'instant : note quelques titres de plus.</span></div>`; return; }
  const bt = (cls, note, icone, texte) => `<button class="bt ${cls}" onclick="noter('${r.id}','${note}')">${ico(icone)}${texte}</button>`;
  z.innerHTML = `<article class="tirage" id="c-${r.id}">
-  <div class="cadre">${image(r, "eager")}<div class="sans-image">${ico(ICONE[r.dom])}${esc(r.titre)}</div></div>
+  <div class="cadre" onclick="${fiche(r)}">${image(r, "eager")}<div class="sans-image">${ico(ICONE[r.dom])}${esc(r.titre)}</div></div>
   <div class="infos"><span class="type">${ico(ICONE[r.dom])}${NOM[r.dom]}${r.annee ? " · " + r.annee : ""}</span>
-   <h3><a href="${lien(r)}" target="_blank" rel="noopener">${esc(r.titre)}</a></h3>
+   <h3><button class="titre" onclick="${fiche(r)}">${esc(r.titre)}</button></h3>
    ${r.parce_que[0] ? `<p class="parce">Parce que tu aimes <b>${esc(r.parce_que[0])}</b></p>` : ""}
    <div class="chips">${r.themes.map(t => `<span class="chip">${esc(t)}</span>`).join("")}</div>
-   <div class="actions">${bt("plein", "aime", "pouce", "J'aime")}${bt("", "bof", "non", "Pas pour moi")}${boutonAvis(r, "bt", "Avis")}<button class="bt" onclick="lancerDe()">${ico("relance")}Relancer</button></div>
+   <div class="actions">${bt("plein", "aime", "pouce", "J'aime")}${bt("", "bof", "non", "Pas pour moi")}${boutonAvis(r, "bt", "Fiche")}<button class="bt" onclick="lancerDe()">${ico("relance")}Relancer</button></div>
   </div></article>`;
 }
 
@@ -423,7 +443,7 @@ function accueil(){
    <h2>Tes films, séries et jeux, <em>enfin reliés.</em></h2>
    <p>Dis ce que tu as aimé, et Tastebridge te recommande quoi regarder et à quoi jouer, même d'un écran à l'autre : des jeux d'après tes films, des films d'après tes jeux.</p>
    <div class="actions"><button class="bt plein" onclick="document.getElementById('choix').scrollIntoView({behavior:'smooth'})">Commencer ${ico("fleche")}</button><button class="bt" onclick="aller('gouts')">${ico("televerse")}Importer Netflix, IMDb, Letterboxd</button></div>
-   <div class="preuves"><span>${ico("cadenas")}Aucun compte, tes goûts restent dans ton navigateur</span><span>${ico("eclair")}Recos instantanées, sans IA lourde</span></div>
+   <div class="preuves"><span>${ico("cadenas")}Sans inscription, tes goûts restent dans ton navigateur</span><span>${ico("eclair")}Recos instantanées, sans IA lourde</span></div>
   </section>
   <div id="choix">${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}</div>
   <div class="progres"><div class="barre-p"><i id="jauge"></i></div><small id="nb">0 / 5</small><button class="bt plein" id="voir" disabled onclick="aller('film')">Voir mes recos ${ico("fleche")}</button></div>`;
@@ -452,7 +472,7 @@ async function gouts(){
     <div class="sources"><span class="chip">Netflix : netflix.com/viewingactivity, Tout télécharger</span><span class="chip">IMDb : export de tes notes</span><span class="chip">Letterboxd : export</span><span class="chip">Tout CSV avec une colonne Title</span></div>
     <div id="bilan" role="status"></div></section>
   </div>
-  <section class="panneau"><h3>Tes goûts</h3><p class="aide">${WEB ? "Ils restent dans ce navigateur, sur cet appareil. Sauvegarde-les dans un fichier pour les retrouver ailleurs." : "Tes jeux Steam joués plus de 15 h sont listés : donne ton avis pour qu'ils comptent."}</p>
+  <section class="panneau"><h3>Tes goûts</h3><p class="aide">${WEB ? "Gardés dans ce navigateur. Connecte-toi pour les retrouver sur tous tes appareils, ou sauvegarde-les dans un fichier." : "Tes jeux Steam joués plus de 15 h sont listés : donne ton avis pour qu'ils comptent."}</p>
    ${WEB ? `<div class="outils"><button class="bt" id="sauve">${ico("telecharge")}Sauvegarder</button><label class="bt"><input type="file" accept=".json" hidden id="restaure">${ico("televerse")}Charger</label><button class="bt" id="vide">${ico("non")}Tout effacer</button></div>` : ""}
    <div class="filtres">${[["tout","Tout"],["film","Films"],["serie","Séries"],["jeu","Jeux"]].map(([k,v])=>`<button class="${k===filtre?"on":""}" onclick="filtre='${k}';gouts()">${v} ${k==="tout" ? liste.length : liste.filter(r=>r.dom===k).length}</button>`).join("")}</div>
    <div class="lignes liste-gouts">${vus.length ? vus.map(ligne).join("") : `<p class="aide">Rien ici pour l'instant.</p>`}</div>
@@ -486,13 +506,13 @@ function recherche(){
  v.onkeydown = e => { if (e.key === "Escape") fermer(); };
  const q = v.querySelector("#qg"); q.focus();
  let t; q.oninput = () => { clearTimeout(t); t = setTimeout(async () => {
-  if (q.value.trim().length < 2) return;
+  if (q.value.trim().length < 2){ v.querySelector("#rg").innerHTML = `<p class="indice">Tape au moins 2 lettres.</p>`; return; }
   const r = await api.cherche(q.value);
   if (!v.dataset.compte){ v.dataset.compte = 1; dispatchEvent(new CustomEvent("action-visiteur")); }
   const b = (x, cls, note, icone, texte) => `<button class="${cls}" title="${texte}" aria-label="${texte} : ${esc(x.titre)}" onclick="noter('${x.id}','${note}')">${ico(icone)}</button>`;
-  v.querySelector("#rg").innerHTML = r.length ? r.map(x => `<article class="c" id="c-${x.id}"><div class="cadre"><div class="sans-image">${ico(ICONE[x.dom])}${esc(x.titre)}</div>${image(x)}
+  v.querySelector("#rg").innerHTML = r.length ? r.map(x => `<article class="c" id="c-${x.id}"><div class="cadre" ${clicAffiche(x)}>${etoile(x)}<div class="sans-image">${ico(ICONE[x.dom])}${esc(x.titre)}</div>${image(x)}
    <div class="voile"><div class="mini-act">${b(x,"a1","adore","coeur","J'adore")}${b(x,"a2","aime","pouce","J'aime")}${b(x,"a3","vu","oeil",`Déjà ${VERBE[x.dom]}`)}${b(x,"a4","bof","non","Pas pour moi")}${boutonAvis(x)}</div></div></div>
-   <div class="legende"><a href="${lien(x)}" target="_blank" rel="noopener">${esc(x.titre)}</a><span>${NOM[x.dom]}${x.annee ? " · " + x.annee : ""}</span></div></article>`).join("") : `<p class="indice">Rien trouvé pour « ${esc(q.value)} ».</p>`;
+   <div class="legende"><button class="titre" onclick="${fiche(x)}">${esc(x.titre)}</button><span>${NOM[x.dom]}${x.annee ? " · " + x.annee : ""}</span></div></article>`).join("") : `<p class="indice">Rien trouvé pour « ${esc(q.value)} ».</p>`;
  }, 200); };
 }
 $("#chercher").onclick = recherche;

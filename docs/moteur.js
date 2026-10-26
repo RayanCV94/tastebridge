@@ -79,7 +79,7 @@ const Moteur = (() => {
     const dot = (a, b) => Object.entries(VEC[a]).reduce((s, [th, x]) => s + (VEC[b][th] || 0) * x, 0);
     // Un seul profil additionné laisse un titre aux thèmes rares tout écraser (un Disney => que du Disney).
     // Chaque titre aimé a donc sa propre liste, et on pioche à tour de rôle (les « adoré » et les plus récents d'abord).
-    const ok = res.filter(r => r[2] > 0.15);
+    const ok = res.filter(r => r[2] > 0.15 && CAT[r[1]].image);  // sans affiche, une reco donne une carte vide
     const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim]));
     const ancres = Object.keys(poids).filter(j => poids[j] > 0).reverse().sort((a, b) => poids[b] - poids[a]).slice(0, 15);
     const listes = ancres.map(j => ok.map(([, i]) => [dot(i, j) * qual.get(i), i]).filter(([s]) => s > 0.12).sort((a, b) => b[0] - a[0]).map(([, i]) => i));

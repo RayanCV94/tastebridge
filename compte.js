@@ -131,7 +131,18 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
   const echap = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
   const etoiles = n => "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n);
   css.textContent += `
-.avis-boite{width:min(560px,100%);max-height:88vh;display:flex;flex-direction:column}
+.avis-boite{position:relative;width:min(640px,100%);max-height:90vh;display:flex;flex-direction:column;overflow:auto}
+.fermer-fiche{position:absolute;top:10px;right:12px;width:36px;height:36px;border:0;border-radius:10px;background:var(--surface2);color:var(--doux);font-size:22px;cursor:pointer}
+.fiche{display:grid;grid-template-columns:140px 1fr;gap:20px;margin-bottom:8px}
+.fiche .aff{aspect-ratio:2/3;border-radius:12px;overflow:hidden;background:var(--surface2)}
+.fiche .aff img{width:100%;height:100%;object-fit:cover;display:block}
+.fiche .type{font-size:12.5px;color:var(--pale)}
+.fiche h3{margin:4px 40px 10px 0}
+.fiche .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.fiche .ext{font-size:13px;color:var(--doux)}
+.avis-boite .sous{font:600 13px Onest,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--pale);margin:12px 0 10px;padding-top:14px;border-top:1px solid var(--trait)}
+.avis-boite .liste{flex:none!important}
+@media(max-width:520px){.fiche{grid-template-columns:96px 1fr;gap:14px}.fiche h3{font-size:22px}}
 .avis-boite .resume{display:flex;align-items:baseline;gap:10px;margin:2px 0 16px;color:var(--doux);font-size:13.5px}
 .avis-boite .resume b{font:400 30px Gloock,serif;color:var(--texte)}
 .avis-boite .liste{overflow:auto;display:flex;flex-direction:column;gap:10px;margin:0 -4px;padding:0 4px;flex:1;min-height:60px}
@@ -156,9 +167,17 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
     const item = bouton.dataset.id, titre = bouton.dataset.t;
     const v = document.createElement("div");
     v.className = "voile-compte";
-    v.innerHTML = `<div class="boite avis-boite"><h3>${echap(titre)}</h3><div class="resume">Chargement des avis...</div><div class="liste"></div><div class="saisie"></div></div>`;
+    // En-tête de fiche : affiche, infos, lien externe (FICHES est rempli par la page)
+    const f = typeof FICHES !== "undefined" ? FICHES[item] : null;
+    const ext = f ? (f.steam ? `https://store.steampowered.com/app/${f.steam}` : `https://fr.wikipedia.org/wiki/Special:Search/${encodeURIComponent(f.titre)}`) : "";
+    const tete = f ? `<div class="fiche"><div class="aff">${f.image ? `<img src="${echap(visuel(f))}" alt="">` : ""}</div><div>
+<span class="type">${{film: "Film", serie: "Série", jeu: "Jeu"}[f.dom]}${f.annee ? " · " + f.annee : ""}</span><h3>${echap(titre)}</h3>
+<div class="chips">${(f.themes || []).map(t => `<span class="chip">${echap(t)}</span>`).join("")}</div>
+<div class="resume">Chargement des avis...</div>
+<a class="ext" href="${ext}" target="_blank" rel="noopener">${f.steam ? "Voir sur Steam" : "Voir sur Wikipédia"}</a></div></div>` : `<h3>${echap(titre)}</h3><div class="resume">Chargement des avis...</div>`;
+    v.innerHTML = `<div class="boite avis-boite"><button class="fermer-fiche" aria-label="Fermer">×</button>${tete}<h4 class="sous">Avis</h4><div class="liste"></div><div class="saisie"></div></div>`;
     document.body.append(v);
-    v.onclick = e => { if (e.target === v) fermer(); };
+    v.onclick = e => { if (e.target === v || e.target.closest(".fermer-fiche")) fermer(); };
     const { data, error } = await sb.from("avis").select("id,user_id,pseudo,note,texte,cree").eq("item", item).order("cree", { ascending: false }).limit(200);
     const res = v.querySelector(".resume"), liste = v.querySelector(".liste"), saisie = v.querySelector(".saisie");
     if (error) { res.textContent = "Avis indisponibles pour le moment."; return; }
@@ -195,9 +214,21 @@ ${a.texte ? `<p>${echap(a.texte)}</p>` : ""}${user && a.user_id === user.id ? `<
       const { error } = await sb.from("avis").upsert({ user_id: user.id, item, pseudo: ps, note, texte }, { onConflict: "user_id,item" });
       if (error) { msg.textContent = "Envoi impossible : " + error.message; return; }
       try { localStorage.setItem("tastebridge-pseudo", ps); } catch {}
+      chargerNotes();
       ouvrirAvis(bouton);
     };
   };
+
+  // Moyenne de chaque œuvre, pour le badge étoile et le tri « Mieux notés »
+  async function chargerNotes() {
+    const { data, error } = await sb.from("avis").select("item,note").limit(10000);
+    if (error) return;
+    const t = {};
+    data.forEach(a => { const x = t[a.item] ||= [0, 0]; x[0] += a.note; x[1]++; });
+    window.NOTES = Object.fromEntries(Object.entries(t).map(([k, [s, n]]) => [k, [s / n, n]]));
+    dispatchEvent(new CustomEvent("notes-moyennes"));
+  }
+  chargerNotes();
 
   sb.auth.onAuthStateChange((evt, session) => {
     const avant = user?.id;
