@@ -205,8 +205,8 @@ footer a{color:var(--doux)}
  nav{order:3;width:100%;justify-content:space-between}
  nav button{padding:8px 9px;font-size:13px;gap:6px;white-space:nowrap}
  .gh{display:none}
- header .connexion{padding:0 11px}
- .logo{font-size:22px}
+ header .connexion{padding:0 10px;font-size:12.5px} .langue{min-width:0;padding:0 8px} .barre{gap:8px}
+ .logo{font-size:20px;margin-right:auto}
  .scene{grid-template-columns:1fr;min-height:0;gap:22px;padding:22px}
  .scene .affiche{order:-1;width:150px}
  .scene .actions .bt{padding:10px 13px}
@@ -219,6 +219,7 @@ footer a{color:var(--doux)}
 .chercher:hover{color:var(--texte);border-color:var(--ambre)}
 .chercher svg{width:16px;height:16px}
 .chercher+.compte{margin-left:0}
+.langue{height:36px;min-width:40px;padding:0 10px;border-radius:10px;border:1px solid var(--trait);background:var(--surface);color:var(--doux);font:600 12px Onest,sans-serif;letter-spacing:.06em;cursor:pointer;transition:color .2s,border-color .2s}.langue:hover{color:var(--texte);border-color:var(--trait2)}
 .fond-recherche{position:fixed;inset:0;z-index:30;background:rgba(5,5,8,.82);backdrop-filter:blur(8px);overflow:auto;padding:clamp(16px,6vh,64px) var(--marge)}
 .panneau-recherche{max-width:1200px;margin:auto}
 .panneau-recherche .champ{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--trait2);border-radius:16px;padding:0 18px;margin-bottom:24px}
@@ -525,5 +526,6 @@ else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); compter(); char
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="compte.js"></script>
+<script src="langue.js"></script>
 </body>
 </html>

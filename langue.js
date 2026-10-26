@@ -1,0 +1,144 @@
+// Version anglaise du site : la page est écrite en français, ce script traduit ce qui s'affiche.
+// Langue = choix mémorisé, sinon celle du navigateur. Les titres des œuvres ne sont pas traduits.
+(() => {
+  let langue;
+  try { langue = localStorage.getItem("tastebridge-langue"); } catch {}
+  langue ||= /^fr/i.test(navigator.language || "fr") ? "fr" : "en";
+
+  // Bouton FR / EN dans l'en-tête : il affiche la langue vers laquelle on bascule
+  const b = document.createElement("button");
+  b.className = "langue";
+  b.textContent = langue === "fr" ? "EN" : "FR";
+  b.title = langue === "fr" ? "English version" : "Version française";
+  b.setAttribute("aria-label", b.title);
+  b.onclick = () => { try { localStorage.setItem("tastebridge-langue", langue === "fr" ? "en" : "fr"); } catch {} location.reload(); };
+  document.querySelector("#compte").before(b);
+  if (langue === "fr") return;
+
+  const MOTS = {
+    // En-tête, pied de page
+    "Films": "Movies", "Séries": "Shows", "Jeux": "Games", "Mes goûts": "My taste", "Rechercher": "Search",
+    "Sections": "Sections", "Rechercher un film, une série ou un jeu": "Search for a movie, a show or a game",
+    "Le projet sur GitHub": "The project on GitHub", "titres notés": "titles rated", "titre noté": "title rated",
+    "Tastebridge : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.": "Tastebridge: one taste profile for movies, shows and games. Data from Wikidata, SteamSpy and Wikipedia.",
+    "Comment ça marche": "How it works",
+    // Accueil
+    "Tes films, séries et jeux,": "Your movies, shows and games,", "enfin reliés.": "finally connected.",
+    "Dis ce que tu as aimé, et Tastebridge te recommande quoi regarder et à quoi jouer, même d'un écran à l'autre : des jeux d'après tes films, des films d'après tes jeux.": "Tell it what you loved, and Tastebridge recommends what to watch and what to play, even across screens: games based on your movies, movies based on your games.",
+    "Commencer": "Get started", "Importer Netflix, IMDb, Letterboxd": "Import Netflix, IMDb, Letterboxd",
+    "Sans inscription, tes goûts restent dans ton navigateur": "No sign-up needed, your taste stays in your browser",
+    "Recos instantanées, sans IA lourde": "Instant picks, no heavy AI",
+    "Films que tu as aimés ?": "Movies you loved?", "Séries que tu as aimées ?": "Shows you loved?", "Jeux que tu as aimés ?": "Games you loved?",
+    "Voir mes recos": "See my picks",
+    // Recos
+    "Parce que tu as aimé": "Because you liked", "Parce que tu aimes": "Because you like", "et": "and",
+    "J'aime": "Like", "J'adore": "Love", "Pas pour moi": "Not for me", "Déjà vu": "Seen it", "Déjà joué": "Played it",
+    "Fiche et avis": "Details & reviews", "Fiche": "Details", "En savoir plus": "Learn more", "Sur Steam": "On Steam",
+    "Avis et commentaires": "Reviews and comments",
+    "Un coup de dé": "Roll the dice", "Tout": "All", "Film": "Movie", "Série": "Show", "Jeu": "Game", "Relancer": "Roll again",
+    "Type de découverte": "Discovery type", "Trier": "Sort", "Pour toi": "For you", "Mieux notés": "Top rated",
+    "Une œuvre au hasard qui colle à tes goûts, hors de ce que tu connais déjà.": "A random pick that fits your taste, outside what you already know.",
+    "D'après tes films et séries": "Based on your movies and shows", "D'après tes jeux": "Based on your games",
+    "Ce qui ressemble le plus à ce que tu aimes, les titres récents et acclamés d'abord.": "Closest to what you love, recent and acclaimed titles first.",
+    "Pas encore assez de goûts notés pour ça.": "Not enough ratings for this yet.", "Ajoute quelques titres": "Add a few titles",
+    "et les recos apparaissent.": "and picks will show up.",
+    "Rien à tirer ici pour l'instant : note quelques titres de plus.": "Nothing to roll yet: rate a few more titles.",
+    // Mes goûts
+    "Ajouter un titre": "Add a title", "Un film, une série ou un jeu que tu as vu ou fait.": "A movie, show or game you watched or played.",
+    "Interstellar, The Last of Us, Elden Ring...": "Interstellar, The Last of Us, Elden Ring...",
+    "Importer ton historique": "Import your history",
+    "Le fichier est lu dans ton navigateur, rien n'est envoyé.": "The file is read in your browser, nothing is uploaded.",
+    "Le fichier est lu sur ton PC, rien n'est envoyé.": "The file is read on your PC, nothing is uploaded.",
+    "Glisse un fichier CSV ici": "Drop a CSV file here", "ou clique pour le choisir": "or click to choose one",
+    "Netflix : netflix.com/viewingactivity, Tout télécharger": "Netflix: netflix.com/viewingactivity, Download all",
+    "IMDb : export de tes notes": "IMDb: export your ratings", "Letterboxd : export": "Letterboxd: export",
+    "Tout CSV avec une colonne Title": "Any CSV with a Title column", "Tes goûts": "Your taste",
+    "Gardés dans ce navigateur. Connecte-toi pour les retrouver sur tous tes appareils, ou sauvegarde-les dans un fichier.": "Kept in this browser. Sign in to get them on all your devices, or save them to a file.",
+    "Sauvegarder": "Save", "Charger": "Load", "Tout effacer": "Clear all", "Rien ici pour l'instant.": "Nothing here yet.",
+    "Ton avis...": "Your rating...", "Retirer": "Remove",
+    "Adoré": "Loved", "Aimé": "Liked", "Regardé": "Watched", "Vu, sans plus": "Seen, meh", "Détesté": "Hated",
+    "Noté, il ne reviendra plus": "Rated, it won't come back", "Noté, recos mises à jour": "Rated, picks updated",
+    "Retiré": "Removed", "Goûts chargés": "Taste loaded",
+    // Recherche
+    "Un film, une série, un jeu...": "A movie, a show, a game...", "Tape au moins 2 lettres.": "Type at least 2 letters.",
+    // Fiche et avis
+    "Avis": "Reviews", "Chargement des avis...": "Loading reviews...", "Avis indisponibles pour le moment.": "Reviews unavailable right now.",
+    "Aucun avis pour l'instant. Sois le premier.": "No reviews yet. Be the first.", "Voir sur Wikipédia": "View on Wikipedia",
+    "Voir sur Steam": "View on Steam", "Se connecter pour donner ton avis": "Sign in to write a review", "Fermer": "Close",
+    "Supprimer mon avis": "Delete my review", "Ta note": "Your rating", "Ton pseudo": "Your username",
+    "Ton avis (facultatif) : ce que tu as aimé, ou pas...": "Your review (optional): what you liked, or didn't...",
+    "Mettre à jour": "Update", "Publier": "Post", "Choisis une note de 1 à 5 étoiles.": "Pick a rating from 1 to 5 stars.",
+    "Choisis un pseudo (2 caractères minimum).": "Pick a username (2 characters minimum).",
+    "Répartition des notes": "Ratings breakdown", "Moyenne": "Average",
+    // Compte
+    "Se connecter": "Sign in", "Connexion": "Sign in", "Créer un compte": "Create an account", "Créer mon compte": "Create my account",
+    "Garder tes goûts sur tous tes appareils": "Keep your taste on all your devices",
+    "Tes goûts sont sauvegardés et te suivent sur tous tes appareils. Ceux déjà notés ici sont repris dans ton compte.": "Your taste is saved and follows you on every device. Titles already rated here move into your account.",
+    "Tu vas recevoir un e-mail de confirmation envoyé par": "You'll get a confirmation e-mail sent by",
+    ", le service qui gère les comptes de Tastebridge (pense à regarder dans les spams).": ", the service that runs Tastebridge accounts (check your spam folder).",
+    "E-mail": "E-mail", "Mot de passe": "Password", "Mot de passe (8 caractères minimum)": "Password (8 characters minimum)",
+    "Pas encore de compte ?": "No account yet?", "Déjà un compte ?": "Already have an account?",
+    "Compte créé. Clique le lien de l'e-mail « Supabase » pour l'activer (regarde aussi les spams).": "Account created. Click the link in the \"Supabase\" e-mail to activate it (check spam too).",
+    "E-mail ou mot de passe incorrect.": "Wrong e-mail or password.", "Un compte existe déjà avec cet e-mail.": "An account already exists with this e-mail.",
+    "Active d'abord ton compte avec le lien reçu par e-mail.": "Activate your account first with the link sent by e-mail.",
+    "Mot de passe trop faible (8 caractères minimum).": "Password too weak (8 characters minimum).",
+    "Trop d'essais, réessaie dans quelques minutes.": "Too many attempts, try again in a few minutes.",
+    "Ton compte": "Your account", "Tes notes sont synchronisées automatiquement.": "Your ratings sync automatically.", "Se déconnecter": "Sign out",
+    "Garde tes goûts pour de bon": "Keep your taste for good",
+    "Avec un compte gratuit, tes notes sont sauvegardées et tu les retrouves sur ton téléphone comme sur ton PC. Celles déjà notées ici sont reprises.": "With a free account, your ratings are saved and available on your phone and your PC. The ones rated here carry over.",
+    "L'e-mail de confirmation vient de": "The confirmation e-mail comes from", ", notre service de comptes (vérifie les spams).": ", our account service (check spam).",
+    "Plus tard": "Later",
+    // Thèmes (themes.py)
+    "Horreur": "Horror", "Zombies": "Zombies", "Science-fiction": "Sci-fi", "Cyberpunk, dystopie": "Cyberpunk, dystopia",
+    "Post-apocalyptique": "Post-apocalyptic", "Super-héros": "Superheroes", "Fantasy": "Fantasy", "Action": "Action",
+    "Aventure": "Adventure", "Polar, gangsters": "Crime, gangsters", "Thriller, mystère": "Thriller, mystery", "Guerre": "War",
+    "Western": "Western", "Comédie": "Comedy", "Animation, famille": "Animation, family", "Sombre, adulte": "Dark, mature",
+    "Romance": "Romance", "Histoire forte": "Strong story", "Historique": "Historical", "Anime": "Anime", "Survie": "Survival",
+    "Espionnage, infiltration": "Spy, stealth", "Vengeance, vigilante": "Revenge, vigilante", "Monde ouvert": "Open world",
+    "Souls-like": "Souls-like", "RPG": "RPG", "Tir": "Shooter", "Roguelike": "Roguelike", "Stratégie": "Strategy", "Course, sport": "Racing, sports",
+  };
+  const T = t => MOTS[t] ?? t;
+  const REGLES = [
+    [/^Notre meilleur choix pour toi · (\d+) %$/, (_, n) => `Our top pick for you · ${n}%`],
+    [/^(\d+) % positifs sur ([\d\s ]+) avis$/, (_, p, n) => `${p}% positive out of ${n.trim().replace(/\s/g, ",")} reviews`],
+    [/^(Tout|Films|Séries|Jeux) (\d+)$/, (_, k, n) => `${T(k)} ${n}`],
+    [/^(Film|Série|Jeu) · (\d+)$/, (_, k, n) => `${T(k)} · ${n}`],
+    [/^(\d{4}) · (.+)$/, (_, a, t) => `${a} · ${T(t)}`],
+    [/^Mêmes ambiances, autre support : ce que tes (jeux|films et séries) disent de toi\.$/, (_, k) => `Same vibes, different screen: what your ${k === "jeux" ? "games say" : "movies and shows say"} about you.`],
+    [/^Rien trouvé pour « (.*) »\.$/, (_, q) => `No results for "${q}".`],
+    [/^sur 5 · (\d+) avis$/, (_, n) => `out of 5 · ${n} review${n > 1 ? "s" : ""}`],
+    [/^(J'adore|J'aime|Déjà vu|Déjà joué|Pas pour moi) : (.+)$/, (_, k, t) => `${T(k)}: ${t}`],
+    [/^Avis sur (.+)$/, (_, t) => `Reviews of ${t}`],
+    [/^Ton avis sur (.+)$/, (_, t) => `Your rating for ${t}`],
+    [/^(\d) sur 5$/, (_, n) => `${n} out of 5`],
+    [/^Connecté : (.+)$/, (_, m) => `Signed in: ${m}`],
+    [/^Envoi impossible : (.+)$/, (_, e) => `Couldn't post: ${e}`],
+    [/^(.+) \((.+)\) : (\d+) titres ajoutés, (\d+) absents du catalogue\.$/, (_, f, s, a, b) => `${f} (${s}): ${a} titles added, ${b} not in the catalog.`],
+  ];
+  const traduire = t => {
+    const c = t.trim();
+    if (!c) return t;
+    let r = MOTS[c];
+    if (r === undefined) for (const [re, f] of REGLES) if (re.test(c)) { r = c.replace(re, f); break; }
+    return r === undefined ? t : t.replace(c, r);
+  };
+  const ATTR = ["placeholder", "title", "aria-label"];
+  const passer = racine => {
+    if (racine.nodeType === 3) { const v = traduire(racine.nodeValue); if (v !== racine.nodeValue) racine.nodeValue = v; return; }
+    if (racine.nodeType !== 1 || racine.tagName === "SCRIPT" || racine.tagName === "STYLE") return;
+    for (const e of [racine, ...racine.querySelectorAll("[placeholder],[title],[aria-label]")])
+      for (const a of ATTR) { const v = e.getAttribute?.(a); if (v) { const w = traduire(v); if (w !== v) e.setAttribute(a, w); } }
+    const w = document.createTreeWalker(racine, NodeFilter.SHOW_TEXT);
+    for (let n; (n = w.nextNode());) { if (n.parentElement.closest("script,style")) continue; const v = traduire(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; }
+  };
+  document.documentElement.lang = "en";
+  document.title = "Tastebridge: your movies, shows and games, connected";
+  const conf = window.confirm;
+  window.confirm = m => conf(m === "Effacer tous tes goûts de ce navigateur ?" ? "Clear all your ratings from this browser?" : m);
+  passer(document.body);
+  new MutationObserver(l => l.forEach(m => {
+    if (m.type === "characterData") passer(m.target);
+    else if (m.type === "attributes") { const v = m.target.getAttribute(m.attributeName), w = v && traduire(v); if (w && w !== v) m.target.setAttribute(m.attributeName, w); }
+    else m.addedNodes.forEach(passer);
+  })).observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTR });
+})();

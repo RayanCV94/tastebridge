@@ -37,7 +37,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
   bouton.onclick = () => user ? menuCompte() : fenetre("entrer");
 
   function maj() {
-    bouton.innerHTML = user ? `<i></i>${user.email.split("@")[0]}` : "Se connecter";
+    bouton.innerHTML = user ? `<i></i>${user.email.split("@")[0]}` : "Connexion";
     bouton.title = user ? `Connecté : ${user.email}` : "Garder tes goûts sur tous tes appareils";
   }
 
@@ -133,7 +133,15 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
   css.textContent += `
 .avis-boite{position:relative;width:min(640px,100%);max-height:90vh;display:flex;flex-direction:column;overflow:auto}
 .fermer-fiche{position:absolute;top:10px;right:12px;width:36px;height:36px;border:0;border-radius:10px;background:var(--surface2);color:var(--doux);font-size:22px;cursor:pointer}
-.fiche{display:grid;grid-template-columns:140px 1fr;gap:20px;margin-bottom:8px}
+.fond-fiche{position:absolute;inset:0 0 auto;height:220px;background-size:cover;background-position:center 25%;filter:blur(28px) saturate(1.2);opacity:.45;transform:scale(1.2);pointer-events:none;mask-image:linear-gradient(#000,transparent)}
+.avis-boite{overflow-x:hidden}
+.avis-boite>*:not(.fond-fiche):not(.fermer-fiche){position:relative}
+.fiche{display:grid;grid-template-columns:140px 1fr;gap:20px;margin-bottom:8px;padding-top:34px}
+.fiche .aff{box-shadow:0 12px 30px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.1)}
+.avis-boite .resume{flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+.moyenne{display:flex;align-items:baseline;gap:8px}
+.histo{display:flex;align-items:flex-end;gap:3px;height:34px;width:90px}
+.histo i{flex:1;background:var(--ambre);opacity:.75;border-radius:2px 2px 0 0}
 .fiche .aff{aspect-ratio:2/3;border-radius:12px;overflow:hidden;background:var(--surface2)}
 .fiche .aff img{width:100%;height:100%;object-fit:cover;display:block}
 .fiche .type{font-size:12.5px;color:var(--pale)}
@@ -146,7 +154,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
 .avis-boite .resume{display:flex;align-items:baseline;gap:10px;margin:2px 0 16px;color:var(--doux);font-size:13.5px}
 .avis-boite .resume b{font:400 30px Gloock,serif;color:var(--texte)}
 .avis-boite .liste{overflow:auto;display:flex;flex-direction:column;gap:10px;margin:0 -4px;padding:0 4px;flex:1;min-height:60px}
-.un-avis{background:var(--surface2);border:1px solid var(--trait);border-radius:12px;padding:12px 14px}
+.un-avis{padding:14px 2px;border-bottom:1px solid var(--trait)}.un-avis:last-child{border-bottom:0}
 .un-avis .haut{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--doux)}
 .un-avis .haut strong{color:var(--texte);font-weight:600}
 .un-avis .st,.saisie .st button{color:var(--ambre);letter-spacing:1px}
@@ -175,14 +183,17 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
 <div class="chips">${(f.themes || []).map(t => `<span class="chip">${echap(t)}</span>`).join("")}</div>
 <div class="resume">Chargement des avis...</div>
 <a class="ext" href="${ext}" target="_blank" rel="noopener">${f.steam ? "Voir sur Steam" : "Voir sur Wikipédia"}</a></div></div>` : `<h3>${echap(titre)}</h3><div class="resume">Chargement des avis...</div>`;
-    v.innerHTML = `<div class="boite avis-boite"><button class="fermer-fiche" aria-label="Fermer">×</button>${tete}<h4 class="sous">Avis</h4><div class="liste"></div><div class="saisie"></div></div>`;
+    const fond = f?.image ? `<div class="fond-fiche" style="background-image:url('${echap(f.image)}')"></div>` : "";
+    v.innerHTML = `<div class="boite avis-boite">${fond}<button class="fermer-fiche" aria-label="Fermer">×</button>${tete}<h4 class="sous">Avis</h4><div class="liste"></div><div class="saisie"></div></div>`;
     document.body.append(v);
     v.onclick = e => { if (e.target === v || e.target.closest(".fermer-fiche")) fermer(); };
     const { data, error } = await sb.from("avis").select("id,user_id,pseudo,note,texte,cree").eq("item", item).order("cree", { ascending: false }).limit(200);
     const res = v.querySelector(".resume"), liste = v.querySelector(".liste"), saisie = v.querySelector(".saisie");
     if (error) { res.textContent = "Avis indisponibles pour le moment."; return; }
     const moy = data.length ? data.reduce((s, a) => s + a.note, 0) / data.length : 0;
-    res.innerHTML = data.length ? `<b>${moy.toFixed(1).replace(".", ",")}</b><span>sur 5 · ${data.length} avis</span>` : "<span>Aucun avis pour l'instant. Sois le premier.</span>";
+    const par = [1, 2, 3, 4, 5].map(n => data.filter(a => a.note === n).length), haut = Math.max(1, ...par);
+    res.innerHTML = data.length ? `<div class="moyenne"><b>${moy.toFixed(1).replace(".", ",")}</b><span>sur 5 · ${data.length} avis</span></div>
+<div class="histo" aria-label="Répartition des notes">${par.map((c, i) => `<i style="height:${Math.max(4, c / haut * 100)}%" title="${i + 1} sur 5"></i>`).join("")}</div>` : "<span>Aucun avis pour l'instant. Sois le premier.</span>";
     liste.innerHTML = data.map(a => `<div class="un-avis"><div class="haut"><span><strong>${echap(a.pseudo)}</strong> <span class="st">${etoiles(a.note)}</span></span><span>${new Date(a.cree).toLocaleDateString("fr-FR")}</span></div>
 ${a.texte ? `<p>${echap(a.texte)}</p>` : ""}${user && a.user_id === user.id ? `<button class="suppr" data-sup="${a.id}">Supprimer mon avis</button>` : ""}</div>`).join("");
     liste.querySelectorAll("[data-sup]").forEach(b => b.onclick = async () => {
