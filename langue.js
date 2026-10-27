@@ -96,6 +96,21 @@
     "Romance": "Romance", "Histoire forte": "Strong story", "Historique": "Historical", "Anime": "Anime", "Survie": "Survival",
     "Espionnage, infiltration": "Spy, stealth", "Vengeance, vigilante": "Revenge, vigilante", "Monde ouvert": "Open world",
     "Souls-like": "Souls-like", "RPG": "RPG", "Tir": "Shooter", "Roguelike": "Roguelike", "Stratégie": "Strategy", "Course, sport": "Racing, sports",
+    // Ambiances (page.html)
+    "Ambiances": "Themes", "Batailles historiques et héroïsme épique": "Historical battles and epic heroism", "Polars noirs et poisseux": "Gritty noir crime",
+    "Enquêtes tendues à rebondissements": "Tense, twisty investigations", "Horreur crue et dérangeante": "Raw, disturbing horror", "Survivre la peur au ventre": "Survival with dread",
+    "Morts-vivants et fin du monde": "The undead and the end of the world", "Futurs sombres et sociétés sous contrôle": "Dark futures and controlled societies",
+    "Odyssées spatiales et mondes inconnus": "Space odysseys and unknown worlds", "Fantasy sombre, magie et sang": "Dark fantasy, magic and blood",
+    "Contes merveilleux pour tous": "Enchanting tales for everyone", "Quêtes épiques en terres de légende": "Epic quests in legendary lands",
+    "Héros masqués et justiciers": "Masked heroes and vigilantes", "Vengeance froide et justice personnelle": "Cold revenge and personal justice",
+    "Espions, doubles jeux et infiltration": "Spies, double-crosses and infiltration", "Grands espaces et hors-la-loi": "Wide open spaces and outlaws",
+    "Survivre dans un monde en ruines": "Surviving a ruined world", "Comédies romantiques qui font du bien": "Feel-good romantic comedies",
+    "Drames passionnés et poétiques": "Passionate, poetic drama", "Humour noir et grinçant": "Dark, biting humor", "Rires en famille": "Laughs for the whole family",
+    "Fresques historiques poignantes": "Moving historical epics", "Drames intenses et sans concession": "Intense, uncompromising drama",
+    "Vastes mondes à explorer": "Vast worlds to explore", "Défis exigeants et combats punitifs": "Demanding challenges and punishing combat",
+    "Une partie de plus, encore une": "Just one more run", "Tactique et réflexion": "Tactics and strategy", "Action nerveuse et fusillades": "Fast action and gunfights",
+    "Animation japonaise": "Japanese animation", "Vitesse et compétition": "Speed and competition", "Suspense et mystères": "Suspense and mysteries",
+    "Pour rire un bon coup": "For a good laugh", "Des histoires qui marquent": "Stories that stay with you",
   };
   const T = t => MOTS[t] ?? t;
   const REGLES = [
