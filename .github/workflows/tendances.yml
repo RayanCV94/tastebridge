@@ -1,5 +1,5 @@
 name: Tendances du jour
-# Met à jour tendances.json (Wikipédia, SteamSpy) chaque jour et republie docs/ si quelque chose a changé.
+# Met à jour les tendances de la semaine (Wikipédia, SteamSpy) et republie le site si elles ont changé.
 on:
   schedule:
     - cron: "17 5 * * *"
@@ -18,16 +18,10 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install requests
-      - run: python tendances.py
-      - name: Discussions Reddit (ignoré sans les secrets REDDIT_CLIENT_ID et REDDIT_CLIENT_SECRET)
-        run: python communaute.py
-        env:
-          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
-          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
-      - run: python site.py
+      - run: python maj.py
       - name: Commit si changement
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tendances.json docs/ $(ls communaute.json 2>/dev/null)
+          git add docs/
           git diff --cached --quiet || (git commit -m "Tendances du $(date -u +%F)" && git push)

@@ -130,8 +130,8 @@
     "Retour aux recos": "Back to recommendations", "Les avis des visiteurs sont sur": "Visitor reviews are on", "le site en ligne": "the website",
     "Aucun titre assez proche dans le catalogue.": "No close enough title in the catalog.", "Thèmes communs :": "Shared themes:",
     // Liens et listes (page.html)
-    "Appuie sur une affiche : une fois pour J'aime, deux pour J'adore, trois pour retirer. Le titre ouvre la fiche.": "Tap a poster: once for Like, twice for Love, three times to remove. The title opens the details page.",
-    "En ce moment": "Right now", "Les plus lus sur Wikipédia ou les plus joués sur Steam cette semaine, ceux qui te ressemblent d'abord.": "Most read on Wikipedia or most played on Steam this week, closest to your taste first.", "Les plus lus sur Wikipédia, les plus joués sur Steam ou les plus discutés sur Reddit cette semaine, ceux qui te ressemblent d'abord.": "Most read on Wikipedia, most played on Steam or most discussed on Reddit this week, closest to your taste first.",
+    "Appuie sur une couverture : une fois pour J'aime, deux pour J'adore, trois pour retirer. Le titre ouvre la fiche.": "Tap a cover: once for Like, twice for Love, three times to remove. The title opens the details page.",
+    "En ce moment": "Right now", "Mentions légales et licences": "Legal notice and licences", "Texte extrait de Wikipédia, par ses contributeurs, sous licence": "Text from Wikipedia, by its contributors, licensed under", "Les plus lus sur Wikipédia ou les plus joués sur Steam cette semaine, ceux qui te ressemblent d'abord.": "Most read on Wikipedia or most played on Steam this week, closest to your taste first.",
     // Listes
     "Ajouter à une liste": "Add to a list", "Nouvelle liste : Ma liste d'automne": "New list: My fall list", "Nom de la nouvelle liste": "New list name", "Créer": "Create",
     "Des films, des séries et des jeux dans une même liste. Partage-la d'un lien, sans compte.": "Movies, shows and games in one list. Share it with a link, no account needed.",
