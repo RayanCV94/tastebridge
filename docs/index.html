@@ -323,7 +323,8 @@ const api = WEB ? {
  importer: async (nom, texte) => (await poster("/api/import",{nom, texte})).json(),
 };
 function toast(t){const e=$("#toast");e.innerHTML=ico("ok")+esc(t);e.classList.add("v");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("v"),1900)}
-function lien(r){return r.steam?`https://store.steampowered.com/app/${r.steam}`:`https://fr.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`}
+// Wikipédia dans la langue affichée (r.wiki = article anglais, connu depuis Wikidata)
+function lien(r){return r.steam?`https://store.steampowered.com/app/${r.steam}`:document.documentElement.lang==="en"?(r.wiki?`https://en.wikipedia.org/wiki/${r.wiki}`:`https://en.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`):`https://fr.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`}
 // Jeux : jaquette verticale Steam si elle existe, sinon le bandeau
 const visuel = r => r.dom === "jeu" && r.steam ? `https://cdn.akamai.steamstatic.com/steam/apps/${r.steam}/library_600x900.jpg` : r.image;
 const repli = r => r.dom === "jeu" && r.image ? `this.onerror=()=>this.remove();this.src='${esc(r.image)}'` : "this.remove()";
@@ -570,7 +571,7 @@ if (WEB) Moteur.charger().then(async () => { if (await compter() < 5) accueil();
 else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); compter(); charger(); }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="compte.js?v=1e9f69118e"></script>
+<script src="compte.js?v=dabb70d3f4"></script>
 <script src="langue.js?v=750cd3b0ae"></script>
 </body>
 </html>
