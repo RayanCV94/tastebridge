@@ -73,6 +73,19 @@ test("listes et recherche", async () => {
   assert.equal(M.cherche("le bateau")[0].id, "Q62730");
 });
 
+test("tri des listes : récents, note critique (sans note = après, jamais inventée)", async () => {
+  const M = await moteur();
+  const ans = Array.from(M.liste({themes: ["Western"], tri: "recents"}).titres, r => r.annee || 0);
+  const sortis = ans.filter(a => a && a <= new Date().getFullYear());
+  assert.deepEqual(ans.slice(0, sortis.length), [...sortis].sort((a, b) => b - a));  // les titres à venir passent après
+  const notes = Array.from(M.liste({themes: ["Western"], tri: "critique"}).titres)
+    .map(r => r.metacritic ?? r.rt ?? (r.avis ? parseInt(r.avis) : null));
+  const avec = notes.filter(n => n != null);
+  assert.ok(avec.length > 0);
+  assert.deepEqual(notes.slice(0, avec.length), [...avec].sort((a, b) => b - a));  // les notés d'abord, puis les autres
+  assert.equal(M.liste({themes: ["Western"], tri: "inconnu"}).total, M.liste({themes: ["Western"]}).total);
+});
+
 test("où jouer : plateformes Wikidata, « chez moi » selon mes services", async () => {
   const liste = a => Array.from(a);  // tableaux venus du bac à sable vm
   const M = await moteur();

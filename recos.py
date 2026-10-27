@@ -254,9 +254,20 @@ def titres(ids):
     return [court(CAT[i], themes=CAT[i]["themes"][:3], parce_que=[]) for i in ids if i in CAT]
 
 
-def liste(themes, annee):
+def note_critique(it):
+    # Metacritic, sinon Rotten Tomatoes, sinon avis Steam (« 92 % positifs… ») ; jamais inventée
+    for k in ("metacritic", "rt"):
+        if it.get(k) is not None:
+            return it[k]
+    m = re.match(r"\d+", it.get("avis") or "")
+    return int(m.group()) if m else None
+
+
+def liste(themes, annee, tri="acclames"):
+    # Les plus acclamés d'abord, ou selon le tri choisi ; un titre sans la donnée (ou pas encore sorti) passe après
+    cle = {"critique": note_critique, "recents": lambda it: it["annee"] if (it.get("annee") or 9999) <= time.localtime().tm_year else None}.get(tri, lambda it: 0)
     l = sorted((it for it in CAT.values() if it.get("image") and all(t in it["themes"] for t in themes)
-                and (not annee or it.get("annee") == annee)), key=lambda it: -it["qualite"])
+                and (not annee or it.get("annee") == annee)), key=lambda it: (cle(it) is None, -(cle(it) or 0), -it["qualite"]))
     return {"total": len(l), "titres": [court(it, themes=it["themes"][:3], parce_que=[]) for it in l[:60]]}
 
 
@@ -336,7 +347,8 @@ class H(BaseHTTPRequestHandler):
         elif u.path == "/api/liste":
             q = parse_qs(u.query)
             annee = q.get("annee", [""])[0]
-            self.envoyer(liste([t for t in q.get("themes", [""])[0].split("|") if t], int(annee) if annee.isdigit() else None))
+            self.envoyer(liste([t for t in q.get("themes", [""])[0].split("|") if t], int(annee) if annee.isdigit() else None,
+                               q.get("tri", ["acclames"])[0]))
         elif u.path == "/api/ping":
             self.envoyer({"ok": True})
         else:

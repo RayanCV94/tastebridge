@@ -37,6 +37,10 @@
     "Avis et commentaires": "Reviews and comments",
     "Un coup de dé": "Roll the dice", "Tout": "All", "Film": "Movie", "Série": "Show", "Jeu": "Game", "Relancer": "Roll again",
     "Type de découverte": "Discovery type", "Trier": "Sort", "Pour toi": "For you", "Mieux notés": "Top rated",
+    "Critique": "Critics", "Récents": "Newest", "Tendance": "Trending", "Visiteurs": "Visitors", "Acclamés": "Acclaimed",
+    "Metacritic, sinon Rotten Tomatoes, sinon avis Steam": "Metacritic, else Rotten Tomatoes, else Steam reviews",
+    "Les plus lus sur Wikipédia ou joués sur Steam cette semaine": "Most read on Wikipedia or played on Steam this week",
+    "Moyenne des avis des visiteurs": "Average visitor rating",
     "Une œuvre au hasard qui colle à tes goûts, hors de ce que tu connais déjà.": "A random pick that fits your taste, outside what you already know.",
     "D'après tes films et séries": "Based on your movies and shows", "D'après tes jeux": "Based on your games",
     "Ce qui ressemble le plus à ce que tu aimes, les titres récents et acclamés d'abord.": "Closest to what you love, recent and acclaimed titles first.",
@@ -143,6 +147,9 @@
     "Film ·": "Movie ·", "Série ·": "Show ·", "Jeu ·": "Game ·",
     "Voir la fiche": "Open details", "Voir les avis": "See reviews", "Moyenne des visiteurs :": "Visitor average:", "Correspondance :": "Match:", "D'où vient ce score": "Where this score comes from",
     "Thème": "Genre", "Ambiance": "Theme", "Année": "Year", "titres, tous supports confondus, les plus acclamés d'abord.": "titles across movies, shows and games, most acclaimed first.",
+    "titres, tous supports confondus, les mieux notés par la critique d'abord.": "titles across movies, shows and games, best reviewed first.",
+    "titres, tous supports confondus, les plus récents d'abord.": "titles across movies, shows and games, newest first.",
+    "titres, tous supports confondus, ceux en tendance cette semaine d'abord.": "titles across movies, shows and games, trending this week first.",
     "Rien à afficher pour cette liste.": "Nothing to show for this list.", "Liste indisponible pour le moment.": "List unavailable right now.", "Aucun titre dans le catalogue.": "No title in the catalog.",
   };
   const T = t => MOTS[t] ?? t;

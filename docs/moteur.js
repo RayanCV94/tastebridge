@@ -97,6 +97,8 @@ const Moteur = (() => {
   // Le ton compte : un dessin animé familial colle mal à The Witcher même s'ils partagent « Fantasy »
   const TONS = ["Animation, famille", "Sombre, adulte"];
   const dotV = (a, b) => Object.entries(V()[a]).reduce((s, [th, x]) => s + (V()[b][th] || 0) * x, 0);
+  // Note critique : Metacritic, sinon Rotten Tomatoes, sinon avis Steam (« 92 % positifs… ») ; jamais inventée
+  const noteCritique = it => it.metacritic ?? it.rt ?? (it.avis ? parseInt(it.avis) : null);
   const court = (it, plus) => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki, ...notesExt(it), ...plus});
 
   // Fiche : les titres les plus proches (même similarité cosinus que les recos), du même support d'abord, puis des autres
@@ -292,6 +294,7 @@ const Moteur = (() => {
         .map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam, note: notes[it.id] || ""}));
     },
     avecReddit: () => REDDIT,
+    tendance: id => TENDANCES[id] || 0,
     // En ce moment : les tendances de la semaine, celles qui te ressemblent d'abord (moitié tendance, moitié goûts)
     tendances(dom, n = 12) {
       const p = profil(), poids = {};
@@ -311,9 +314,11 @@ const Moteur = (() => {
       return {...it, note: profil().notes[id] || "", similaires: proches(id), pour_toi: pourToi(id)};
     },
     // Liste d'un thème (ou d'une ambiance = plusieurs thèmes) et/ou d'une année, tous supports, les plus acclamés d'abord
-    liste({themes = [], annee = null} = {}) {
+    // ou selon le tri choisi ; un titre sans la donnée (ou pas encore sorti, pour « récents ») passe après
+    liste({themes = [], annee = null, tri = "acclames"} = {}) {
+      const cle = {critique: noteCritique, recents: it => it.annee <= new Date().getFullYear() ? it.annee : null, tendance: it => TENDANCES[it.id]}[tri] || (() => 0);
       const l = Object.values(CAT).filter(it => it.image && themes.every(t => it.themes.includes(t)) && (!annee || it.annee === annee))
-        .sort((a, b) => b.qualite - a.qualite);
+        .sort((a, b) => (cle(b) ?? -Infinity) - (cle(a) ?? -Infinity) || b.qualite - a.qualite);
       return {total: l.length, titres: l.slice(0, 60).map(it => court(it, {themes: it.themes.slice(0, 3), parce_que: []}))};
     },
     noter(id, note) {
