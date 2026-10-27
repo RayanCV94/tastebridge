@@ -7,6 +7,8 @@ const SUPA_URL = "https://ryvqymggtvosrijdxmzg.supabase.co";
 const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
 
 (() => {
+  // Supabase injoignable (bloqueur, hors ligne) : le site marche sans compte, les avis s'affichent « indisponibles »
+  if (typeof supabase === "undefined") { window.NOTES = null; return; }
   const sb = supabase.createClient(SUPA_URL, SUPA_CLE);
   let user = null, envoi = null, applique = false;
 

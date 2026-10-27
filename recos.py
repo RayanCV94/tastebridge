@@ -11,7 +11,6 @@ DONNEES.mkdir(exist_ok=True)
 if sys.stdout is None:  # lancé masqué (pythonw) : les erreurs vont dans donnees/erreurs.log
     sys.stdout = sys.stderr = open(DONNEES / "erreurs.log", "a", encoding="utf-8", buffering=1)
 
-import requests
 import imports
 import notes
 
