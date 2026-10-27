@@ -42,6 +42,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
   }
 
   function fermer() { document.querySelector(".voile-compte")?.remove(); }
+  addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
 
   function fenetre(mode) {
     fermer();
@@ -132,30 +133,12 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
   const en = () => document.documentElement.lang === "en";  // langue.js passe la page en anglais
   const etoiles = n => "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n);
   css.textContent += `
-.avis-boite{position:relative;width:min(640px,100%);max-height:90vh;display:flex;flex-direction:column;overflow:auto}
-.fermer-fiche{position:absolute;top:10px;right:12px;width:36px;height:36px;border:0;border-radius:10px;background:var(--surface2);color:var(--doux);font-size:22px;cursor:pointer}
-.fond-fiche{position:absolute;inset:0 0 auto;height:220px;background-size:cover;background-position:center 25%;filter:blur(28px) saturate(1.2);opacity:.45;transform:scale(1.2);pointer-events:none;mask-image:linear-gradient(#000,transparent)}
-.avis-boite{overflow-x:hidden}
-.avis-boite>*:not(.fond-fiche):not(.fermer-fiche){position:relative}
-.fiche{display:grid;grid-template-columns:140px 1fr;gap:20px;margin-bottom:8px;padding-top:34px}
-.fiche .aff{box-shadow:0 12px 30px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.1)}
-.avis-boite .resume{flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+.avis-zone .resume{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;margin:0 0 16px;color:var(--doux);font-size:13.5px}
+.avis-zone .resume b{font:400 30px Gloock,serif;color:var(--texte)}
 .moyenne{display:flex;align-items:baseline;gap:8px}
 .histo{display:flex;align-items:flex-end;gap:3px;height:38px;width:110px}
 .histo i{flex:1;background:var(--ambre);opacity:.75;border-radius:2px 2px 0 0}
-.fiche .aff{aspect-ratio:2/3;border-radius:12px;overflow:hidden;background:var(--surface2)}
-.fiche .aff img{width:100%;height:100%;object-fit:cover;display:block}
-.fiche .type{font-size:12.5px;color:var(--pale)}
-.fiche h3{margin:4px 40px 10px 0}
-.fiche .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.fiche h5{margin:0 0 6px;font:600 11.5px Onest,sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--pale)}
-.fiche .ext{font-size:13px;color:var(--doux)}
-.avis-boite .sous{font:600 13px Onest,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--pale);margin:12px 0 10px;padding-top:14px;border-top:1px solid var(--trait)}
-.avis-boite .liste{flex:none!important}
-@media(max-width:520px){.fiche{grid-template-columns:96px 1fr;gap:14px}.fiche h3{font-size:22px}}
-.avis-boite .resume{display:flex;align-items:baseline;gap:10px;margin:2px 0 16px;color:var(--doux);font-size:13.5px}
-.avis-boite .resume b{font:400 30px Gloock,serif;color:var(--texte)}
-.avis-boite .liste{overflow:auto;display:flex;flex-direction:column;gap:10px;margin:0 -4px;padding:0 4px;flex:1;min-height:60px}
+.avis-zone .liste{display:flex;flex-direction:column}
 .un-avis{padding:14px 2px;border-bottom:1px solid var(--trait)}.un-avis:last-child{border-bottom:0}
 .un-avis .haut{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--doux)}
 .un-avis .haut strong{color:var(--texte);font-weight:600}
@@ -170,38 +153,26 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
 .saisie textarea:focus,.saisie input:focus{border-color:var(--ambre)}
 .saisie .ligne{display:flex;gap:8px;margin-top:8px}
 .saisie input{flex:1;min-width:0;background:var(--surface2);border:1px solid var(--trait);border-radius:10px;padding:10px 12px;color:var(--texte);font:14px Onest,sans-serif;outline:none}
-.saisie .principal{width:auto;margin:0;padding:10px 18px}`;
+.avis-zone .principal{margin:0;padding:10px 18px;border:0;border-radius:10px;background:var(--ambre);color:#16110a;font:600 14px Onest,sans-serif;cursor:pointer}
+.avis-zone .msg{min-height:20px;margin-top:10px;font-size:13px;color:var(--rouge)}`;
 
-  window.ouvrirAvis = async bouton => {
-    fermer();
-    const item = bouton.dataset.id, titre = bouton.dataset.t;
-    const v = document.createElement("div");
-    v.className = "voile-compte";
-    // En-tête de fiche : affiche, infos, lien externe (FICHES est rempli par la page)
-    const f = typeof FICHES !== "undefined" ? FICHES[item] : null;
-    const ext = f ? lien(f) : "";
-    const tete = f ? `<div class="fiche"><div class="aff">${f.image ? `<img src="${echap(visuel(f))}" alt="">` : ""}</div><div>
-<span class="type">${{film: "Film", serie: "Série", jeu: "Jeu"}[f.dom]}${f.annee ? " · " + f.annee : ""}</span><h3>${echap(titre)}</h3>
-<h5>Genres</h5><div class="chips">${(f.themes || []).map(t => `<span class="chip">${echap(t)}</span>`).join("")}</div>
-${typeof ambiances === "function" && ambiances(f.themes).length ? `<h5>Ambiances</h5><div class="chips">${ambiances(f.themes).map(t => `<span class="chip">${echap(t)}</span>`).join("")}</div>` : ""}
-<div class="resume">Chargement des avis...</div>
-<a class="ext" href="${ext}" target="_blank" rel="noopener">${f.steam ? "Voir sur Steam" : "Voir sur Wikipédia"}</a></div></div>` : `<h3>${echap(titre)}</h3><div class="resume">Chargement des avis...</div>`;
-    const fond = f?.image ? `<div class="fond-fiche" style="background-image:url('${echap(f.image)}')"></div>` : "";
-    v.innerHTML = `<div class="boite avis-boite">${fond}<button class="fermer-fiche" aria-label="Fermer">×</button>${tete}<h4 class="sous">Avis</h4><div class="liste"></div><div class="saisie"></div></div>`;
-    document.body.append(v);
-    v.onclick = e => { if (e.target === v || e.target.closest(".fermer-fiche")) fermer(); };
+  // Avis d'une œuvre, affichés dans sa fiche (page.html) : moyenne, répartition, liste et saisie
+  window.avisDans = async (zone, item) => {
+    zone.innerHTML = `<div class="resume">Chargement des avis...</div><div class="liste"></div><div class="saisie"></div>`;
     const { data, error } = await sb.from("avis").select("id,user_id,pseudo,note,texte,cree").eq("item", item).order("cree", { ascending: false }).limit(200);
-    const res = v.querySelector(".resume"), liste = v.querySelector(".liste"), saisie = v.querySelector(".saisie");
+    if (!zone.isConnected) return;
+    const res = zone.querySelector(".resume"), liste = zone.querySelector(".liste"), saisie = zone.querySelector(".saisie");
     if (error) { res.textContent = "Avis indisponibles pour le moment."; return; }
     const moy = data.length ? data.reduce((s, a) => s + a.note, 0) / data.length : 0;
     const par = [1, 2, 3, 4, 5].map(n => data.filter(a => a.note === n).length), haut = Math.max(1, ...par);
     res.innerHTML = data.length ? `<div class="moyenne"><b>${en() ? moy.toFixed(1) : moy.toFixed(1).replace(".", ",")}</b><span>sur 5 · ${data.length} avis</span></div>
-<div class="histo" aria-label="Répartition des notes">${par.map((c, i) => `<i style="height:${Math.max(4, c / haut * 100)}%" title="${i + 1} sur 5"></i>`).join("")}</div>` : "<span>Aucun avis pour l'instant. Sois le premier.</span>";
-    liste.innerHTML = data.map(a => `<div class="un-avis"><div class="haut"><span><strong>${echap(a.pseudo)}</strong> <span class="st">${etoiles(a.note)}</span></span><span>${new Date(a.cree).toLocaleDateString(en() ? "en-GB" : "fr-FR")}</span></div>
+<div class="histo" role="img" aria-label="Répartition des notes : ${par.map((c, i) => `${c} × ${i + 1}★`).join(", ")}">${par.map((c, i) => `<i style="height:${Math.max(4, c / haut * 100)}%" title="${i + 1} sur 5"></i>`).join("")}</div>` : "<span>Aucun avis pour l'instant. Sois le premier.</span>";
+    liste.innerHTML = data.map(a => `<div class="un-avis"><div class="haut"><span><strong>${echap(a.pseudo)}</strong> <span class="st" aria-label="${a.note} sur 5">${etoiles(a.note)}</span></span><span>${new Date(a.cree).toLocaleDateString(en() ? "en-GB" : "fr-FR")}</span></div>
 ${a.texte ? `<p>${echap(a.texte)}</p>` : ""}${user && a.user_id === user.id ? `<button class="suppr" data-sup="${a.id}">Supprimer mon avis</button>` : ""}</div>`).join("");
     liste.querySelectorAll("[data-sup]").forEach(b => b.onclick = async () => {
       await sb.from("avis").delete().eq("id", b.dataset.sup);
-      ouvrirAvis(bouton);
+      chargerNotes();
+      avisDans(zone, item);
     });
     if (!user) {
       saisie.innerHTML = `<button class="principal">Se connecter pour donner ton avis</button>`;
@@ -213,11 +184,11 @@ ${a.texte ? `<p>${echap(a.texte)}</p>` : ""}${user && a.user_id === user.id ? `<
     let pseudo = mien?.pseudo || "";
     try { pseudo ||= localStorage.getItem("tastebridge-pseudo") || ""; } catch {}
     saisie.innerHTML = `<div class="st" role="radiogroup" aria-label="Ta note">${[1, 2, 3, 4, 5].map(n => `<button type="button" data-n="${n}" aria-label="${n} sur 5">★</button>`).join("")}</div>
-<textarea maxlength="1000" placeholder="Ton avis (facultatif) : ce que tu as aimé, ou pas...">${echap(mien?.texte || "")}</textarea>
-<div class="ligne"><input maxlength="30" placeholder="Ton pseudo" value="${echap(pseudo)}"><button class="principal">${mien ? "Mettre à jour" : "Publier"}</button></div>
+<textarea maxlength="1000" aria-label="Ton avis" placeholder="Ton avis (facultatif) : ce que tu as aimé, ou pas...">${echap(mien?.texte || "")}</textarea>
+<div class="ligne"><input maxlength="30" aria-label="Ton pseudo" placeholder="Ton pseudo" value="${echap(pseudo)}"><button class="principal">${mien ? "Mettre à jour" : "Publier"}</button></div>
 <div class="msg" role="status"></div>`;
     const boutons = saisie.querySelectorAll(".st button"), msg = saisie.querySelector(".msg");
-    const peindre = () => boutons.forEach(b => b.classList.toggle("on", +b.dataset.n <= note));
+    const peindre = () => boutons.forEach(b => { b.classList.toggle("on", +b.dataset.n <= note); b.setAttribute("aria-checked", +b.dataset.n === note); b.setAttribute("role", "radio"); });
     boutons.forEach(b => b.onclick = () => { note = +b.dataset.n; peindre(); });
     peindre();
     saisie.querySelector(".principal").onclick = async () => {
@@ -229,14 +200,14 @@ ${a.texte ? `<p>${echap(a.texte)}</p>` : ""}${user && a.user_id === user.id ? `<
       if (error) { msg.textContent = "Envoi impossible : " + error.message; return; }
       try { localStorage.setItem("tastebridge-pseudo", ps); } catch {}
       chargerNotes();
-      ouvrirAvis(bouton);
+      avisDans(zone, item);
     };
   };
 
   // Moyenne de chaque œuvre, pour le badge étoile et le tri « Mieux notés »
   async function chargerNotes() {
     const { data, error } = await sb.from("avis").select("item,note").limit(10000);
-    if (error) return;
+    if (error) { window.NOTES = null; dispatchEvent(new CustomEvent("notes-moyennes")); return; }
     const t = {};
     data.forEach(a => { const x = t[a.item] ||= [0, 0]; x[0] += a.note; x[1]++; });
     window.NOTES = Object.fromEntries(Object.entries(t).map(([k, [s, n]]) => [k, [s / n, n]]));

@@ -10,7 +10,7 @@
   b.className = "langue";
   b.textContent = langue === "fr" ? "EN" : "FR";
   b.title = langue === "fr" ? "English version" : "Version française";
-  b.setAttribute("aria-label", b.title);
+  b.setAttribute("aria-label", `${b.textContent}, ${b.title}`);  // le nom accessible contient le texte visible
   b.onclick = () => { try { localStorage.setItem("tastebridge-langue", langue === "fr" ? "en" : "fr"); } catch {} location.reload(); };
   document.querySelector("#compte").before(b);
   if (langue === "fr") return;
@@ -111,6 +111,26 @@
     "Une partie de plus, encore une": "Just one more run", "Tactique et réflexion": "Tactics and strategy", "Action nerveuse et fusillades": "Fast action and gunfights",
     "Animation japonaise": "Japanese animation", "Vitesse et compétition": "Speed and competition", "Suspense et mystères": "Suspense and mysteries",
     "Pour rire un bon coup": "For a good laugh", "Des histoires qui marquent": "Stories that stay with you",
+    // Fiche d'un titre (page.html)
+    "Résumé": "Synopsis", "Pourquoi ce titre pour toi": "Why this title for you", "Avis des visiteurs": "Visitor reviews", "Notes": "Ratings",
+    "Ailleurs": "Elsewhere", "Dans le même esprit": "In the same spirit", "Les titres aux thèmes les plus proches, sur le même support puis sur les autres.": "Titles with the closest themes, on the same screen first, then on the others.",
+    "Chargement du résumé…": "Loading synopsis…", "Chargement des avis…": "Loading reviews…", "non disponible": "not available", "chargement…": "loading…", "aucun avis": "no reviews yet",
+    "avis des joueurs, via SteamSpy": "player reviews, via SteamSpy", "note de la presse, via Wikidata": "critics score, via Wikidata",
+    "critiques positives, via Wikidata": "positive critic reviews, via Wikidata", "avis des visiteurs, sur 5": "visitor reviews, out of 5",
+    "Pas encore noté.": "Not rated yet.", "Ta note :": "Your rating:", "Titre français": "French title", "Titre anglais": "English title", "Titre français :": "French title:", "Titre anglais :": "English title:",
+    "de correspondance avec tes goûts": "match with your taste", "Le plus proche de ce que tu as aimé :": "Closest to what you liked:", "Thèmes en commun avec ton profil :": "Themes shared with your profile:",
+    "Le pourcentage compare les thèmes de ce titre à ceux des titres que tu as notés (les thèmes rares comptent plus). C'est le meilleur score entre ton profil entier et ton titre aimé le plus proche.": "The percentage compares this title's themes with those of the titles you rated (rare themes count more). It is the best score between your whole profile and your closest liked title.",
+    "Note quelques titres que tu aimes : Tastebridge t'expliquera ici ce qui te rapproche de celui-ci.": "Rate a few titles you like: Tastebridge will explain here what connects you to this one.",
+    "Résumé non disponible.": "Synopsis not available.", "Résumé indisponible pour le moment : Wikipédia ne répond pas.": "Synopsis unavailable right now: Wikipedia is not responding.",
+    "Lire l'article sur Wikipédia": "Read the article on Wikipedia", "Wikipédia": "Wikipedia", "Ce titre n'est pas (ou plus) dans le catalogue.": "This title is not (or no longer) in the catalog.",
+    "Retour aux recos": "Back to recommendations", "Les avis des visiteurs sont sur": "Visitor reviews are on", "le site en ligne": "the website",
+    "Aucun titre assez proche dans le catalogue.": "No close enough title in the catalog.", "Thèmes communs :": "Shared themes:",
+    // Liens et listes (page.html)
+    "Appuie sur une affiche : une fois pour J'aime, deux pour J'adore, trois pour retirer. Le titre ouvre la fiche.": "Tap a poster: once for Like, twice for Love, three times to remove. The title opens the details page.",
+    "Film ·": "Movie ·", "Série ·": "Show ·", "Jeu ·": "Game ·",
+    "Voir la fiche": "Open details", "Voir les avis": "See reviews", "Moyenne des visiteurs :": "Visitor average:", "Correspondance :": "Match:", "D'où vient ce score": "Where this score comes from",
+    "Thème": "Genre", "Ambiance": "Theme", "Année": "Year", "titres, tous supports confondus, les plus acclamés d'abord.": "titles across movies, shows and games, most acclaimed first.",
+    "Rien à afficher pour cette liste.": "Nothing to show for this list.", "Liste indisponible pour le moment.": "List unavailable right now.", "Aucun titre dans le catalogue.": "No title in the catalog.",
   };
   const T = t => MOTS[t] ?? t;
   const REGLES = [
@@ -121,14 +141,17 @@
     [/^(\d{4}) · (.+)$/, (_, a, t) => `${a} · ${T(t)}`],
     [/^Mêmes ambiances, autre support : ce que tes (jeux|films et séries) disent de toi\.$/, (_, k) => `Same vibes, different screen: what your ${k === "jeux" ? "games say" : "movies and shows say"} about you.`],
     [/^Rien trouvé pour « (.*) »\.$/, (_, q) => `No results for "${q}".`],
+    [/^([\d.,]+) \/5 · (\d+) avis$/, (_, m, n) => `${m} /5 · ${n} review${n > 1 ? "s" : ""}`],
     [/^sur 5 · (\d+) avis$/, (_, n) => `out of 5 · ${n} review${n > 1 ? "s" : ""}`],
     [/^(J'adore|J'aime|Déjà vu|Déjà joué|Pas pour moi) : (.+)$/, (_, k, t) => `${T(k)}: ${t}`],
+    [/^Fiche et avis : (.+)$/, (_, t) => `Details and reviews: ${t}`],
+    [/^Les (\d+) premiers sont affichés\.$/, (_, n) => `The first ${n} are shown.`],
     [/^Avis sur (.+)$/, (_, t) => `Reviews of ${t}`],
     [/^Ton avis sur (.+)$/, (_, t) => `Your rating for ${t}`],
     [/^(\d) sur 5$/, (_, n) => `${n} out of 5`],
     [/^Connecté : (.+)$/, (_, m) => `Signed in: ${m}`],
     [/^Envoi impossible : (.+)$/, (_, e) => `Couldn't post: ${e}`],
-    [/^(.+) \((.+)\) : (\d+) titres ajoutés, (\d+) absents du catalogue\.$/, (_, f, s, a, b) => `${f} (${s}): ${a} titles added, ${b} not in the catalog.`],
+    [/^(.+) \((.+)\) : (\d+) titres? ajoutés?, (\d+) absents? du catalogue\.$/, (_, f, s, a, b) => `${f} (${s}): ${a} title${a > 1 ? "s" : ""} added, ${b} not in the catalog.`],
   ];
   const traduire = t => {
     const c = t.trim();
