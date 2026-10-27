@@ -7,7 +7,7 @@ import datetime, json, sys
 from pathlib import Path
 
 ICI = Path(__file__).parent
-UA = {"User-Agent": "tastebridge/1.0 (https://github.com/RayanCV94/tastebridge)"}
+UA = {"User-Agent": "tastebridge/1.0 (https://makingdreamscometrue.github.io/tastebridge/)"}
 
 
 def calculer(cat, jours=7, garder=40):

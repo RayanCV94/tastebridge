@@ -7,10 +7,12 @@
 <meta name="description" content="Des recommandations de films, séries et jeux vidéo qui passent d'un écran à l'autre. Sans inscription obligatoire, compte gratuit si tu veux les retrouver partout.">
 <meta name="theme-color" content="#0b0b0f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e8a33d'/%3E%3Cpath d='M7 10v13M25 10v13M7 14c4 0 6 4 9 4s5-4 9-4' stroke='%230b0b0f' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Gloock&display=swap" rel="stylesheet">
+<link rel="preload" href="polices/onest.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* Polices hébergées ici (licence SIL OFL 1.1, voir polices/) : aucun appel à Google Fonts, donc aucune adresse IP transmise */
+@font-face{font-family:Onest;src:url(polices/onest.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:Onest;src:url(polices/onest-latin-ext.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:Gloock;src:url(polices/gloock.woff2) format("woff2");font-weight:400;font-display:swap}
 :root{
  --fond:#0b0b0f;--surface:#14151b;--surface2:#1c1e26;--trait:#262833;--trait2:#363948;
  --texte:#eeebe4;--doux:#a8a7b2;--pale:#7d7c88;
@@ -45,15 +47,11 @@ nav button.on{background:var(--surface2);color:var(--texte);box-shadow:0 1px 0 r
 nav button[data-o="film"].on svg{color:var(--ambre)} nav button[data-o="serie"].on svg{color:var(--violet)} nav button[data-o="jeu"].on svg{color:var(--menthe)} nav button[data-o="gouts"].on svg{color:var(--rouge)}
 .compte{margin-left:auto;font-size:13px;color:var(--doux);display:flex;align-items:center;gap:8px;white-space:nowrap}
 .compte b{color:var(--texte);font-weight:600;font-variant-numeric:tabular-nums}
-.gh{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;color:var(--doux);border:1px solid var(--trait);transition:color .2s,border-color .2s}
-.gh:hover{color:var(--texte);border-color:var(--trait2)}
-.gh svg{width:18px;height:18px}
 
 main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 var(--marge) 80px}
 
 /* Grande affiche (meilleure reco) */
 .scene{position:relative;margin:24px 0 8px;border-radius:22px;overflow:hidden;isolation:isolate;min-height:clamp(380px,52vh,560px);display:grid;grid-template-columns:1fr auto;align-items:end;gap:40px;padding:clamp(24px,4vw,56px);border:1px solid rgba(255,255,255,.07)}
-.scene .fondu{position:absolute;inset:-60px;z-index:-2;background:center/cover;filter:blur(50px) saturate(160%) brightness(.8);transform:scale(1.15)}
 .scene::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,rgba(11,11,15,.94) 0%,rgba(11,11,15,.7) 45%,rgba(11,11,15,.15) 100%),linear-gradient(0deg,rgba(11,11,15,.6),transparent 40%)}
 .scene .texte{max-width:640px;display:flex;flex-direction:column;gap:14px;animation:entre .9s var(--sortie) both}
 .etiquette{align-self:flex-start;display:flex;align-items:center;gap:8px;font:600 12.5px Onest;color:var(--texte);padding:6px 12px 6px 10px;border-radius:30px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px)}
@@ -61,12 +59,10 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 .scene h2{font:400 clamp(36px,5.4vw,72px)/1 Gloock,serif;letter-spacing:-.02em;margin:0;text-wrap:balance}
 .scene h2.long{font-size:clamp(30px,3.8vw,52px);line-height:1.05}
 /* Affiche chargée : on masque le titre de secours (sinon il transparaît derrière les logos PNG) */
-.cadre:has(img.ok) .sans-image{visibility:hidden}
 .scene h2 span{color:var(--doux);font-size:.5em;letter-spacing:0;margin-left:10px;font-variant-numeric:tabular-nums}
 .scene .pq{font-size:16px;color:#d9d6ce;max-width:56ch}
 .scene .pq b{color:#fff;font-weight:600}
-.scene .affiche{display:block;width:clamp(170px,19vw,270px);aspect-ratio:2/3;border-radius:14px;overflow:hidden;box-shadow:0 30px 60px -18px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.08);animation:monte 1s .1s var(--sortie) both;background:var(--surface2)}
-.scene .affiche img{width:100%;height:100%;object-fit:cover;display:block}
+.scene .affiche{display:block;position:relative;width:clamp(170px,19vw,270px);aspect-ratio:2/3;border-radius:14px;overflow:hidden;box-shadow:0 30px 60px -18px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.08);animation:monte 1s .1s var(--sortie) both;background:var(--surface2)}
 @keyframes entre{from{opacity:0;transform:translateY(14px)}}
 @keyframes monte{from{opacity:0;transform:translateY(24px) scale(.97)}}
 
@@ -96,11 +92,11 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 .c.note{opacity:.3;pointer-events:none;transition:opacity .3s}
 .cadre{position:relative;aspect-ratio:2/3;border-radius:14px;overflow:hidden;background:linear-gradient(155deg,#252835,#121319);box-shadow:0 0 0 1px rgba(255,255,255,.06);transition:transform .45s var(--sortie),box-shadow .45s var(--sortie)}
 .c:hover .cadre,.c:focus-within .cadre{transform:translateY(-5px);box-shadow:var(--ombre),0 0 0 1px rgba(255,255,255,.12)}
-.cadre img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s var(--sortie),transform .7s var(--sortie)}
-.cadre img.ok{opacity:1}
-.c:hover .cadre img.ok{transform:scale(1.05)}
-.sans-image{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;padding:16px;font:400 21px/1.15 Gloock,serif;color:#cfccd6;background:radial-gradient(120% 80% at 0% 0%,color-mix(in srgb,var(--dom) 22%,transparent),transparent 60%)}
-.sans-image svg{width:26px;height:26px;color:var(--dom);opacity:.8}
+.sans-image{position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;padding:16px;overflow:hidden;font:400 22px/1.12 Gloock,serif;color:var(--texte);background:linear-gradient(var(--a,150deg),color-mix(in srgb,var(--dom) 38%,var(--surface2)),var(--surface2) 72%)}
+.sans-image span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;text-wrap:balance}
+.sans-image svg{width:24px;height:24px;flex:none;color:var(--dom)}
+.sans-image .filigrane{position:absolute;right:-22%;bottom:-12%;width:85%;height:auto;aspect-ratio:1;color:var(--dom);opacity:.13}
+.aff-fiche .sans-image,.scene .affiche .sans-image,.tirage .sans-image{font-size:30px;padding:22px}
 .pct{position:absolute;z-index:2;top:10px;left:10px;display:flex;align-items:center;gap:6px;font:600 12px Onest;font-variant-numeric:tabular-nums;color:#fff;padding:4px 9px 4px 8px;border-radius:30px;background:rgba(8,8,12,.72);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)}
 .pct i{width:7px;height:7px;border-radius:50%;background:var(--dom)}
 /* Survol : la raison et les avis apparaissent sur l'affiche */
@@ -144,7 +140,8 @@ a.accroche:hover{color:var(--texte)}
 /* Accueil (premier passage, version site) */
 .accueil{position:relative;margin:24px 0 0;border-radius:24px;overflow:hidden;isolation:isolate;padding:clamp(36px,7vw,96px) clamp(24px,5vw,72px);border:1px solid rgba(255,255,255,.07);min-height:clamp(420px,60vh,620px);display:flex;flex-direction:column;justify-content:center}
 .mur{position:absolute;inset:-10%;z-index:-2;display:grid;grid-template-columns:repeat(8,1fr);gap:12px;transform:rotate(-8deg) scale(1.15);opacity:.5;animation:defile 60s linear infinite alternate}
-.mur img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:10px}
+.mur .tuile{position:relative;aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:var(--surface2)}
+.mur .sans-image{font-size:17px;padding:12px}
 @keyframes defile{to{transform:rotate(-8deg) scale(1.15) translateY(-12%)}}
 .accueil::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(90% 120% at 0% 50%,rgba(11,11,15,.97) 30%,rgba(11,11,15,.75) 65%,rgba(11,11,15,.45))}
 .accueil h2{font:400 clamp(40px,6.4vw,88px)/.98 Gloock,serif;letter-spacing:-.025em;margin:0 0 20px;max-width:12ch}
@@ -192,7 +189,8 @@ a.accroche:hover{color:var(--texte)}
 #res:not(:empty){margin-top:12px}
 .l{display:flex;align-items:center;gap:12px;padding:7px 8px;border-radius:12px;transition:background .15s}
 .l:hover{background:rgba(255,255,255,.04)}
-.l .mini{width:38px;height:56px;border-radius:7px;background:var(--surface2) center/cover;flex:none;box-shadow:0 0 0 1px rgba(255,255,255,.06)}
+.l .mini{width:38px;height:56px;border-radius:7px;background:color-mix(in srgb,var(--dom) 16%,var(--surface2));flex:none;box-shadow:0 0 0 1px rgba(255,255,255,.06);display:grid;place-items:center}
+.l .mini svg{width:18px;height:18px;color:var(--dom)}
 .l .nom{flex:1;min-width:0;font-weight:500;line-height:1.3}
 .l .nom a{color:var(--texte);text-decoration:none}.l .nom a:hover{text-decoration:underline;text-underline-offset:3px}
 a.mini{display:block}
@@ -232,7 +230,6 @@ footer a{color:var(--doux)}
  .barre{flex-wrap:wrap;gap:12px;padding-top:10px;padding-bottom:10px}
  nav{order:3;width:100%;justify-content:space-between}
  nav button{padding:8px 9px;font-size:13px;gap:6px;white-space:nowrap}
- .gh{display:none}
  header .connexion{padding:0 10px;font-size:12.5px} .langue{min-width:0;padding:0 8px} .barre{gap:8px}
  .logo{font-size:20px;margin-right:auto}
  .scene{grid-template-columns:1fr;min-height:0;gap:22px;padding:22px}
@@ -271,7 +268,6 @@ footer a{color:var(--doux)}
 .tirage{display:grid;grid-template-columns:150px 1fr;gap:22px;align-items:center;padding:18px;background:var(--surface);border:1px solid var(--trait);border-radius:18px;animation:apparait .4s var(--sortie)}
 @keyframes apparait{from{opacity:0;transform:translateY(8px)}}
 .tirage .cadre{display:block;position:relative;aspect-ratio:2/3;border-radius:12px;overflow:hidden;background:var(--surface2)}
-.tirage .cadre img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .tirage .infos{display:flex;flex-direction:column;gap:8px;min-width:0}
 .tirage .type{display:flex;align-items:center;gap:6px;color:var(--doux);font-size:13px}
 .tirage .type svg{width:15px;height:15px}
@@ -285,12 +281,8 @@ footer a{color:var(--doux)}
 
 /* Fiche d'un titre (page entière, #/film/ID) */
 .fiche-tete{position:relative;margin:24px 0 0;border-radius:22px;overflow:hidden;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:end;padding:clamp(22px,4vw,52px);border:1px solid rgba(255,255,255,.07)}
-.fiche-tete .fondu{position:absolute;inset:-60px;z-index:-2;background:center/cover;filter:blur(50px) saturate(160%) brightness(.7);transform:scale(1.15)}
 .fiche-tete::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(11,11,15,.96) 10%,rgba(11,11,15,.6))}
 .aff-fiche{position:relative;width:clamp(150px,18vw,250px);aspect-ratio:2/3;border-radius:14px;overflow:hidden;background:var(--surface2);box-shadow:0 30px 60px -18px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.08)}
-.aff-fiche img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s}
-.aff-fiche img.ok{opacity:1}
-.aff-fiche:has(img.ok) .sans-image{visibility:hidden}
 .fiche-tete .texte{display:flex;flex-direction:column;gap:12px;min-width:0}
 .fiche-tete h1{font:400 clamp(34px,5vw,64px)/1.02 Gloock,serif;letter-spacing:-.02em;margin:0;text-wrap:balance;overflow-wrap:anywhere}
 .type-fiche{display:flex;align-items:center;gap:8px;margin:0;color:var(--doux);font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.1em}
@@ -318,9 +310,6 @@ footer a{color:var(--doux)}
 .ou svg{width:13px;height:13px;flex:none;color:var(--pale)}
 .ou b,.chip.mien{color:var(--menthe);font-weight:600}
 .chip.mien{border-color:color-mix(in srgb,var(--menthe) 45%,transparent)}
-.offres h3{margin:12px 0 6px;font:600 12px Onest;color:var(--doux)}
-.offres h3:first-child{margin-top:0}
-.offres .chips{margin-bottom:4px}
 .boutiques{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .services{display:flex;flex-wrap:wrap;gap:6px}
 .services button{background:none;border:1px solid var(--trait2);color:var(--doux);font:500 13px Onest;padding:6px 12px;border-radius:30px;cursor:pointer}
@@ -332,8 +321,9 @@ footer a{color:var(--doux)}
 .listes-menu input[type=text],.nom-liste{flex:1;min-width:0;background:var(--fond);border:1px solid var(--trait2);border-radius:10px;padding:9px 12px;color:var(--texte);font:14px Onest}
 .mes-listes{display:flex;flex-direction:column;gap:10px}
 .une-liste{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;border:1px solid var(--trait);background:var(--surface)}
+.mentions{max-width:72ch}.mentions h4{font:600 15px Onest;margin:22px 0 6px}.mentions p,.mentions li{color:var(--doux);line-height:1.6}.mentions a{color:var(--texte)}
 .une-liste .vignettes{display:flex;flex:none}
-.une-liste .vignettes i{width:30px;height:45px;border-radius:5px;background:var(--surface2) center/cover;box-shadow:0 0 0 2px var(--surface);margin-left:-10px}
+.une-liste .vignettes i{width:30px;height:45px;border-radius:5px;background:color-mix(in srgb,var(--dom) 30%,var(--surface2));box-shadow:0 0 0 2px var(--surface);margin-left:-10px}
 .une-liste .vignettes i:first-child{margin-left:0}
 .une-liste a{flex:1;min-width:0;color:var(--texte);text-decoration:none;font-weight:600}
 .une-liste a small{display:block;font-weight:400;color:var(--doux);font-size:12.5px}
@@ -346,16 +336,33 @@ footer a{color:var(--doux)}
 @media(max-width:760px){.bloc,#proches{scroll-margin-top:130px}.fiche-tete{grid-template-columns:1fr;align-items:start}.aff-fiche{width:140px}.fiche-tete .actions .bt{padding:10px 13px}}
 </style>
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://rayancv94.github.io/tastebridge/">
+<meta property="og:url" content="https://makingdreamscometrue.github.io/tastebridge/">
 <meta property="og:title" content="Tastebridge : films, séries et jeux, reliés">
 <meta property="og:description" content="Tu as aimé un film ? Voici le jeu. Un jeu ? Voici la série. Avec la raison, et où regarder ou jouer.">
-<meta property="og:image" content="https://rayancv94.github.io/tastebridge/medias/social.png">
+<meta property="og:image" content="https://makingdreamscometrue.github.io/tastebridge/medias/social.png">
 <meta property="og:image:width" content="1280"><meta property="og:image:height" content="640">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icones/icone-192.png">
 </head>
 <body>
+<!-- Icônes : Lucide (lucide.dev), licence ISC.
+ISC License
+
+Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2022.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+-->
 <svg style="display:none">
  <symbol id="film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></symbol>
  <symbol id="tv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="15" x="2" y="7" rx="2"/><path d="m17 2-5 5-5-5"/></symbol>
@@ -381,7 +388,6 @@ footer a{color:var(--doux)}
  <symbol id="eclair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
  <symbol id="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
  <symbol id="telecharge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 10l5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
- <symbol id="github" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
 </svg>
 <header><div class="barre">
  <a class="logo" href="#/film"><b><svg aria-hidden="true"><use href="#pont"/></svg></b>Tastebridge</a>
@@ -393,13 +399,12 @@ footer a{color:var(--doux)}
  </nav>
  <button class="chercher" id="chercher" title="Rechercher un film, une série ou un jeu" aria-label="Rechercher"><svg><use href="#loupe"/></svg><span>Rechercher</span></button>
  <span class="compte" id="compte"></span>
- <a class="gh" href="https://github.com/RayanCV94/tastebridge" target="_blank" rel="noopener" title="Le projet sur GitHub" aria-label="Le projet sur GitHub"><svg><use href="#github"/></svg></a>
 </div></header>
 <main id="main"></main>
-<footer><div><span>Tastebridge : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="https://github.com/RayanCV94/tastebridge#how-it-works" target="_blank" rel="noopener">Comment ça marche</a></div></footer>
+<footer><div><span>Tastebridge : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=765485684d"></script>
-<script src="moteur.js?v=7c77cc5050"></script>
+<script src="langue.js?v=228bf3e52a"></script>
+<script src="moteur.js?v=53010fab9c"></script>
 <script>
 let onglet = "film", data = null;
 const $ = s => document.querySelector(s);
@@ -430,10 +435,12 @@ const api = WEB ? {
 function toast(t){const e=$("#toast");e.innerHTML=ico("ok")+esc(t);e.classList.add("v");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("v"),1900)}
 // Wikipédia dans la langue affichée (r.wiki = article anglais, connu depuis Wikidata)
 function lien(r){return r.steam?`https://store.steampowered.com/app/${r.steam}`:enAnglais()?(r.wiki?`https://en.wikipedia.org/wiki/${r.wiki}`:`https://en.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`):`https://fr.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`}
-// Jeux : jaquette verticale Steam si elle existe, sinon le bandeau
-const visuel = r => r.dom === "jeu" && r.steam ? `https://cdn.akamai.steamstatic.com/steam/apps/${r.steam}/library_600x900.jpg` : r.image;
-const repli = r => r.dom === "jeu" && r.image ? `this.onerror=()=>this.remove();this.src='${esc(r.image)}'` : "this.remove()";
-const image = (r, charge = "lazy") => r.image ? `<img src="${esc(visuel(r))}" loading="${charge}" alt="" onload="this.classList.add('ok')" onerror="${repli(r)}">` : "";
+// Pas d'affiches ni de jaquettes : ce sont des œuvres protégées (studios, éditeurs), inutilisables dans un projet
+// commercial sans licence. Chaque titre a une couverture originale : icône du support, titre, teinte du support.
+const TEINTE = {film:"var(--ambre)", serie:"var(--violet)", jeu:"var(--menthe)"};
+// Variation stable par titre (angle du dégradé), pour que deux couvertures voisines ne se ressemblent pas
+const angle = id => 120 + [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 100;
+const couverture = r => `<div class="sans-image" style="--dom:${TEINTE[r.dom]};--a:${angle(r.id)}deg">${ico(ICONE[r.dom])}<span>${esc(r.titre)}</span><svg class="filigrane" aria-hidden="true"><use href="#${ICONE[r.dom]}"/></svg></div>`;
 // Ambiances à la Letterboxd : des combinaisons de thèmes décrites en une phrase (affichage seulement)
 const AMBIANCES = [
  [["Guerre","Historique"], "Batailles historiques et héroïsme épique"],
@@ -512,10 +519,8 @@ function blocOu(r){
    <div class="boutiques">${b.map(([k, id]) => `<a class="bt" href="${esc(BOUTIQUES[k][1](id))}" target="_blank" rel="noopener">${ico("lien")}${BOUTIQUES[k][0]}</a>`).join("")}</div>
    <p class="aide">Plateformes et boutiques : Wikidata (incomplet, surtout pour les consoles).</p>`;
  }
- const o = r.dispo?.[paysOffres()], jw = enAnglais() ? `https://www.justwatch.com/us/search?q=${encodeURIComponent(r.titre)}` : `https://www.justwatch.com/fr/recherche?q=${encodeURIComponent(r.titre)}`;
- const groupe = (titre, l) => l?.length ? `<h3>${titre}</h3><div class="chips">${l.map(x => `<span class="chip${marque(x)}">${esc(x)}</span>`).join("")}</div>` : "";
- return `${o ? `<div class="offres">${groupe("Abonnement ou gratuit", o.abo)}${groupe("Location", o.loc)}${groupe("Achat", o.achat)}</div><p class="aide">Offres : JustWatch, via TMDB.</p>`
-  : `<p class="aide">Offres de streaming non disponibles ici.</p>`}
+ const jw = enAnglais() ? `https://www.justwatch.com/us/search?q=${encodeURIComponent(r.titre)}` : `https://www.justwatch.com/fr/recherche?q=${encodeURIComponent(r.titre)}`;
+ return `<p class="aide">Les offres de streaming changent souvent : JustWatch les tient à jour.</p>
   <a class="bt" href="${jw}" target="_blank" rel="noopener">${ico("lien")}Toutes les offres sur JustWatch</a>`;
 }
 function reglerServices(k){
@@ -555,7 +560,7 @@ function carte(r){
  const b = (cls, note, icone, texte) => `<button class="${cls}" title="${texte}" aria-label="${texte} : ${esc(r.titre)}" onclick="noter('${r.id}','${note}')">${ico(icone)}</button>`;
  return `<article class="c" id="c-${r.id}">
   <div class="cadre">
-   <a class="couvre" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true"><div class="sans-image">${ico(ICONE[r.dom])}${esc(r.titre)}</div>${image(r)}</a>
+   <a class="couvre" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true">${couverture(r)}</a>
    ${r.match != null ? `<a class="pct" href="${lienFiche(r, "score")}" title="D'où vient ce score"><span class="vh">Correspondance :</span><i></i>${r.match} %</a>` : ""}${etoile(r)}
    <div class="voile"><div class="mini-act">${b("a1","adore","coeur","J'adore")}${b("a2","aime","pouce","J'aime")}${b("a3","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("a4","bof","non","Pas pour moi")}${boutonAvis(r)}</div></div>
   </div>
@@ -569,7 +574,6 @@ function carte(r){
 function scene(r){
  const b = (cls, note, icone, texte) => `<button class="bt ${cls}" onclick="noter('${r.id}','${note}')">${ico(icone)}${texte}</button>`;
  return `<section class="scene" id="c-${r.id}">
-  ${r.image ? `<div class="fondu" style="background-image:url('${esc(r.image)}')"></div>` : ""}
   <div class="texte">
    <span class="etiquette"><i></i>Notre meilleur choix pour toi · ${r.match} %</span>
    <h2 class="${r.titre.length > 26 ? "long" : ""}"><a href="${lienFiche(r)}">${esc(r.titre)}</a><span>${lienAnnee(r.annee)}</span></h2>
@@ -579,7 +583,7 @@ function scene(r){
    <div class="actions">${b("plein","aime","pouce","J'aime")}${b("","adore","coeur","J'adore")}${b("","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("","bof","non","Pas pour moi")}
     ${boutonAvis(r, "bt", "Fiche et avis")}<a class="bt" href="${lien(r)}" target="_blank" rel="noopener">${ico("lien")}${r.steam ? "Sur Steam" : "En savoir plus"}</a></div>
   </div>
-  <a class="affiche" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true">${image(r, "eager")}</a>
+  <a class="affiche" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true">${couverture(r)}</a>
  </section>`;
 }
 
@@ -606,7 +610,7 @@ function rendre(){
 // En ce moment : tendances de la semaine (Wikipédia, Steam), celles qui te ressemblent d'abord
 function railTendances(dom){
  const l = Moteur.tendances(dom);
- return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3><p>${Moteur.avecReddit() ? "Les plus lus sur Wikipédia, les plus joués sur Steam ou les plus discutés sur Reddit cette semaine, ceux qui te ressemblent d'abord." : "Les plus lus sur Wikipédia ou les plus joués sur Steam cette semaine, ceux qui te ressemblent d'abord."}</p></div>
+ return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3><p>Les plus lus sur Wikipédia ou les plus joués sur Steam cette semaine, ceux qui te ressemblent d'abord.</p></div>
   <div class="rail rail-cartes">${l.map(carte).join("")}</div></section>` : "";
 }
 
@@ -632,7 +636,7 @@ function lancerDe(){
  if (!r){ z.innerHTML = `<div class="vide">${ico("de")}<span>Rien à tirer ici pour l'instant : note quelques titres de plus.</span></div>`; return; }
  const bt = (cls, note, icone, texte) => `<button class="bt ${cls}" onclick="noter('${r.id}','${note}')">${ico(icone)}${texte}</button>`;
  z.innerHTML = `<article class="tirage" id="c-${r.id}">
-  <a class="cadre" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true">${image(r, "eager")}<div class="sans-image">${ico(ICONE[r.dom])}${esc(r.titre)}</div></a>
+  <a class="cadre" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true">${couverture(r)}</a>
   <div class="infos"><span class="type">${ico(ICONE[r.dom])}${NOM[r.dom]}${r.annee ? " · " : ""}${lienAnnee(r.annee)}</span>
    <h3><a class="titre" href="${lienFiche(r)}">${esc(r.titre)}</a></h3>
    ${r.parce_que[0] ? `<p class="parce">Parce que tu aimes ${lienTitre(r.parce_que[0])}</p>` : ""}
@@ -667,10 +671,10 @@ function accueil(pret = true){
  const mur = pret ? ["film","serie","film","jeu"].flatMap(d => Moteur.populaires(d, 12)).filter(x => x.image).slice(0, 40) : [];
  // L'affiche note (geste rapide), le titre en dessous ouvre la fiche, l'état est écrit sous chaque affiche
  const rang = (d, nom) => `<section class="section"><div class="tete"><h3>${nom}</h3></div><div class="rail">${!pret ? '<div class="pop" aria-hidden="true"><div class="squelette"></div><span class="pop-titre">&nbsp;</span><span class="pop-etat"></span></div>'.repeat(10) : Moteur.populaires(d, 40).map(x=>`<div class="pop" data-n="${x.note || ""}">
-  <button class="pop-note" onclick="choisir('${x.id}', this.parentElement)" aria-pressed="${!!x.note}" aria-label="${esc(x.titre)}"><div class="cadre"><div class="sans-image">${ico(ICONE[d])}${esc(x.titre)}</div>${image(x)}<span class="coche">${ico("ok")}</span></div></button>
+  <button class="pop-note" onclick="choisir('${x.id}', this.parentElement)" aria-pressed="${!!x.note}" aria-label="${esc(x.titre)}"><div class="cadre">${couverture(x)}<span class="coche">${ico("ok")}</span></div></button>
   <a class="pop-titre" href="${lienFiche(x)}" title="Voir la fiche">${esc(x.titre)}</a><span class="pop-etat">${x.note ? esc(ETAT_POP[x.note] || TEXTE[x.note]) : ""}</span></div>`).join("")}</div></section>`;
- const murHtml = mur.map(x=>`<img src="${esc(visuel(x))}" alt="" onerror="this.style.visibility='hidden'">`).join("");
- const rails = `<p class="aide-rail">Appuie sur une affiche : une fois pour J'aime, deux pour J'adore, trois pour retirer. Le titre ouvre la fiche.</p>${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}`;
+ const murHtml = mur.map(x=>`<div class="tuile">${couverture(x)}</div>`).join("");
+ const rails = `<p class="aide-rail">Appuie sur une couverture : une fois pour J'aime, deux pour J'adore, trois pour retirer. Le titre ouvre la fiche.</p>${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}`;
  // Déjà affiché sans catalogue : on complète le mur et les rails sans retoucher le texte (pas de nouveau rendu du titre)
  if (pret && $(".accueil[data-attente]")) { $(".accueil").removeAttribute("data-attente"); $(".mur").innerHTML = murHtml; $("#choix").innerHTML = rails; majProgres(); return; }
  m.innerHTML = `<section class="accueil"${pret ? "" : " data-attente"}>
@@ -697,7 +701,7 @@ async function gouts(){
  const m = $("#main"); m.className = "";
  const liste = await api.gouts();
  const sel = r => `<select aria-label="Ton avis sur ${esc(r.titre)}" onchange="noter('${r.id}',this.value)">${r.note ? "" : `<option value="">Ton avis...</option>`}${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}" ${k===r.note?"selected":""}>${v}</option>`).join("")}${r.note ? `<option value="">Retirer</option>` : ""}</select>`;
- const ligne = r => `<div class="l"><a class="mini" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true" style="background-image:url('${esc(visuel(r)||"")}')"></a><div class="nom"><a href="${lienFiche(r)}">${esc(r.titre)}</a><small>${NOM[r.dom]}${r.annee ? " · " + r.annee : ""}</small></div>${r.heures ? `<span class="h">${r.heures} h</span>` : ""}${sel(r)}</div>`;
+ const ligne = r => `<div class="l"><a class="mini" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true" style="--dom:${TEINTE[r.dom]}">${ico(ICONE[r.dom])}</a><div class="nom"><a href="${lienFiche(r)}">${esc(r.titre)}</a><small>${NOM[r.dom]}${r.annee ? " · " + r.annee : ""}</small></div>${r.heures ? `<span class="h">${r.heures} h</span>` : ""}${sel(r)}</div>`;
  const vus = liste.filter(r => filtre === "tout" || r.dom === filtre);
  m.innerHTML = `<div class="colonnes">
   <div>
@@ -731,7 +735,7 @@ async function gouts(){
  }
  let t; $("#q").oninput = e => { clearTimeout(t); t = setTimeout(async () => {
   const r = await api.cherche(e.target.value);
-  $("#res").innerHTML = r.map(x=>`<div class="l"><a class="mini" href="${lienFiche(x)}" tabindex="-1" aria-hidden="true" style="background-image:url('${esc(visuel(x)||"")}')"></a><div class="nom"><a href="${lienFiche(x)}">${esc(x.titre)}</a><small>${NOM[x.dom]}${x.annee ? " · " + x.annee : ""}</small></div>
+  $("#res").innerHTML = r.map(x=>`<div class="l"><a class="mini" href="${lienFiche(x)}" tabindex="-1" aria-hidden="true" style="--dom:${TEINTE[x.dom]}">${ico(ICONE[x.dom])}</a><div class="nom"><a href="${lienFiche(x)}">${esc(x.titre)}</a><small>${NOM[x.dom]}${x.annee ? " · " + x.annee : ""}</small></div>
    <select aria-label="Ton avis sur ${esc(x.titre)}" onchange="noter('${x.id}',this.value)"><option value="">Ton avis...</option>${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>`).join("");
  }, 200); };
 }
@@ -778,7 +782,6 @@ function notesExternes(r){
  const l = [];
  if (r.dom === "jeu") l.push(ligne("Steam", r.avis ? esc(r.avis) : ND, r.avis && "avis des joueurs, via SteamSpy"));
  else {
-  l.push(ligne("IMDb", r.note_imdb != null ? `${decimal(r.note_imdb)} /10` : ND, r.note_imdb != null && `${nombre(r.votes_imdb)} votes`, r.note_imdb != null && "Information courtesy of IMDb (imdb.com). Used with permission."));
   l.push(ligne("Metacritic", r.metacritic != null ? `${r.metacritic} /100` : ND, r.metacritic != null && "note de la presse, via Wikidata"));
   l.push(ligne("Rotten Tomatoes", r.rt != null ? `${r.rt} %` : ND, r.rt != null && "critiques positives, via Wikidata"));
  }
@@ -820,7 +823,8 @@ async function resumeWiki(r, recaler){
   const j = await rep.json(), url = j.content_urls?.desktop?.page;
   if (!j.extract) return fin(`<p class="aide">Résumé non disponible.</p>`);
   fin(`<p class="resume-texte" lang="${langue}">${esc(j.extract)}</p>${repli ? `<p class="aide">Pas d'article en français : résumé de Wikipédia en anglais.</p>` : ""}
-   ${/^https:\/\/[a-z]+\.wikipedia\.org\//.test(url || "") ? `<a href="${esc(url)}" target="_blank" rel="noopener">Lire l'article sur Wikipédia</a>` : ""}`);
+   ${/^https:\/\/[a-z]+\.wikipedia\.org\//.test(url || "") ? `<a href="${esc(url)}" target="_blank" rel="noopener">Lire l'article sur Wikipédia</a>` : ""}
+   <p class="aide">Texte extrait de Wikipédia, par ses contributeurs, sous licence <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</p>`);
  } catch { fin(`<p class="aide">Résumé indisponible pour le moment : Wikipédia ne répond pas.</p>`); }
 }
 async function fichePage(dom, id, ancre){
@@ -836,8 +840,7 @@ async function fichePage(dom, id, ancre){
  m.className = r.dom;
  m.innerHTML = `<article class="fiche-page">
   <header class="fiche-tete">
-   ${r.image ? `<div class="fondu" style="background-image:url('${esc(r.image)}')"></div>` : ""}
-   <div class="aff-fiche"><div class="sans-image">${ico(ICONE[r.dom])}${esc(r.titre)}</div>${image(r, "eager")}</div>
+    <div class="aff-fiche">${couverture(r)}</div>
    <div class="texte">
     <p class="type-fiche">${ico(ICONE[r.dom])}${NOM[r.dom]}${r.annee ? " · " : ""}${lienAnnee(r.annee)}</p>
     ${amb[0] ? `<a class="accroche" href="${lienListe("ambiance", amb[0])}">${esc(amb[0])}</a>` : ""}
@@ -855,7 +858,7 @@ async function fichePage(dom, id, ancre){
     <section class="bloc" id="resume"><h2>Résumé</h2><div class="contenu"><p class="aide">Chargement du résumé…</p></div></section>
     <section class="bloc" id="score"><h2>Pourquoi ce titre pour toi</h2>${pourToiBloc(r)}</section>
     <section class="bloc" id="avis"><h2>Avis des visiteurs</h2><div class="avis-zone">${WEB ? `<p class="aide">Chargement des avis…</p>`
-     : `<p class="aide">Les avis des visiteurs sont sur <a href="https://rayancv94.github.io/tastebridge/${lienFiche(r)}" target="_blank" rel="noopener">le site en ligne</a>.</p>`}</div></section>
+     : `<p class="aide">Les avis des visiteurs sont sur <a href="https://makingdreamscometrue.github.io/tastebridge/${lienFiche(r)}" target="_blank" rel="noopener">le site en ligne</a>.</p>`}</div></section>
    </div>
    <div>
     <section class="bloc" id="ou"><h2>${r.dom === "jeu" ? "Où jouer" : "Où regarder"}</h2>${blocOu(r)}</section>
@@ -936,6 +939,35 @@ async function partagerListe(l){
  try { if (navigator.share) { await navigator.share({title: l.titre, text: `${l.titre} · Tastebridge`, url}); return; } } catch (e) { if (e.name === "AbortError") return; }
  try { await navigator.clipboard.writeText(url); toast("Lien copié"); } catch { prompt("Copie ce lien :", url); }
 }
+// Mentions légales (LCEN), confidentialité (RGPD), sources et licences. Bilingue ici plutôt que dans langue.js (longs paragraphes).
+function mentions(){
+ vue = "mentions"; marquerNav(null);
+ const m = $("#main"); m.className = "";
+ const en = enAnglais(), t = (fr, an) => en ? an : fr;
+ m.innerHTML = `<section class="section mentions"><div class="tete"><h3>${t("Mentions légales et licences", "Legal notice and licences")}</h3></div>
+  <h4>${t("Éditeur", "Publisher")}</h4>
+  <p>Rayan Achmahou. ${t("Contact", "Contact")} : <a href="https://github.com/makingdreamscometrue" target="_blank" rel="noopener">github.com/makingdreamscometrue</a>.</p>
+  <h4>${t("Hébergement", "Hosting")}</h4>
+  <p>${t("Site", "Website")} : GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, ${t("États-Unis", "USA")}. ${t("Comptes", "Accounts")} : Supabase, Inc.</p>
+  <h4>${t("Données personnelles", "Personal data")}</h4>
+  <p>${t("Sans compte, rien ne quitte ton navigateur : tes notes, tes listes et tes réglages restent dans son stockage local. Pas de publicité, pas de mesure d'audience, pas de cookie de suivi.",
+   "Without an account, nothing leaves your browser: your ratings, lists and settings stay in its local storage. No ads, no analytics, no tracking cookies.")}</p>
+  <p>${t("Avec un compte (facultatif) : ton e-mail, ton mot de passe (haché par Supabase, jamais visible par nous), tes notes pour les synchroniser entre appareils, et les avis que tu publies avec ton pseudo (visibles par tous). Ces données servent uniquement à faire fonctionner ton compte et sont gardées tant qu'il existe. Tu peux demander à y accéder, les corriger ou les supprimer via le contact ci-dessus, et saisir la CNIL (cnil.fr) en cas de désaccord.",
+   "With an (optional) account: your email, your password (hashed by Supabase, never visible to us), your ratings to sync them across devices, and the reviews you publish under your nickname (visible to everyone). This data is only used to run your account and is kept while it exists. You can ask to access, correct or delete it through the contact above, and complain to the CNIL (cnil.fr).")}</p>
+  <p>${t("Quand tu ouvres la fiche d'un film ou d'une série, ton navigateur demande le résumé directement à Wikipédia (Wikimedia Foundation).", "When you open a film or show page, your browser fetches the synopsis directly from Wikipedia (Wikimedia Foundation).")}</p>
+  <h4>${t("Sources et licences", "Sources and licences")}</h4>
+  <ul>
+   <li>${t("Titres, genres, notes Metacritic et Rotten Tomatoes : Wikidata, licence CC0.", "Titles, genres, Metacritic and Rotten Tomatoes scores: Wikidata, CC0 licence.")}</li>
+   <li>${t("Résumés : Wikipédia, par ses contributeurs, licence", "Synopses: Wikipedia, by its contributors, licence")} <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</li>
+   <li>${t("Jeux, tags et part d'avis positifs : SteamSpy et Steam.", "Games, tags and share of positive reviews: SteamSpy and Steam.")}</li>
+   <li>${t("Tendances : nombre de lectures Wikipédia (Wikimedia) et de joueurs (SteamSpy).", "Trends: Wikipedia page views (Wikimedia) and player counts (SteamSpy).")}</li>
+   <li>${t("Polices Onest et Gloock : SIL Open Font License 1.1. Icônes : Lucide, licence ISC. Bibliothèque supabase-js : licence MIT.", "Onest and Gloock fonts: SIL Open Font License 1.1. Icons: Lucide, ISC licence. supabase-js library: MIT licence.")}</li>
+  </ul>
+  <p>${t("Aucune affiche ni jaquette n'est reproduite : chaque titre a une couverture dessinée par Tastebridge. Les titres, marques et noms cités (Netflix, Steam, IMDb, Letterboxd, JustWatch, Metacritic, Rotten Tomatoes…) appartiennent à leurs propriétaires ; Tastebridge n'est affilié à aucun d'eux.",
+   "No poster or cover art is reproduced: every title gets a cover drawn by Tastebridge. Titles, trademarks and names mentioned (Netflix, Steam, IMDb, Letterboxd, JustWatch, Metacritic, Rotten Tomatoes…) belong to their owners; Tastebridge is not affiliated with any of them.")}</p>
+ </section>`;
+ scrollTo(0, 0);
+}
 async function mesListes(){
  vue = "listes"; marquerNav("gouts");
  const m = $("#main"), listes = lireListes(); m.className = "";
@@ -944,7 +976,7 @@ async function mesListes(){
   <form class="champ-liste" onsubmit="event.preventDefault(); nouvelleListe(this.nom.value); mesListes()" style="display:flex;gap:8px;margin-bottom:16px">
    <input class="nom-liste" name="nom" maxlength="60" placeholder="Nouvelle liste : Ma liste d'automne" aria-label="Nom de la nouvelle liste" required><button class="bt plein">Créer</button></form>
   ${listes.length ? `<div class="mes-listes">${listes.map((l, k) => { const t = l.items.map(i => par[i]).filter(Boolean);
-   return `<div class="une-liste"><span class="vignettes" aria-hidden="true">${t.slice(0, 4).map(x => `<i style="background-image:url('${esc(visuel(x) || "")}')"></i>`).join("")}</span>
+   return `<div class="une-liste"><span class="vignettes" aria-hidden="true">${t.slice(0, 4).map(x => `<i style="--dom:${TEINTE[x.dom]}"></i>`).join("")}</span>
     <a href="${lienPartage(l)}">${esc(l.titre)}<small>${resumeListe(t)}</small></a>
     <button class="bt" onclick="partagerListe(lireListes()[${k}])" aria-label="Partager ${esc(l.titre)}">${ico("partage")}</button>
     <button class="bt" onclick="if(confirm('Supprimer cette liste ?')){const l=lireListes();l.splice(${k},1);ecrireListes(l);mesListes()}" aria-label="Supprimer ${esc(l.titre)}">${ico("corbeille")}</button></div>`; }).join("")}</div>`
@@ -990,6 +1022,7 @@ function router(){
  if (["theme", "ambiance", "annee"].includes(a) && b) return listePage(a, decodeURIComponent(b));
  if (a === "l" && b) return listePartagee(decodeURIComponent(b), (c || "").split(".").filter(Boolean).map(decodeURIComponent));
  if (a === "listes") return mesListes();
+ if (a === "mentions") return mentions();
  if (ONGLETS.includes(a)) { vue = "onglet"; onglet = a; marquerNav(a); return rendre(); }
  if (WEB && nbNotes < 5) { marquerNav(null); accueil(); return appliquerDefile(); }  // premier passage
  history.replaceState(null, "", "#/film"); router();
@@ -1005,8 +1038,8 @@ if (WEB) {
 }
 else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); compter().then(router); }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="compte.js?v=a9b8fec0de"></script>
+<script src="vendor/supabase.js?v=34035ac76d"></script>
+<script src="compte.js?v=d387590717"></script>
 <script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
 </body>
 </html>

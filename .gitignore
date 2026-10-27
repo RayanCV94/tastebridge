@@ -1,9 +1,0 @@
-# Données personnelles : goûts, réglages (clés Jellyfin), journaux
-donnees/
-# Cache de construction (se refait avec construire.py)
-steamspy_cache.json
-__pycache__/
-*.tmp
-*.log
-.impeccable/
-node_modules/
