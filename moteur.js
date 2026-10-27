@@ -22,7 +22,7 @@ const Moteur = (() => {
       "Ghost of Tsushima DIRECTOR'S CUT", "Outer Wilds", "Sid Meier's Civilization VI", "Left 4 Dead 2", "Valheim", "Inscryption", "Dead Cells",
       "Minecraft Dungeons", "Half-Life: Alyx", "Persona 5 Royal", "Subnautica", "Monster Hunter: World"],
   };
-  let CAT, INDEX, PAR_IMDB, VEC, TENDANCES = {};
+  let CAT, INDEX, PAR_IMDB, VEC, TENDANCES = {}, REDDIT = false;
 
   const simple = t => (t || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const trouver = (dom, titre) => INDEX.get(dom + "|" + simple(titre));
@@ -31,11 +31,15 @@ const Moteur = (() => {
     tmdb: it.tmdb, plateformes: it.plateformes, boutiques: it.boutiques, dispo: it.dispo});
 
   async function charger() {
-    // Tendances de la semaine (tendances.py, mis à jour chaque jour) : facultatives, le site marche sans
-    const tend = fetch("tendances.json").then(r => r.ok ? r.json() : {}).catch(() => ({}));
+    // Tendances de la semaine (tendances.py) et discussions Reddit (communaute.py), mises à jour chaque jour :
+    // facultatives, le site marche sans. Un titre garde son signal le plus fort des deux.
+    const facultatif = url => fetch(url).then(r => r.ok ? r.json() : {}).catch(() => ({}));
+    const signaux = Promise.all([facultatif("tendances.json"), facultatif("communaute.json")]);
     const brut = await (await fetch("catalogue.json")).json();
     TENDANCES = {};
-    for (const [d, l] of Object.entries(await tend)) if (Array.isArray(l)) for (const [i, t] of l) TENDANCES[i] = t;
+    const [, commu] = await signaux;
+    REDDIT = Object.values(commu).some(l => Array.isArray(l) && l.length);
+    for (const s of await signaux) for (const l of Object.values(s)) if (Array.isArray(l)) for (const [i, t] of l) TENDANCES[i] = Math.max(TENDANCES[i] || 0, t);
     CAT = brut.v === 1 ? deplier(brut) : brut;
     INDEX = new Map(); PAR_IMDB = new Map();
     for (const it of Object.values(CAT).sort((a, b) => a.qualite - b.qualite)) {
@@ -287,6 +291,7 @@ const Moteur = (() => {
       return [...new Set([...connus, ...reste])].filter(it => it.image).slice(0, n)
         .map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam, note: notes[it.id] || ""}));
     },
+    avecReddit: () => REDDIT,
     // En ce moment : les tendances de la semaine, celles qui te ressemblent d'abord (moitié tendance, moitié goûts)
     tendances(dom, n = 12) {
       const p = profil(), poids = {};

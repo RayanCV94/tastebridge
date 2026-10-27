@@ -391,8 +391,8 @@ footer a{color:var(--doux)}
 <main id="main"></main>
 <footer><div><span>Tastebridge : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="https://github.com/RayanCV94/tastebridge#how-it-works" target="_blank" rel="noopener">Comment ça marche</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=f295427b9e"></script>
-<script src="moteur.js?v=a5f25ee868"></script>
+<script src="langue.js?v=507960aaf6"></script>
+<script src="moteur.js?v=0af3789590"></script>
 <script>
 let onglet = "film", data = null;
 const $ = s => document.querySelector(s);
@@ -589,7 +589,7 @@ function rendre(){
 // En ce moment : tendances de la semaine (Wikipédia, Steam), celles qui te ressemblent d'abord
 function railTendances(dom){
  const l = Moteur.tendances(dom);
- return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3><p>Les plus lus sur Wikipédia ou les plus joués sur Steam cette semaine, ceux qui te ressemblent d'abord.</p></div>
+ return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3><p>${Moteur.avecReddit() ? "Les plus lus sur Wikipédia, les plus joués sur Steam ou les plus discutés sur Reddit cette semaine, ceux qui te ressemblent d'abord." : "Les plus lus sur Wikipédia ou les plus joués sur Steam cette semaine, ceux qui te ressemblent d'abord."}</p></div>
   <div class="rail rail-cartes">${l.map(carte).join("")}</div></section>` : "";
 }
 

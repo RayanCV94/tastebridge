@@ -585,7 +585,7 @@ function rendre(){
 // En ce moment : tendances de la semaine (Wikipédia, Steam), celles qui te ressemblent d'abord
 function railTendances(dom){
  const l = Moteur.tendances(dom);
- return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3><p>Les plus lus sur Wikipédia ou les plus joués sur Steam cette semaine, ceux qui te ressemblent d'abord.</p></div>
+ return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3><p>${Moteur.avecReddit() ? "Les plus lus sur Wikipédia, les plus joués sur Steam ou les plus discutés sur Reddit cette semaine, ceux qui te ressemblent d'abord." : "Les plus lus sur Wikipédia ou les plus joués sur Steam cette semaine, ceux qui te ressemblent d'abord."}</p></div>
   <div class="rail rail-cartes">${l.map(carte).join("")}</div></section>` : "";
 }
 
