@@ -1,6 +1,6 @@
-# Tastebridge (site public)
+# Pontil (site public)
 
-Fichiers générés du site https://makingdreamscometrue.github.io/tastebridge/ (GitHub Pages, dossier `docs/`) :
+Fichiers générés du site https://makingdreamscometrue.github.io/pontil/ (GitHub Pages, dossier `docs/`) :
 ne pas les modifier ici. Le code source est dans un dépôt privé, qui publie ce dossier avec `python publier.py`.
 
 Seule chose qui vit ici : `maj.py`, lancé chaque jour par `.github/workflows/tendances.yml`, met à jour
