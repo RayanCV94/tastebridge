@@ -88,9 +88,20 @@ test("lien direct, titre inconnu, liste par thème", async () => {
   const {p, erreurs} = await page();
   await p.goto(base + "#/jeu/steam2358720"); await p.waitForSelector(".fiche-page");
   assert.match(await p.$eval("#notes", e => e.innerText), /positifs/);
+  assert.match(await p.$eval("#ou", e => e.innerText), /Steam/);
+  assert.ok(await p.$$eval("#ou a", l => l.some(a => a.href.startsWith("https://store.steampowered.com/app/2358720"))));
   await p.goto(base + "#/film/Q_INEXISTANT"); await p.waitForSelector(".vide");
   await p.goto(base + "#/theme/Western"); await p.waitForSelector("#main .c");
   assert.match(await p.$eval("#main .tete", e => e.innerText), /titres/);
+  assert.deepEqual(erreurs, []);
+});
+
+test("mes services : un jeu Xbox ressort « chez toi »", async () => {
+  const {p, erreurs} = await page();
+  await p.goto(base + "#/gouts"); await p.waitForSelector(".services");
+  await p.click('.services [data-k="xbox"]');
+  await p.goto(base + "#/jeu/steam2358720"); await p.waitForSelector("#ou");
+  assert.deepEqual(await p.$$eval("#ou .chip.mien", l => l.map(e => e.textContent)), ["Xbox Series"]);
   assert.deepEqual(erreurs, []);
 });
 

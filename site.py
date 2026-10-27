@@ -47,7 +47,8 @@ def compact(items):
     lignes = [[it["id"], "fsj".index(it["dom"][0]), it["titre"], it["titre_en"] if it["titre_en"] != it["titre"] else 0,
                it.get("annee") or 0, round(it["qualite"] * 1e4), [rang[t] for t in it["themes"]], image(it),
                it.get("wiki") or "", it.get("imdb") or "", it.get("steam") or 0, avis(it),
-               it.get("metacritic"), it.get("rt"), it.get("note_imdb"), it.get("votes_imdb")] for it in items.values()]
+               it.get("metacritic"), it.get("rt"), it.get("note_imdb"), it.get("votes_imdb"),
+               it.get("plateformes"), it.get("boutiques"), it.get("dispo")] for it in items.values()]
     for l in lignes:  # champs vides en fin de ligne retirés
         while l[-1] in (None, 0, ""):
             l.pop()

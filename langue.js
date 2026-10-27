@@ -127,6 +127,12 @@
     "Aucun titre assez proche dans le catalogue.": "No close enough title in the catalog.", "Thèmes communs :": "Shared themes:",
     // Liens et listes (page.html)
     "Appuie sur une affiche : une fois pour J'aime, deux pour J'adore, trois pour retirer. Le titre ouvre la fiche.": "Tap a poster: once for Like, twice for Love, three times to remove. The title opens the details page.",
+    // Où regarder, où jouer
+    "Où jouer": "Where to play", "Où regarder": "Where to watch", "Chez toi": "You have it", "Plateformes non disponibles.": "Platforms not available.",
+    "Plateformes et boutiques : Wikidata (incomplet, surtout pour les consoles).": "Platforms and stores: Wikidata (incomplete, especially for consoles).",
+    "Abonnement ou gratuit": "Subscription or free", "Location": "Rent", "Achat": "Buy", "Offres : JustWatch, via TMDB.": "Offers: JustWatch, via TMDB.",
+    "Offres de streaming non disponibles ici.": "Streaming offers not available here.", "Toutes les offres sur JustWatch": "All offers on JustWatch", "Mes services": "My services",
+    "Ce que tu as : les recos disponibles chez toi passent un peu devant, et sont signalées « Chez toi ».": "What you have: recommendations available to you rank a bit higher and are marked \u201cYou have it\u201d.",
     "Film ·": "Movie ·", "Série ·": "Show ·", "Jeu ·": "Game ·",
     "Voir la fiche": "Open details", "Voir les avis": "See reviews", "Moyenne des visiteurs :": "Visitor average:", "Correspondance :": "Match:", "D'où vient ce score": "Where this score comes from",
     "Thème": "Genre", "Ambiance": "Theme", "Année": "Year", "titres, tous supports confondus, les plus acclamés d'abord.": "titles across movies, shows and games, most acclaimed first.",

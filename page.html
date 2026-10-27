@@ -310,6 +310,17 @@ footer a{color:var(--doux)}
 .notes-ext dt{color:var(--doux);font-size:13.5px;font-weight:600}
 .notes-ext dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
 .notes-ext dd small{display:block;font-weight:400;color:#8a8995;font-size:12px;max-width:26ch}
+.ou{display:flex;align-items:center;gap:6px;margin:3px 0 0;font-size:12px;color:var(--doux);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ou svg{width:13px;height:13px;flex:none;color:var(--pale)}
+.ou b,.chip.mien{color:var(--menthe);font-weight:600}
+.chip.mien{border-color:color-mix(in srgb,var(--menthe) 45%,transparent)}
+.offres h3{margin:12px 0 6px;font:600 12px Onest;color:var(--doux)}
+.offres h3:first-child{margin-top:0}
+.offres .chips{margin-bottom:4px}
+.boutiques{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.services{display:flex;flex-wrap:wrap;gap:6px}
+.services button{background:none;border:1px solid var(--trait2);color:var(--doux);font:500 13px Onest;padding:6px 12px;border-radius:30px;cursor:pointer}
+.services button[aria-pressed="true"]{background:color-mix(in srgb,var(--menthe) 18%,transparent);border-color:var(--menthe);color:var(--texte)}
 .nd{color:#8a8995;font-weight:400}  /* --pale manque de contraste sur --surface (4,4:1) */
 .liens-ext{display:flex;flex-wrap:wrap;gap:8px}
 #proches{scroll-margin-top:90px}
@@ -334,6 +345,7 @@ footer a{color:var(--doux)}
  <symbol id="etoile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 2.3a.53.53 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.1l5.2.8a.53.53 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.53.53 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.53.53 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.8a.53.53 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.1z"/></symbol>
  <symbol id="loupe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
  <symbol id="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+ <symbol id="ecran" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
  <symbol id="lien" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
  <symbol id="cadenas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
  <symbol id="eclair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
@@ -436,6 +448,49 @@ const lienTitre = x => `<a href="${lienFiche(x)}">${esc(x.titre)}</a>`;
 const raisons = (r, cls = "pq") => r.parce_que.length ? `<p class="${cls}">Parce que tu as aimé ${r.parce_que.map(lienTitre).join(" et ")}</p>` : "";
 const lienAnnee = a => a ? `<a href="${lienListe("annee", a)}">${a}</a>` : "";
 
+// ---------- Où regarder, où jouer (disponibilites.py) ----------
+const BOUTIQUES = {steam: ["Steam", id => `https://store.steampowered.com/app/${id}`], gog: ["GOG", id => `https://www.gog.com/${encodeURI(id)}`],
+ epic: ["Epic Games Store", id => `https://store.epicgames.com/p/${encodeURI(id)}`], ms: ["Microsoft Store", id => `https://apps.microsoft.com/detail/${encodeURI(id)}`],
+ ps: ["PlayStation Store", id => `https://store.playstation.com/product/${encodeURI(id)}`], eshop: ["Nintendo eShop", id => `https://www.nintendo.com/us/store/products/${encodeURI(id)}/`]};
+const SERVICES_NOMS = [["netflix", "Netflix"], ["prime", "Prime Video"], ["disney", "Disney+"], ["canal", "Canal+"], ["apple", "Apple TV+"], ["max", "Max"],
+ ["paramount", "Paramount+"], ["crunchyroll", "Crunchyroll"], ["pc", "PC"], ["playstation", "PlayStation"], ["xbox", "Xbox"], ["switch", "Switch"], ["mac", "Mac"]];
+const paysOffres = () => enAnglais() ? "US" : "FR";
+// Plateformes d'un jeu : celles de Wikidata, complétées par les boutiques (une fiche PlayStation Store = jouable sur PlayStation)
+const plateformesJeu = r => { const p = [...(r.plateformes || [])];
+ if (r.boutiques?.ps && !p.some(x => x.startsWith("PS"))) p.push("PlayStation");
+ if (r.boutiques?.eshop && !p.some(x => x.startsWith("Switch"))) p.push("Switch");
+ return p; };
+const mesServices = () => { try { return JSON.parse(localStorage.getItem("tastebridge-services")) || []; } catch { return []; } };
+const chezMoi = r => WEB ? Moteur.chezMoi(r) : [];
+// Ligne courte sous chaque carte : où regarder ou jouer, en vert si c'est sur un de tes services
+function ouCourt(r){
+ const liste = r.dom === "jeu" ? plateformesJeu(r) : r.dispo?.[paysOffres()]?.abo || [];
+ if (!liste.length) return "";
+ const moi = chezMoi(r).length > 0;
+ return `<p class="ou">${ico("ecran")}${moi ? "<b>Chez toi</b> · " : ""}${liste.slice(0, 3).map(esc).join(" · ")}</p>`;
+}
+function blocOu(r){
+ // Une offre ou une plateforme que tu as (réglage « Mes services ») ressort en vert
+ const marque = n => WEB && Moteur.chezMoi(r.dom === "jeu" ? {dom: "jeu", plateformes: [n]} : {dom: r.dom, dispo: {[Moteur.pays()]: {abo: [n]}}}).length ? " mien" : "";
+ if (r.dom === "jeu") {
+  const pl = plateformesJeu(r);
+  const b = [["steam", r.steam], ...Object.entries(r.boutiques || {})].filter(([k, id]) => id && BOUTIQUES[k]);
+  return `${pl.length ? `<div class="chips">${pl.map(x => `<span class="chip${marque(x)}">${esc(x)}</span>`).join("")}</div>` : `<p class="aide">Plateformes non disponibles.</p>`}
+   <div class="boutiques">${b.map(([k, id]) => `<a class="bt" href="${esc(BOUTIQUES[k][1](id))}" target="_blank" rel="noopener">${ico("lien")}${BOUTIQUES[k][0]}</a>`).join("")}</div>
+   <p class="aide">Plateformes et boutiques : Wikidata (incomplet, surtout pour les consoles).</p>`;
+ }
+ const o = r.dispo?.[paysOffres()], jw = enAnglais() ? `https://www.justwatch.com/us/search?q=${encodeURIComponent(r.titre)}` : `https://www.justwatch.com/fr/recherche?q=${encodeURIComponent(r.titre)}`;
+ const groupe = (titre, l) => l?.length ? `<h3>${titre}</h3><div class="chips">${l.map(x => `<span class="chip${marque(x)}">${esc(x)}</span>`).join("")}</div>` : "";
+ return `${o ? `<div class="offres">${groupe("Abonnement ou gratuit", o.abo)}${groupe("Location", o.loc)}${groupe("Achat", o.achat)}</div><p class="aide">Offres : JustWatch, via TMDB.</p>`
+  : `<p class="aide">Offres de streaming non disponibles ici.</p>`}
+  <a class="bt" href="${jw}" target="_blank" rel="noopener">${ico("lien")}Toutes les offres sur JustWatch</a>`;
+}
+function reglerServices(k){
+ const l = mesServices(), i = l.indexOf(k); if (i < 0) l.push(k); else l.splice(i, 1);
+ try { localStorage.setItem("tastebridge-services", JSON.stringify(l)); } catch {}
+ data = null; document.querySelectorAll(`.services [data-k="${k}"]`).forEach(b => b.setAttribute("aria-pressed", i < 0));
+}
+
 // Fiche d'une œuvre : une page entière à son adresse (#/film/ID), voir fichePage()
 const lienFiche = (r, ancre) => `#/${r.dom}/${encodeURIComponent(r.id)}${ancre ? "/" + ancre : ""}`;
 // Moyennes des avis de tout le monde (compte.js remplit window.NOTES : id -> [moyenne, nombre])
@@ -462,7 +517,7 @@ function carte(r){
    <div class="voile"><div class="mini-act">${b("a1","adore","coeur","J'adore")}${b("a2","aime","pouce","J'aime")}${b("a3","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("a4","bof","non","Pas pour moi")}${boutonAvis(r)}</div></div>
   </div>
   <div class="legende"><a class="titre" href="${lienFiche(r)}">${esc(r.titre)}</a><span>${lienAnnee(r.annee)}${r.annee ? " · " : ""}${r.themes?.[0] ? `<a href="${lienListe("theme", r.themes[0])}">${esc(r.themes[0])}</a>` : NOM[r.dom]}</span>
-   ${r.parce_que?.length ? raisons(r) : r.communs?.length ? `<p class="pq">Thèmes communs : ${r.communs.map(t => `<a href="${lienListe("theme", t)}">${esc(t)}</a>`).join(", ")}</p>`
+   ${ouCourt(r)}${r.parce_que?.length ? raisons(r) : r.communs?.length ? `<p class="pq">Thèmes communs : ${r.communs.map(t => `<a href="${lienListe("theme", t)}">${esc(t)}</a>`).join(", ")}</p>`
     : ambiances(r.themes, 1).map(a => `<em><a href="${lienListe("ambiance", a)}">${esc(a)}</a></em>`).join("")}</div>
  </article>`;
 }
@@ -598,6 +653,8 @@ async function gouts(){
    <section class="panneau"><h3>Ajouter un titre</h3><p class="aide">Un film, une série ou un jeu que tu as vu ou fait.</p>
     <div class="champ">${ico("loupe")}<input id="q" placeholder="Interstellar, The Last of Us, Elden Ring..." autocomplete="off"></div>
     <div class="lignes" id="res"></div></section>
+   ${WEB ? `<section class="panneau"><h3>Mes services</h3><p class="aide">Ce que tu as : les recos disponibles chez toi passent un peu devant, et sont signalées « Chez toi ».</p>
+    <div class="services">${SERVICES_NOMS.map(([k, v]) => `<button data-k="${k}" aria-pressed="${mesServices().includes(k)}" onclick="reglerServices('${k}')">${v}</button>`).join("")}</div></section>` : ""}
    <section class="panneau"><h3>Importer ton historique</h3><p class="aide">Le fichier est lu ${WEB ? "dans ton navigateur" : "sur ton PC"}, rien n'est envoyé.</p>
     <label class="depot" id="depot"><input type="file" accept=".csv" multiple hidden id="fichier">${ico("televerse")}<strong>Glisse un fichier CSV ici</strong>ou clique pour le choisir</label>
     <div class="sources"><span class="chip">Netflix : netflix.com/viewingactivity, Tout télécharger</span><span class="chip">IMDb : export de tes notes</span><span class="chip">Letterboxd : export</span><span class="chip">Tout CSV avec une colonne Title</span></div>
@@ -748,6 +805,7 @@ async function fichePage(dom, id, ancre){
      : `<p class="aide">Les avis des visiteurs sont sur <a href="https://rayancv94.github.io/tastebridge/${lienFiche(r)}" target="_blank" rel="noopener">le site en ligne</a>.</p>`}</div></section>
    </div>
    <div>
+    <section class="bloc" id="ou"><h2>${r.dom === "jeu" ? "Où jouer" : "Où regarder"}</h2>${blocOu(r)}</section>
     <section class="bloc" id="notes"><h2>Notes</h2>${notesExternes(r)}</section>
     <section class="bloc" id="liens"><h2>Ailleurs</h2><div class="liens-ext">${liensExt(r)}</div></section>
    </div>

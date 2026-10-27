@@ -9,8 +9,8 @@ const vm = require("node:vm");
 const ICI = path.join(__dirname, "..");
 const source = JSON.parse(fs.readFileSync(path.join(ICI, "catalogue.json"), "utf8"));
 
-async function moteur(langue = "fr") {
-  const stockage = new Map([["tastebridge-langue", langue]]);
+async function moteur(langue = "fr", services = []) {
+  const stockage = new Map([["tastebridge-langue", langue], ["tastebridge-services", JSON.stringify(services)]]);
   const bac = {
     fetch: async () => ({json: async () => JSON.parse(fs.readFileSync(path.join(ICI, "docs", "catalogue.json"), "utf8"))}),
     localStorage: {getItem: k => stockage.get(k) ?? null, setItem: (k, v) => stockage.set(k, String(v)), removeItem: k => stockage.delete(k)},
@@ -71,6 +71,19 @@ test("listes et recherche", async () => {
   assert.ok(l.total > 0 && l.titres.length <= 60);
   assert.equal(M.cherche("das boot")[0].id, "Q62730");
   assert.equal(M.cherche("le bateau")[0].id, "Q62730");
+});
+
+test("où jouer : plateformes Wikidata, « chez moi » selon mes services", async () => {
+  const liste = a => Array.from(a);  // tableaux venus du bac à sable vm
+  const M = await moteur();
+  const w = M.fiche("steam2358720");
+  assert.ok(w.plateformes.includes("PC"));
+  assert.deepEqual(liste(M.chezMoi(w)), []);  // aucun service réglé
+  const X = await moteur("fr", ["xbox"]);
+  assert.deepEqual(liste(X.chezMoi({dom: "jeu", plateformes: ["Xbox Series"]})), ["xbox"]);
+  assert.deepEqual(liste(X.chezMoi({dom: "jeu", boutiques: {ms: "x"}})), []);  // Microsoft Store = PC, pas forcément Xbox
+  const N = await moteur("fr", ["netflix"]);
+  assert.deepEqual(liste(N.chezMoi({dom: "film", dispo: {FR: {abo: ["Netflix"]}}})), ["netflix"]);
 });
 
 test("site en anglais : titre anglais affiché", async () => {

@@ -26,8 +26,9 @@ const Moteur = (() => {
 
   const simple = t => (t || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const trouver = (dom, titre) => INDEX.get(dom + "|" + simple(titre));
-  // Notes externes (construire.py, notes.py) : IMDb seulement si le site a été publié avec --avec-imdb
-  const notesExt = it => ({imdb: it.imdb, note_imdb: it.note_imdb, votes_imdb: it.votes_imdb, metacritic: it.metacritic, rt: it.rt});
+  // Notes externes (notes.py ; IMDb seulement si le site a été publié avec --avec-imdb) et disponibilités (disponibilites.py)
+  const notesExt = it => ({imdb: it.imdb, note_imdb: it.note_imdb, votes_imdb: it.votes_imdb, metacritic: it.metacritic, rt: it.rt,
+    tmdb: it.tmdb, plateformes: it.plateformes, boutiques: it.boutiques, dispo: it.dispo});
 
   async function charger() {
     const brut = await (await fetch("catalogue.json")).json();
@@ -47,12 +48,13 @@ const Moteur = (() => {
   // Catalogue compact du site (site.py) : on reconstruit les objets
   function deplier({themes, prefixes, lignes}) {
     const cat = {}, milliers = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    for (const [id, d, titre, titre_en, annee, q, th, img, wiki, imdb, steam, avis, metacritic, rt, note_imdb, votes_imdb] of lignes) {
+    for (const [id, d, titre, titre_en, annee, q, th, img, wiki, imdb, steam, avis, metacritic, rt, note_imdb, votes_imdb, plateformes, boutiques, dispo] of lignes) {
       const dom = ["film", "serie", "jeu"][d];
       const image = dom === "jeu" ? `https://cdn.akamai.steamstatic.com/steam/apps/${steam}/header.jpg` : !img ? undefined : /^\d:/.test(img) ? prefixes[+img[0]] + img.slice(2) : img;
       cat[id] = {id, dom, titre, titre_en: titre_en || titre, annee: annee || undefined, qualite: q / 1e4, themes: th.map(k => themes[k]), image,
         wiki: wiki || undefined, imdb: imdb || undefined, steam: steam || undefined, avis: avis ? `${avis[0]} % positifs sur ${milliers(avis[1])} avis` : undefined,
-        metacritic: metacritic ?? undefined, rt: rt ?? undefined, note_imdb: note_imdb ?? undefined, votes_imdb: votes_imdb ?? undefined};
+        metacritic: metacritic ?? undefined, rt: rt ?? undefined, note_imdb: note_imdb ?? undefined, votes_imdb: votes_imdb ?? undefined,
+        plateformes: plateformes || undefined, boutiques: boutiques || undefined, dispo: dispo || undefined};
     }
     return cat;
   }
@@ -72,6 +74,17 @@ const Moteur = (() => {
     return VEC;
   }
   const V = () => VEC || vecteurs();
+
+  // Mes services et plateformes (réglage de « Mes goûts ») : un titre disponible chez toi passe un peu devant (×1,1)
+  const SERVICES = {netflix: ["netflix"], prime: ["amazon prime", "prime video"], disney: ["disney"], canal: ["canal"], apple: ["apple tv"],
+    max: ["max", "hbo max"], paramount: ["paramount"], crunchyroll: ["crunchyroll"],
+    pc: ["pc", "steam", "gog", "epic", "ms"], playstation: ["ps5", "ps4", "ps", "playstation"], xbox: ["xbox series", "xbox one"], switch: ["switch", "eshop"], mac: ["mac"]};
+  const mesServices = () => { try { return JSON.parse(localStorage.getItem("tastebridge-services")) || []; } catch { return []; } };
+  const pays = () => { let l; try { l = localStorage.getItem("tastebridge-langue"); } catch {} return (l || (/^fr/i.test(navigator.language || "fr") ? "fr" : "en")) === "en" ? "US" : "FR"; };
+  // Où le titre est disponible : plateformes et boutiques (jeux), services d'abonnement du pays (films, séries)
+  const endroits = it => it.dom === "jeu" ? ["steam", ...(it.plateformes || []), ...Object.keys(it.boutiques || {})].map(x => x.toLowerCase())
+    : (it.dispo?.[pays()]?.abo || []).map(x => x.toLowerCase());
+  const chezMoi = (it, services = mesServices()) => { const e = endroits(it); return services.filter(k => (SERVICES[k] || []).some(a => e.some(x => x === a || x.startsWith(a + " ")))); };
 
   // Le ton compte : un dessin animé familial colle mal à The Witcher même s'ils partagent « Fantasy »
   const TONS = ["Animation, famille", "Sombre, adulte"];
@@ -143,7 +156,8 @@ const Moteur = (() => {
     // Un seul profil additionné laisse un titre aux thèmes rares tout écraser (un Disney => que du Disney).
     // Chaque titre aimé a donc sa propre liste, et on pioche à tour de rôle (les « adoré » et les plus récents d'abord).
     const ok = res.filter(r => r[2] > 0.15 && CAT[r[1]].image);  // sans affiche, une reco donne une carte vide
-    const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim]));
+    const services = mesServices();
+    const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim * (services.length && chezMoi(CAT[i], services).length ? 1.1 : 1)]));
     const ancres = Object.keys(poids).filter(j => poids[j] > 0).reverse().sort((a, b) => poids[b] - poids[a]).slice(0, 15);
     const ton = (i, j) => TONS.some(t => (t in V()[i]) !== (t in V()[j])) ? 0.4 : 1;
     const listes = ancres.map(j => ok.map(([, i]) => [dot(i, j) * qual.get(i) * ton(i, j), i]).filter(([s]) => s > 0.12).sort((a, b) => b[0] - a[0]).map(([, i]) => i));
@@ -293,6 +307,7 @@ const Moteur = (() => {
       }
       sauver(p); return {source, reconnus, inconnus};
     },
+    chezMoi: it => chezMoi(it), pays,
     exporter: () => JSON.stringify(profil(), null, 1),
     restaurer(texte) { const p = JSON.parse(texte); if (!p || typeof p.notes !== "object") throw new Error("Fichier de profil invalide."); sauver({notes: p.notes}); },
     vider() { sauver({notes: {}}); },
