@@ -27,7 +27,7 @@ Python standard library only: nothing to install, no account, no API key, no tra
 - **A page for every title**: synopsis (Wikipedia), ratings with their source (Metacritic, Rotten Tomatoes, Steam, visitors), similar titles on every screen, and **where to watch or play** (platforms and stores; streaming offers via TMDB when configured).
 - **Mixed lists you can share with a link**: *"My fall list: 2 films, 1 show, 1 game"*, no account needed.
 - **Right now**: what is trending this week on Wikipedia and Steam, closest to your taste first (updated daily).
-- **Fast and mobile-first**: installable PWA, offline after the first visit, Lighthouse mobile performance 98. French and English.
+- **Fast and mobile-first**: installable PWA, offline after the first visit, first screen in about 2 s on a throttled mobile connection (Lighthouse, applied throttling). French and English.
 
 | Games tab | Title page | Shared list (phone) |
 |---|---|---|
