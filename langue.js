@@ -10,7 +10,7 @@
   b.className = "langue";
   b.textContent = langue === "fr" ? "EN" : "FR";
   b.title = langue === "fr" ? "English version" : "Version française";
-  b.setAttribute("aria-label", b.title);
+  b.setAttribute("aria-label", `${b.textContent}, ${b.title}`);  // le nom accessible contient le texte visible
   b.onclick = () => { try { localStorage.setItem("tastebridge-langue", langue === "fr" ? "en" : "fr"); } catch {} location.reload(); };
   document.querySelector("#compte").before(b);
   if (langue === "fr") return;
@@ -125,6 +125,12 @@
     "Lire l'article sur Wikipédia": "Read the article on Wikipedia", "Wikipédia": "Wikipedia", "Ce titre n'est pas (ou plus) dans le catalogue.": "This title is not (or no longer) in the catalog.",
     "Retour aux recos": "Back to recommendations", "Les avis des visiteurs sont sur": "Visitor reviews are on", "le site en ligne": "the website",
     "Aucun titre assez proche dans le catalogue.": "No close enough title in the catalog.", "Thèmes communs :": "Shared themes:",
+    // Liens et listes (page.html)
+    "Appuie sur une affiche : une fois pour J'aime, deux pour J'adore, trois pour retirer. Le titre ouvre la fiche.": "Tap a poster: once for Like, twice for Love, three times to remove. The title opens the details page.",
+    "Film ·": "Movie ·", "Série ·": "Show ·", "Jeu ·": "Game ·",
+    "Voir la fiche": "Open details", "Voir les avis": "See reviews", "Moyenne des visiteurs :": "Visitor average:", "Correspondance :": "Match:", "D'où vient ce score": "Where this score comes from",
+    "Thème": "Genre", "Ambiance": "Theme", "Année": "Year", "titres, tous supports confondus, les plus acclamés d'abord.": "titles across movies, shows and games, most acclaimed first.",
+    "Rien à afficher pour cette liste.": "Nothing to show for this list.", "Liste indisponible pour le moment.": "List unavailable right now.", "Aucun titre dans le catalogue.": "No title in the catalog.",
   };
   const T = t => MOTS[t] ?? t;
   const REGLES = [
@@ -138,12 +144,14 @@
     [/^([\d.,]+) \/5 · (\d+) avis$/, (_, m, n) => `${m} /5 · ${n} review${n > 1 ? "s" : ""}`],
     [/^sur 5 · (\d+) avis$/, (_, n) => `out of 5 · ${n} review${n > 1 ? "s" : ""}`],
     [/^(J'adore|J'aime|Déjà vu|Déjà joué|Pas pour moi) : (.+)$/, (_, k, t) => `${T(k)}: ${t}`],
+    [/^Fiche et avis : (.+)$/, (_, t) => `Details and reviews: ${t}`],
+    [/^Les (\d+) premiers sont affichés\.$/, (_, n) => `The first ${n} are shown.`],
     [/^Avis sur (.+)$/, (_, t) => `Reviews of ${t}`],
     [/^Ton avis sur (.+)$/, (_, t) => `Your rating for ${t}`],
     [/^(\d) sur 5$/, (_, n) => `${n} out of 5`],
     [/^Connecté : (.+)$/, (_, m) => `Signed in: ${m}`],
     [/^Envoi impossible : (.+)$/, (_, e) => `Couldn't post: ${e}`],
-    [/^(.+) \((.+)\) : (\d+) titres ajoutés, (\d+) absents du catalogue\.$/, (_, f, s, a, b) => `${f} (${s}): ${a} titles added, ${b} not in the catalog.`],
+    [/^(.+) \((.+)\) : (\d+) titres? ajoutés?, (\d+) absents? du catalogue\.$/, (_, f, s, a, b) => `${f} (${s}): ${a} title${a > 1 ? "s" : ""} added, ${b} not in the catalog.`],
   ];
   const traduire = t => {
     const c = t.trim();

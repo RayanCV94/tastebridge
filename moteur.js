@@ -138,7 +138,7 @@ const Moteur = (() => {
       const pourquoi = Object.keys(poids).filter(j => poids[j] > 0).map(j => [dot(i, j), j]).sort((a, b) => b[0] - a[0]).slice(0, 2);
       const communs = Object.keys(VEC[i]).sort((a, b) => (prof[b] || 0) * VEC[i][b] - (prof[a] || 0) * VEC[i][a]).slice(0, 3);
       return {id: i, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki, ...notesExt(it),
-        themes: communs.filter(t => (prof[t] || 0) > 0), parce_que: pourquoi.filter(([s]) => s > 0).map(([, j]) => CAT[j].titre), match: Math.round(Math.max(sim, pourquoi[0]?.[0] || 0) * 100)};
+        themes: communs.filter(t => (prof[t] || 0) > 0), parce_que: pourquoi.filter(([s]) => s > 0).map(([, j]) => ({id: j, dom: CAT[j].dom, titre: CAT[j].titre})), match: Math.round(Math.max(sim, pourquoi[0]?.[0] || 0) * 100)};
     });
   }
 
@@ -226,7 +226,7 @@ const Moteur = (() => {
       const dot = j => Object.entries(VEC[i]).reduce((s, [th, v]) => s + (VEC[j][th] || 0) * v, 0);
       const parce = aimes.map(j => [dot(j), j]).sort((a, b) => b[0] - a[0])[0];
       return {id: i, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki, ...notesExt(it),
-        themes: it.themes.slice(0, 3), parce_que: parce && parce[0] > 0 ? [CAT[parce[1]].titre] : [], match: Math.round(sim * 100)};
+        themes: it.themes.slice(0, 3), parce_que: parce && parce[0] > 0 ? [{id: parce[1], dom: CAT[parce[1]].dom, titre: CAT[parce[1]].titre}] : [], match: Math.round(sim * 100)};
     },
     gouts() {
       return Object.entries(profil().notes).filter(([i]) => CAT[i]).map(([i, note]) => ({id: i, dom: CAT[i].dom, titre: CAT[i].titre, annee: CAT[i].annee, image: CAT[i].image, note}))
@@ -236,7 +236,7 @@ const Moteur = (() => {
       q = simple(q); if (q.length < 2) return [];
       return Object.values(CAT).filter(it => simple(it.titre).includes(q) || simple(it.titre_en).includes(q))
         .sort((a, b) => (simple(a.titre).startsWith(q) ? 0 : 1) - (simple(b.titre).startsWith(q) ? 0 : 1) || b.qualite - a.qualite)
-        .slice(0, 20).map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, ...notesExt(it)}));
+        .slice(0, 20).map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam, themes: it.themes.slice(0, 3), ...notesExt(it)}));
     },
     // Titres les plus acclamés d'un domaine, pour qu'un nouveau visiteur note quelques titres d'entrée
     // Titres très connus d'abord (choisis à la main), complétés par les mieux notés du catalogue
@@ -244,8 +244,9 @@ const Moteur = (() => {
       const notes = profil().notes;
       const connus = (CELEBRES[dom] || []).map(t => trouver(dom, t)).filter(Boolean).map(i => CAT[i]);
       const reste = Object.values(CAT).filter(it => it.dom === dom && it.image && (it.annee || 0) >= 2008).sort((a, b) => b.qualite - a.qualite);
-      return [...new Set([...connus, ...reste])].filter(it => it.image && !notes[it.id]).slice(0, n)
-        .map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam}));
+      // Les titres déjà notés restent, avec leur note : en revenant sur l'accueil, on voit où on en est
+      return [...new Set([...connus, ...reste])].filter(it => it.image).slice(0, n)
+        .map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam, note: notes[it.id] || ""}));
     },
     fiche(id) {
       const it = CAT[id]; if (!it) return null;

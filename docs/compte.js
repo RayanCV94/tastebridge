@@ -42,6 +42,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
   }
 
   function fermer() { document.querySelector(".voile-compte")?.remove(); }
+  addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
 
   function fenetre(mode) {
     fermer();

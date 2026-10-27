@@ -2,7 +2,7 @@
 
 **Movie, TV show and video game recommendations that cross the line between screens.**
 Liked *The Dark Knight*? Here are crime-noir superhero games. Played *Dying Light*? Here are zombie films.
-**Try it in your browser: https://rayancv94.github.io/tastebridge/** (no account: your ratings stay in your browser).
+**Try it in your browser: https://rayancv94.github.io/tastebridge/** (no sign-up needed: your ratings stay in your browser; an optional free account syncs them across devices and lets you post reviews).
 Or run it locally, no account, no API key, no tracking.
 
 *Version française plus bas.*
@@ -69,7 +69,9 @@ Optional, in `donnees/config.json` (never committed):
 
 ## Run it
 
-The website (`docs/`, GitHub Pages) runs the same engine in JavaScript (`moteur.js`) with no server: your ratings live in your browser's storage, and you can save them to a file and load them on another device. I chose no accounts on purpose: no password stored anywhere means nothing to leak. `python site.py` regenerates it.
+The website (`docs/`, GitHub Pages) runs the same engine in JavaScript (`moteur.js`) with no server: your ratings live in your browser's storage, and you can save them to a file and load them on another device. An account is optional (Supabase e-mail + password, hashed by Supabase, never seen by this code): it syncs your ratings between devices and lets you post public reviews. Everything else works without one. `python site.py` regenerates it.
+
+Ratings shown on each title page: Metacritic and Rotten Tomatoes come from Wikidata (CC0) at build time (`notes.py`). IMDb ratings (`python notes.py --imdb`) come from IMDb's non-commercial datasets, which are for personal use only: they stay in `donnees/` for the local version and are not published on the website unless `site.py --avec-imdb` is used.
 
 The local version adds automatic Steam and Jellyfin detection:
 
@@ -99,13 +101,13 @@ Code: MIT. Wikidata content is CC0. Game data comes from SteamSpy. Posters are n
 
 ## Version française
 
-**J'ai créé ce projet parce que je voulais des recommandations qui passent d'un écran à l'autre** : des jeux d'après les films que j'aime, des films d'après mes jeux. Les plateformes ne recommandent que dans leur catalogue et un seul support à la fois. Tout tourne en local, sans compte ni clé.
+**J'ai créé ce projet parce que je voulais des recommandations qui passent d'un écran à l'autre** : des jeux d'après les films que j'aime, des films d'après mes jeux. Les plateformes ne recommandent que dans leur catalogue et un seul support à la fois. Tout tourne en local, sans compte ni clé ; sur le site, un compte est facultatif.
 
 - Un seul profil de goûts pour films, séries et jeux, avec deux sortes de recos : dans le même domaine, et d'un domaine à l'autre, chaque fois avec la raison (« parce que tu as aimé X et Y »). Je peux aimer un genre en jeu et pas en film, d'où la séparation.
 - Méthode : 27 thèmes communs (horreur, cyberpunk, braquage, monde ouvert...), vecteurs TF-IDF, similarité cosinus, pondérée par la qualité (avis Steam, couverture Wikipédia) et la récence.
 - Pour vérifier que ça marche, j'ai fait une évaluation « leave-one-out » sur mon propre profil : je cache un titre que j'ai aimé, et il ressort dans le top 10 dans 35 % des cas, contre 5 % pour « les plus populaires d'abord » et 0 % au hasard. Limites : testé sur moi seul, et pas encore de filtrage collaboratif (prochaine étape).
 - Import d'historique : Netflix (netflix.com/viewingactivity, « Télécharger tout »), IMDb, Letterboxd, ou tout CSV avec une colonne Title ; Steam est lu tout seul. Prime Video : demande de données à Amazon, plusieurs jours.
-- Site : https://rayancv94.github.io/tastebridge/ (sans compte : tes goûts restent dans ton navigateur, sauvegardables dans un fichier).
+- Site : https://rayancv94.github.io/tastebridge/ (sans inscription : tes goûts restent dans ton navigateur, sauvegardables dans un fichier ; un compte gratuit facultatif les synchronise entre appareils et permet de publier des avis).
 - Lancer en local : `pip install -r requirements.txt` puis `python recos.py` (ou double-clic sur `lancer.vbs` sous Windows). La page s'ouvre, et le serveur s'arrête seul 3 minutes après sa fermeture.
 
 ![Onglet films](docs/films.jpg)

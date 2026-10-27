@@ -169,7 +169,7 @@ def recos(p, cible, sources, n=12):
         communs = sorted(VEC[i], key=lambda th: -prof.get(th, 0) * VEC[i][th])[:3]
         sortie.append({**{k: it.get(k) for k in ("id", "dom", "titre", "annee", "image", "avis", "steam", "wiki") + NOTES_EXT},
                        "themes": [t for t in communs if prof.get(t, 0) > 0],
-                       "parce_que": [CAT[j]["titre"] for s, j in pourquoi if s > 0],
+                       "parce_que": [{"id": j, "dom": CAT[j]["dom"], "titre": CAT[j]["titre"]} for s, j in pourquoi if s > 0],
                        "match": round(max(sim, pourquoi[0][0] if pourquoi else 0) * 100)})
     return sortie
 
@@ -263,7 +263,7 @@ def chercher(q):
         return []
     r = [it for it in CAT.values() if q in simple(it["titre"]) or q in simple(it["titre_en"])]
     r.sort(key=lambda it: (not simple(it["titre"]).startswith(q), -it["qualite"]))
-    return [{k: it.get(k) for k in ("id", "dom", "titre", "annee", "image") + NOTES_EXT} for it in r[:20]]
+    return [{**{k: it.get(k) for k in ("id", "dom", "titre", "annee", "image", "steam") + NOTES_EXT}, "themes": it["themes"][:3]} for it in r[:20]]
 
 
 def importer(p, nom_fichier, texte):
