@@ -1,5 +1,5 @@
 # Tests du moteur local (recos.py) sur le vrai catalogue. Lancer : python -m unittest discover tests
-import os, sys, unittest
+import os, sys, time, unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -59,6 +59,17 @@ class Listes(unittest.TestCase):
         self.assertTrue(all("Western" in R.CAT[x["id"]]["themes"] for x in l["titres"]))
         q = [R.CAT[x["id"]]["qualite"] for x in l["titres"]]
         self.assertEqual(q, sorted(q, reverse=True))
+
+    def test_liste_tri(self):
+        ans = [x.get("annee") or 0 for x in R.liste(["Western"], None, "recents")["titres"]]
+        sortis = [a for a in ans if a and a <= time.localtime().tm_year]
+        self.assertEqual(ans[:len(sortis)], sorted(sortis, reverse=True))  # les titres à venir passent après
+        notes = [R.note_critique(x) for x in R.liste(["Western"], None, "critique")["titres"]]
+        avec = [n for n in notes if n is not None]
+        self.assertTrue(avec)
+        self.assertEqual(notes[:len(avec)], sorted(avec, reverse=True))  # les notés d'abord, sans note inventée
+        self.assertEqual(R.note_critique({"avis": "92 % positifs sur 1 000 avis"}), 92)
+        self.assertIsNone(R.note_critique({}))
 
     def test_liste_annee(self):
         self.assertTrue(all(R.CAT[x["id"]].get("annee") == 1994 for x in R.liste([], 1994)["titres"]))

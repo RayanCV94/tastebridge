@@ -98,6 +98,29 @@ test("lien direct, titre inconnu, liste par thème", async () => {
   assert.deepEqual(erreurs, []);
 });
 
+test("trier : recos et listes (récents, critique), le dé reste utilisable", async () => {
+  const {p, erreurs} = await page({viewport: {width: 360, height: 780}, isMobile: true, hasTouch: true});
+  await noterCinq(p);
+  await p.getByRole("radio", {name: "Récents"}).click();
+  const ans = await p.$$eval(".section .grille:first-of-type .c .legende span", l => l.map(e => +(e.innerText.match(/\d{4}/) || [0])[0]));
+  const sortis = ans.filter(a => a && a <= new Date().getFullYear());
+  assert.deepEqual(ans.slice(0, sortis.length), [...sortis].sort((a, b) => b - a));  // les titres à venir passent après
+  await p.getByRole("radio", {name: "Jeu", exact: true}).click();  // le dé et le tri ont chacun leurs boutons
+  assert.equal(await p.$eval(".tri .on", e => e.textContent), "Récents");
+  assert.equal(await p.$eval(".tri", e => e.scrollWidth <= e.clientWidth), true);  // 5 boutons sur 360 px
+  await p.goto(base + "#/theme/Western"); await p.waitForSelector("#main .c");
+  await p.getByRole("radio", {name: "Récents"}).click(); await p.waitForFunction(() => /récents d'abord/.test(document.querySelector("#main .tete").innerText));
+  const ans2 = await p.$$eval("#main .c .legende span", l => l.map(e => +(e.innerText.match(/\d{4}/) || [0])[0]));
+  const sortis2 = ans2.filter(a => a && a <= new Date().getFullYear());
+  assert.ok(sortis2.length > 0);
+  assert.deepEqual(ans2.slice(0, sortis2.length), [...sortis2].sort((a, b) => b - a));
+  assert.equal(await p.$eval(".tri", e => e.scrollWidth <= e.clientWidth), true);  // tient sur un téléphone de 360 px
+  await p.getByRole("radio", {name: "Critique"}).click(); await p.waitForFunction(() => /critique d'abord/.test(document.querySelector("#main .tete").innerText));
+  await p.goto(base + "#/annee/1994"); await p.waitForSelector("#main .c");
+  assert.equal(await p.getByRole("radio", {name: "Récents"}).count(), 0);  // inutile sur une année
+  assert.deepEqual(erreurs, []);
+});
+
 test("mes services : un jeu Xbox ressort « chez toi »", async () => {
   const {p, erreurs} = await page();
   await p.goto(base + "#/gouts"); await p.waitForSelector(".services");

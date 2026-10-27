@@ -280,7 +280,7 @@ footer a{color:var(--doux)}
 .tirage .parce{margin:0;color:var(--doux)}
 .tirage .parce b{color:var(--texte);font-weight:600}
 .tirage .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-@media(max-width:600px){.tirage{grid-template-columns:1fr;gap:14px;padding:14px}.tirage .cadre{width:120px}.tirage h3{font-size:24px}.tirage .actions .bt{white-space:nowrap;padding:10px 12px;font-size:13.5px}.segments{width:100%}.segments button{flex:1;padding:8px 6px}.lancer{width:100%;justify-content:center}.tirage .actions .bt{flex:1 1 45%}}
+@media(max-width:600px){.tirage{grid-template-columns:1fr;gap:14px;padding:14px}.tirage .cadre{width:120px}.tirage h3{font-size:24px}.tirage .actions .bt{white-space:nowrap;padding:10px 12px;font-size:13.5px}.segments{width:100%}.segments button{flex:1;padding:8px 6px}.lancer{width:100%;justify-content:center}.segments.tri{overflow-x:auto;scrollbar-width:none}.segments.tri button{flex:1 0 auto;white-space:nowrap;padding:8px 5px;font-size:13px}.tirage .actions .bt{flex:1 1 45%}}
 @media(prefers-reduced-motion:reduce){.lancer.roule svg,.tirage{animation:none}}
 
 /* Fiche d'un titre (page entière, #/film/ID) */
@@ -413,7 +413,7 @@ const api = WEB ? {
  noter: (id, note) => poster("/api/note",{id,note}),
  fiche: id => json("/api/fiche?id="+encodeURIComponent(id)),
  titres: ids => json("/api/titres?ids="+ids.map(encodeURIComponent).join(".")),
- liste: q => json(`/api/liste?themes=${encodeURIComponent((q.themes || []).join("|"))}&annee=${q.annee || ""}`),
+ liste: q => json(`/api/liste?themes=${encodeURIComponent((q.themes || []).join("|"))}&annee=${q.annee || ""}&tri=${q.tri || ""}`),
  importer: async (nom, texte) => (await poster("/api/import",{nom, texte})).json(),
 };
 function toast(t){const e=$("#toast");e.innerHTML=ico("ok")+esc(t);e.classList.add("v");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("v"),1900)}
@@ -517,10 +517,20 @@ function reglerServices(k){
 const lienFiche = (r, ancre) => `#/${r.dom}/${encodeURIComponent(r.id)}${ancre ? "/" + ancre : ""}`;
 // Moyennes des avis de tout le monde (compte.js remplit window.NOTES : id -> [moyenne, nombre])
 const etoile = r => { const n = window.NOTES?.[r.id]; return n ? `<a class="moy" href="${lienFiche(r, "avis")}" title="Voir les avis"><span class="vh">Moyenne des visiteurs :</span>${ico("etoile")}${decimal(n[0])}</a>` : ""; };
+// Tri : des recos (onglets) et des listes thème / ambiance / année. Un titre sans la donnée passe après, jamais de note inventée.
+// Note critique : Metacritic, sinon Rotten Tomatoes, sinon avis Steam (mêmes règles dans moteur.js et recos.py)
+const noteCritique = r => r.metacritic ?? r.rt ?? (r.avis ? parseInt(r.avis) : null);
+const CLES_TRI = {critique: noteCritique, recents: r => r.annee <= new Date().getFullYear() ? r.annee : null, tendance: r => WEB ? Moteur.tendance(r.id) || null : null,
+ note: r => { const n = window.NOTES?.[r.id]; return n ? n[0] + n[1] / 1e6 : null; }};
+const TRIS = {toi: "Pour toi", acclames: "Acclamés", critique: "Critique", recents: "Récents", tendance: "Tendance", note: "Visiteurs"};
+const AIDE_TRI = {critique: "Metacritic, sinon Rotten Tomatoes, sinon avis Steam", tendance: "Les plus lus sur Wikipédia ou joués sur Steam cette semaine", note: "Moyenne des avis des visiteurs"};
 let tri = "toi"; try { tri = localStorage.getItem("tastebridge-tri") || "toi"; } catch {}
-const trier = l => tri === "toi" ? l : [...l].sort((a, b) => ((window.NOTES?.[b.id]?.[0] || 0) - (window.NOTES?.[a.id]?.[0] || 0)) || ((window.NOTES?.[b.id]?.[1] || 0) - (window.NOTES?.[a.id]?.[1] || 0)));
+if (!(tri in TRIS) || tri === "acclames") tri = "toi";
+const trier = l => { const f = CLES_TRI[tri]; if (!f) return l;
+ return l.map((r, k) => [f(r) ?? -Infinity, k, r]).sort((a, b) => b[0] - a[0] || a[1] - b[1]).map(x => x[2]); };
 function choisirTri(k){ tri = k; try { localStorage.setItem("tastebridge-tri", k); } catch {} rendre(); }
-const barreTri = () => WEB ? `<div class="segments tri" role="radiogroup" aria-label="Trier">${[["toi", "Pour toi"], ["note", "Mieux notés"]].map(([k, v]) => `<button role="radio" aria-checked="${k === tri}" class="${k === tri ? "on" : ""}" onclick="choisirTri('${k}')">${v}</button>`).join("")}</div>` : "";
+const segmentsTri = (cles, actif, fn) => `<div class="segments tri" role="radiogroup" aria-label="Trier">${cles.map(k => `<button role="radio" aria-checked="${k === actif}" class="${k === actif ? "on" : ""}"${AIDE_TRI[k] ? ` title="${AIDE_TRI[k]}"` : ""} onclick="${fn}('${k}')">${TRIS[k]}</button>`).join("")}</div>`;
+const barreTri = () => segmentsTri(WEB ? ["toi", "critique", "recents", "tendance", "note"] : ["toi", "critique", "recents"], tri, "choisirTri");
 addEventListener("notes-moyennes", () => {
  if (vue === "fiche" && $("#note-tb")) $("#note-tb").innerHTML = noteTb(FICHE.id);
  if (vue !== "onglet" || !data || onglet === "gouts") return;
@@ -600,7 +610,7 @@ function zoneDe(){
 }
 function choisirTypeDe(k){
  typeDe = k; try { localStorage.setItem("tastebridge-de", k); } catch {}
- document.querySelectorAll(".segments button").forEach((b, n) => { const on = TYPES_DE[n][0] === k; b.classList.toggle("on", on); b.setAttribute("aria-checked", on); });
+ document.querySelectorAll(".zone-de .segments button").forEach((b, n) => { const on = TYPES_DE[n][0] === k; b.classList.toggle("on", on); b.setAttribute("aria-checked", on); });
 }
 function lancerDe(){
  const b = $("#lancer"); b.classList.remove("roule"); void b.offsetWidth; b.classList.add("roule");
@@ -857,6 +867,9 @@ async function fichePage(dom, id, ancre){
 }
 
 // ---------- Listes : un thème, une ambiance (plusieurs thèmes à la fois) ou une année, tous supports ----------
+let triListe = "acclames"; try { triListe = localStorage.getItem("tastebridge-tri-liste") || "acclames"; } catch {}
+const PHRASE_TRI = {acclames: "les plus acclamés d'abord.", critique: "les mieux notés par la critique d'abord.", recents: "les plus récents d'abord.", tendance: "ceux en tendance cette semaine d'abord."};
+function choisirTriListe(k){ triListe = k; try { localStorage.setItem("tastebridge-tri-liste", k); } catch {} router(); }
 async function listePage(type, v){
  vue = "liste"; marquerNav(null);
  const m = $("#main"), ici = location.hash; m.className = "";
@@ -865,11 +878,13 @@ async function listePage(type, v){
  const vide = texte => `<div class="vide">${ico("film")}<span>${texte} <a href="#/film">Retour aux recos</a></span></div>`;
  if (!q){ m.innerHTML = `<section class="section">${vide("Rien à afficher pour cette liste.")}</section>`; return appliquerDefile(); }
  m.innerHTML = `<section class="section"><div class="grille">${'<div class="squelette"></div>'.repeat(12)}</div></section>`;
- let res = null; try { res = await api.liste(q); } catch {}
+ const tris = ["acclames", "critique", ...(type === "annee" ? [] : ["recents"]), ...(WEB ? ["tendance"] : [])];
+ if (!tris.includes(triListe)) triListe = "acclames";
+ let res = null; try { res = await api.liste({...q, tri: triListe}); } catch {}
  if (vue !== "liste" || location.hash !== ici) return;
  if (!res){ m.innerHTML = `<section class="section">${vide("Liste indisponible pour le moment.")}</section>`; return appliquerDefile(); }
  m.innerHTML = `<section class="section"><div class="tete"><div><p class="accroche">${{theme: "Thème", ambiance: "Ambiance", annee: "Année"}[type]}</p><h3>${esc(v)}</h3></div>
-  <p><b>${nombre(res.total)}</b> titres, tous supports confondus, les plus acclamés d'abord.${res.total > res.titres.length ? `<span> Les ${res.titres.length} premiers sont affichés.</span>` : ""}</p></div>
+  <p><b>${nombre(res.total)}</b> titres, tous supports confondus, ${PHRASE_TRI[triListe]}${res.total > res.titres.length ? `<span> Les ${res.titres.length} premiers sont affichés.</span>` : ""}</p>${segmentsTri(tris, triListe, "choisirTriListe")}</div>
   ${res.titres.length ? `<div class="grille">${res.titres.map(carte).join("")}</div>` : vide("Aucun titre dans le catalogue.")}</section>`;
  appliquerDefile();
 }
