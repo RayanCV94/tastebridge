@@ -8,6 +8,7 @@ jobs:
   python:
     name: Python (lint + tests)
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -20,6 +21,8 @@ jobs:
   site:
     name: Site (moteur, docs à jour, parcours navigateur)
     runs-on: ubuntu-latest
+    # Une installation apt bloquée a déjà tenu un run des dizaines de minutes : on coupe
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
