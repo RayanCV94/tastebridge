@@ -26,6 +26,8 @@ const Moteur = (() => {
 
   const simple = t => (t || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const trouver = (dom, titre) => INDEX.get(dom + "|" + simple(titre));
+  // Notes externes (construire.py, notes.py) : IMDb seulement si le site a été publié avec --avec-imdb
+  const notesExt = it => ({imdb: it.imdb, note_imdb: it.note_imdb, votes_imdb: it.votes_imdb, metacritic: it.metacritic, rt: it.rt});
 
   async function charger() {
     CAT = await (await fetch("catalogue.json")).json();
@@ -100,7 +102,7 @@ const Moteur = (() => {
       const it = CAT[i];
       const pourquoi = Object.keys(poids).filter(j => poids[j] > 0).map(j => [dot(i, j), j]).sort((a, b) => b[0] - a[0]).slice(0, 2);
       const communs = Object.keys(VEC[i]).sort((a, b) => (prof[b] || 0) * VEC[i][b] - (prof[a] || 0) * VEC[i][a]).slice(0, 3);
-      return {id: i, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki,
+      return {id: i, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki, ...notesExt(it),
         themes: communs.filter(t => (prof[t] || 0) > 0), parce_que: pourquoi.filter(([s]) => s > 0).map(([, j]) => CAT[j].titre), match: Math.round(Math.max(sim, pourquoi[0]?.[0] || 0) * 100)};
     });
   }
@@ -188,7 +190,7 @@ const Moteur = (() => {
       const [, i, sim] = choix, it = CAT[i];
       const dot = j => Object.entries(VEC[i]).reduce((s, [th, v]) => s + (VEC[j][th] || 0) * v, 0);
       const parce = aimes.map(j => [dot(j), j]).sort((a, b) => b[0] - a[0])[0];
-      return {id: i, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki,
+      return {id: i, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki, ...notesExt(it),
         themes: it.themes.slice(0, 3), parce_que: parce && parce[0] > 0 ? [CAT[parce[1]].titre] : [], match: Math.round(sim * 100)};
     },
     gouts() {
@@ -199,7 +201,7 @@ const Moteur = (() => {
       q = simple(q); if (q.length < 2) return [];
       return Object.values(CAT).filter(it => simple(it.titre).includes(q) || simple(it.titre_en).includes(q))
         .sort((a, b) => (simple(a.titre).startsWith(q) ? 0 : 1) - (simple(b.titre).startsWith(q) ? 0 : 1) || b.qualite - a.qualite)
-        .slice(0, 20).map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image}));
+        .slice(0, 20).map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, ...notesExt(it)}));
     },
     // Titres les plus acclamés d'un domaine, pour qu'un nouveau visiteur note quelques titres d'entrée
     // Titres très connus d'abord (choisis à la main), complétés par les mieux notés du catalogue

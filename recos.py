@@ -13,6 +13,7 @@ if sys.stdout is None:  # lancé masqué (pythonw) : les erreurs vont dans donne
 
 import requests
 import imports
+import notes
 
 PORT = 5077
 HOTES = {f"127.0.0.1:{PORT}", f"localhost:{PORT}"}
@@ -20,7 +21,8 @@ PROFIL = DONNEES / "profil.json"
 CONFIG = json.loads((DONNEES / "config.json").read_text(encoding="utf-8")) if (DONNEES / "config.json").exists() else {}
 NOTES = {"adore": 2.0, "aime": 1.0, "regarde": 0.5, "vu": 0.0, "bof": -1.0, "deteste": -2.0}
 
-CAT = json.loads((ICI / "catalogue.json").read_text(encoding="utf-8"))
+CAT = notes.ajouter_imdb(json.loads((ICI / "catalogue.json").read_text(encoding="utf-8")))  # IMDb : usage personnel, donc ici
+NOTES_EXT = ("imdb", "note_imdb", "votes_imdb", "metacritic", "rt")
 verrou = threading.Lock()
 dernier_ping = time.time()
 
@@ -165,7 +167,7 @@ def recos(p, cible, sources, n=12):
         it = CAT[i]
         pourquoi = sorted(((dot(i, j), j) for j, w in poids.items() if w > 0), reverse=True)[:2]
         communs = sorted(VEC[i], key=lambda th: -prof.get(th, 0) * VEC[i][th])[:3]
-        sortie.append({**{k: it.get(k) for k in ("id", "dom", "titre", "annee", "image", "avis", "steam", "wiki")},
+        sortie.append({**{k: it.get(k) for k in ("id", "dom", "titre", "annee", "image", "avis", "steam", "wiki") + NOTES_EXT},
                        "themes": [t for t in communs if prof.get(t, 0) > 0],
                        "parce_que": [CAT[j]["titre"] for s, j in pourquoi if s > 0],
                        "match": round(max(sim, pourquoi[0][0] if pourquoi else 0) * 100)})
@@ -201,7 +203,7 @@ def chercher(q):
         return []
     r = [it for it in CAT.values() if q in simple(it["titre"]) or q in simple(it["titre_en"])]
     r.sort(key=lambda it: (not simple(it["titre"]).startswith(q), -it["qualite"]))
-    return [{k: it.get(k) for k in ("id", "dom", "titre", "annee", "image")} for it in r[:20]]
+    return [{k: it.get(k) for k in ("id", "dom", "titre", "annee", "image") + NOTES_EXT} for it in r[:20]]
 
 
 def importer(p, nom_fichier, texte):

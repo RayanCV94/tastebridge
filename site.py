@@ -1,6 +1,6 @@
 # Prépare la version site (GitHub Pages, dossier docs/) : même page que la version locale,
 # avec le moteur JavaScript et le catalogue. À relancer après construire.py ou une modif de page.html.
-import hashlib
+import hashlib, json, sys
 from pathlib import Path
 
 ICI = Path(__file__).parent
@@ -14,6 +14,11 @@ def v(contenu):
 
 
 cat = (ICI / "catalogue.json").read_bytes()
+# Notes IMDb : réservées à un usage personnel (conditions IMDb), donc absentes du site par défaut.
+# --avec-imdb les publie quand même : à ne faire qu'avec une licence ou l'accord d'IMDb.
+if "--avec-imdb" in sys.argv:
+    from notes import ajouter_imdb
+    cat = json.dumps(ajouter_imdb(json.loads(cat)), ensure_ascii=False, separators=(",", ":")).encode()
 moteur = (ICI / "moteur.js").read_text(encoding="utf-8").replace('fetch("catalogue.json")', f'fetch("catalogue.json?v={v(cat)}")', 1)
 assert "catalogue.json?v=" in moteur
 compte = (ICI / "compte.js").read_bytes()

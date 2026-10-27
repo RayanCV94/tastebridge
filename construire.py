@@ -3,6 +3,7 @@
 import json, math, sys, time, requests
 from pathlib import Path
 from themes import THEMES, themes_wd, themes_steam
+import notes
 
 ICI = Path(__file__).parent
 EXCLURE = {"Software", "Utilities", "Sexual Content", "Hentai", "Design & Illustration", "Animation & Modeling", "Massively Multiplayer"}
@@ -167,7 +168,7 @@ elif __name__ == "__main__" and sys.argv[1:] == ["--jeux"]:
     cat = {k: v for k, v in cat.items() if v["dom"] != "jeu"} | jeux()
     (ICI / "catalogue.json").write_text(json.dumps(cat, ensure_ascii=False), encoding="utf-8")
     print("Jeux :", sum(v["dom"] == "jeu" for v in cat.values()))
-elif __name__ == "__main__":
+elif __name__ == "__main__" and sys.argv[1:] in ([], ["--imdb"]):
     t0 = time.time()
     print("Films (Wikidata)...")
     films = ecran("wd:Q11424 wd:Q24869 wd:Q202866", 12, "film")
@@ -183,5 +184,6 @@ elif __name__ == "__main__":
     if len(films) < 3000 or len(series) < 2000 or len(js) < 2000:
         sys.exit("Catalogue incomplet (Wikidata ou SteamSpy en panne) : ancien catalogue gardé.")
     cat = {**films, **series, **js}
+    notes.ajouter(cat, imdb="--imdb" in sys.argv)  # Metacritic, Rotten Tomatoes ; IMDb en local seulement
     (ICI / "catalogue.json").write_text(json.dumps(cat, ensure_ascii=False), encoding="utf-8")
     print(f"Fini : {len(cat)} titres en {round(time.time() - t0)} s")
