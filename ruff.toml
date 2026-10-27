@@ -1,0 +1,5 @@
+# Lint Python (CI) : erreurs réelles seulement. Le style compact du projet est voulu
+# (lignes longues, plusieurs instructions par ligne, variables courtes comme l).
+[lint]
+select = ["E", "F"]
+ignore = ["E401", "E402", "E501", "E701", "E702", "E731", "E741"]

@@ -11,7 +11,6 @@ DONNEES.mkdir(exist_ok=True)
 if sys.stdout is None:  # lancé masqué (pythonw) : les erreurs vont dans donnees/erreurs.log
     sys.stdout = sys.stderr = open(DONNEES / "erreurs.log", "a", encoding="utf-8", buffering=1)
 
-import requests
 import imports
 import notes
 
@@ -22,7 +21,7 @@ CONFIG = json.loads((DONNEES / "config.json").read_text(encoding="utf-8")) if (D
 NOTES = {"adore": 2.0, "aime": 1.0, "regarde": 0.5, "vu": 0.0, "bof": -1.0, "deteste": -2.0}
 
 CAT = notes.ajouter_imdb(json.loads((ICI / "catalogue.json").read_text(encoding="utf-8")))  # IMDb : usage personnel, donc ici
-NOTES_EXT = ("imdb", "note_imdb", "votes_imdb", "metacritic", "rt")
+NOTES_EXT = ("imdb", "note_imdb", "votes_imdb", "metacritic", "rt", "tmdb", "plateformes", "boutiques", "dispo")
 verrou = threading.Lock()
 dernier_ping = time.time()
 
@@ -251,6 +250,10 @@ def fiche(p, id_):
     return {**CAT[id_], "note": p["notes"].get(id_, ""), "similaires": proches(id_), "pour_toi": pour_toi(p, id_)}
 
 
+def titres(ids):
+    return [court(CAT[i], themes=CAT[i]["themes"][:3], parce_que=[]) for i in ids if i in CAT]
+
+
 def liste(themes, annee):
     l = sorted((it for it in CAT.values() if it.get("image") and all(t in it["themes"] for t in themes)
                 and (not annee or it.get("annee") == annee)), key=lambda it: -it["qualite"])
@@ -328,6 +331,8 @@ class H(BaseHTTPRequestHandler):
             self.envoyer(chercher(parse_qs(u.query).get("q", [""])[0]))
         elif u.path == "/api/fiche":
             self.envoyer(fiche(p, parse_qs(u.query).get("id", [""])[0]))
+        elif u.path == "/api/titres":
+            self.envoyer(titres([i for i in parse_qs(u.query).get("ids", [""])[0].split(".") if i]))
         elif u.path == "/api/liste":
             q = parse_qs(u.query)
             annee = q.get("annee", [""])[0]

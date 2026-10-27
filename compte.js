@@ -7,6 +7,8 @@ const SUPA_URL = "https://ryvqymggtvosrijdxmzg.supabase.co";
 const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
 
 (() => {
+  // Supabase injoignable (bloqueur, hors ligne) : le site marche sans compte, les avis s'affichent « indisponibles »
+  if (typeof supabase === "undefined") { window.NOTES = null; return; }
   const sb = supabase.createClient(SUPA_URL, SUPA_CLE);
   let user = null, envoi = null, applique = false;
 
@@ -99,12 +101,19 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
     return m;
   }
 
+  // Les listes (page.html, localStorage « tastebridge-listes ») voyagent avec le compte dans la même ligne
+  // de « profils », sous la clé __listes des notes : pas de nouvelle table, mêmes règles RLS (propriétaire seul)
+  const lireListes = () => { try { return JSON.parse(localStorage.getItem("tastebridge-listes")) || []; } catch { return []; } };
+  const fusionnerListes = (a, b) => { const m = new Map(a.map(l => [l.titre, l])); for (const l of b) m.set(l.titre, {...l, items: [...new Set([...(m.get(l.titre)?.items || []), ...l.items])]}); return [...m.values()]; };
+
   // À la connexion : on fusionne les notes du compte et celles de ce navigateur
   async function recuperer() {
     const { data, error } = await sb.from("profils").select("notes").eq("id", user.id).maybeSingle();
     if (error) { console.warn(error.message); return; }
+    const { __listes = [], ...distantes } = data?.notes || {};
+    try { localStorage.setItem("tastebridge-listes", JSON.stringify(fusionnerListes(Array.isArray(__listes) ? __listes : [], lireListes()))); } catch {}
     const locales = JSON.parse(Moteur.exporter()).notes || {};
-    const notes = { ...(data?.notes || {}), ...locales };
+    const notes = { ...distantes, ...locales };
     applique = true;
     Moteur.restaurer(JSON.stringify({ notes }));
     applique = false;
@@ -114,13 +123,14 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
 
   async function envoyer() {
     if (!user) return;
-    const notes = JSON.parse(Moteur.exporter()).notes || {};
+    const notes = { ...(JSON.parse(Moteur.exporter()).notes || {}), __listes: lireListes() };
     const { error } = await sb.from("profils").upsert({ id: user.id, notes, maj: new Date().toISOString() });
     if (error) console.warn(error.message);
   }
 
   function rafraichir() { dispatchEvent(new CustomEvent("profil-recharge")); }
 
+  addEventListener("listes-change", () => dispatchEvent(new CustomEvent("profil-change")));
   addEventListener("profil-change", () => {
     if (!user || applique) return;
     clearTimeout(envoi);

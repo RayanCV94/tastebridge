@@ -1,7 +1,7 @@
 # Évaluation hors ligne par « leave-one-out » : on cache un titre aimé, on recommande à partir
 # du reste du profil, et on regarde à quel rang le titre caché ressort.
 # Comparé à deux références : le hasard et « les titres les plus populaires d'abord ».
-import os, random, statistics, sys
+import os, random, statistics
 
 os.environ["RECOS_SANS_NAVIGATEUR"] = "1"
 import recos as R

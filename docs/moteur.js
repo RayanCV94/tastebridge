@@ -22,15 +22,25 @@ const Moteur = (() => {
       "Ghost of Tsushima DIRECTOR'S CUT", "Outer Wilds", "Sid Meier's Civilization VI", "Left 4 Dead 2", "Valheim", "Inscryption", "Dead Cells",
       "Minecraft Dungeons", "Half-Life: Alyx", "Persona 5 Royal", "Subnautica", "Monster Hunter: World"],
   };
-  let CAT, INDEX, PAR_IMDB, VEC;
+  let CAT, INDEX, PAR_IMDB, VEC, TENDANCES = {}, REDDIT = false;
 
   const simple = t => (t || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const trouver = (dom, titre) => INDEX.get(dom + "|" + simple(titre));
-  // Notes externes (construire.py, notes.py) : IMDb seulement si le site a été publié avec --avec-imdb
-  const notesExt = it => ({imdb: it.imdb, note_imdb: it.note_imdb, votes_imdb: it.votes_imdb, metacritic: it.metacritic, rt: it.rt});
+  // Notes externes (notes.py ; IMDb seulement si le site a été publié avec --avec-imdb) et disponibilités (disponibilites.py)
+  const notesExt = it => ({imdb: it.imdb, note_imdb: it.note_imdb, votes_imdb: it.votes_imdb, metacritic: it.metacritic, rt: it.rt,
+    tmdb: it.tmdb, plateformes: it.plateformes, boutiques: it.boutiques, dispo: it.dispo});
 
   async function charger() {
-    CAT = await (await fetch("catalogue.json?v=a488aeff88")).json();
+    // Tendances de la semaine (tendances.py) et discussions Reddit (communaute.py), mises à jour chaque jour :
+    // facultatives, le site marche sans. Un titre garde son signal le plus fort des deux.
+    const facultatif = url => fetch(url).then(r => r.ok ? r.json() : {}).catch(() => ({}));
+    const signaux = Promise.all([facultatif("tendances.json?v=eb8e8be442"), facultatif("communaute.json?v=bf21a9e8fb")]);
+    const brut = await (await fetch("catalogue.json?v=5fa7c9322e")).json();
+    TENDANCES = {};
+    const [, commu] = await signaux;
+    REDDIT = Object.values(commu).some(l => Array.isArray(l) && l.length);
+    for (const s of await signaux) for (const l of Object.values(s)) if (Array.isArray(l)) for (const [i, t] of l) TENDANCES[i] = Math.max(TENDANCES[i] || 0, t);
+    CAT = brut.v === 1 ? deplier(brut) : brut;
     INDEX = new Map(); PAR_IMDB = new Map();
     for (const it of Object.values(CAT).sort((a, b) => a.qualite - b.qualite)) {
       INDEX.set(it.dom + "|" + simple(it.titre), it.id); INDEX.set(it.dom + "|" + simple(it.titre_en), it.id);
@@ -40,7 +50,25 @@ const Moteur = (() => {
     let langue; try { langue = localStorage.getItem("tastebridge-langue"); } catch {}
     if ((langue || (/^fr/i.test(navigator.language || "fr") ? "fr" : "en")) === "en")
       for (const it of Object.values(CAT)) if (it.titre_en) [it.titre, it.titre_en] = [it.titre_en, it.titre];
-    // Poids des thèmes : un thème présent partout compte moins qu'un thème rare
+    VEC = null;  // calculés au premier besoin : l'accueil s'affiche sans attendre
+  }
+
+  // Catalogue compact du site (site.py) : on reconstruit les objets
+  function deplier({themes, prefixes, lignes}) {
+    const cat = {}, milliers = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    for (const [id, d, titre, titre_en, annee, q, th, img, wiki, imdb, steam, avis, metacritic, rt, note_imdb, votes_imdb, plateformes, boutiques, dispo] of lignes) {
+      const dom = ["film", "serie", "jeu"][d];
+      const image = dom === "jeu" ? `https://cdn.akamai.steamstatic.com/steam/apps/${steam}/header.jpg` : !img ? undefined : /^\d:/.test(img) ? prefixes[+img[0]] + img.slice(2) : img;
+      cat[id] = {id, dom, titre, titre_en: titre_en || titre, annee: annee || undefined, qualite: q / 1e4, themes: th.map(k => themes[k]), image,
+        wiki: wiki || undefined, imdb: imdb || undefined, steam: steam || undefined, avis: avis ? `${avis[0]} % positifs sur ${milliers(avis[1])} avis` : undefined,
+        metacritic: metacritic ?? undefined, rt: rt ?? undefined, note_imdb: note_imdb ?? undefined, votes_imdb: votes_imdb ?? undefined,
+        plateformes: plateformes || undefined, boutiques: boutiques || undefined, dispo: dispo || undefined};
+    }
+    return cat;
+  }
+
+  // Poids des thèmes : un thème présent partout compte moins qu'un thème rare
+  function vecteurs() {
     const compte = {};
     for (const it of Object.values(CAT)) for (const th of it.themes) compte[th] = (compte[th] || 0) + 1;
     const n = Object.keys(CAT).length;
@@ -51,11 +79,24 @@ const Moteur = (() => {
       s = Math.sqrt(s) || 1; for (const th in v) v[th] /= s;
       VEC[i] = v;
     }
+    return VEC;
   }
+  const V = () => VEC || vecteurs();
+
+  // Mes services et plateformes (réglage de « Mes goûts ») : un titre disponible chez toi passe un peu devant (×1,1)
+  const SERVICES = {netflix: ["netflix"], prime: ["amazon prime", "prime video"], disney: ["disney"], canal: ["canal"], apple: ["apple tv"],
+    max: ["max", "hbo max"], paramount: ["paramount"], crunchyroll: ["crunchyroll"],
+    pc: ["pc", "steam", "gog", "epic", "ms"], playstation: ["ps5", "ps4", "ps", "playstation"], xbox: ["xbox series", "xbox one"], switch: ["switch", "eshop"], mac: ["mac"]};
+  const mesServices = () => { try { return JSON.parse(localStorage.getItem("tastebridge-services")) || []; } catch { return []; } };
+  const pays = () => { let l; try { l = localStorage.getItem("tastebridge-langue"); } catch {} return (l || (/^fr/i.test(navigator.language || "fr") ? "fr" : "en")) === "en" ? "US" : "FR"; };
+  // Où le titre est disponible : plateformes et boutiques (jeux), services d'abonnement du pays (films, séries)
+  const endroits = it => it.dom === "jeu" ? ["steam", ...(it.plateformes || []), ...Object.keys(it.boutiques || {})].map(x => x.toLowerCase())
+    : (it.dispo?.[pays()]?.abo || []).map(x => x.toLowerCase());
+  const chezMoi = (it, services = mesServices()) => { const e = endroits(it); return services.filter(k => (SERVICES[k] || []).some(a => e.some(x => x === a || x.startsWith(a + " ")))); };
 
   // Le ton compte : un dessin animé familial colle mal à The Witcher même s'ils partagent « Fantasy »
   const TONS = ["Animation, famille", "Sombre, adulte"];
-  const dotV = (a, b) => Object.entries(VEC[a]).reduce((s, [th, x]) => s + (VEC[b][th] || 0) * x, 0);
+  const dotV = (a, b) => Object.entries(V()[a]).reduce((s, [th, x]) => s + (V()[b][th] || 0) * x, 0);
   const court = (it, plus) => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki, ...notesExt(it), ...plus});
 
   // Fiche : les titres les plus proches (même similarité cosinus que les recos), du même support d'abord, puis des autres
@@ -65,13 +106,13 @@ const Moteur = (() => {
       if (i === id || !it.image) continue;
       const sim = dotV(id, i);
       if (sim < 0.3) continue;
-      const ton = TONS.some(t => (t in VEC[i]) !== (t in VEC[id])) ? 0.4 : 1;
+      const ton = TONS.some(t => (t in V()[i]) !== (t in V()[id])) ? 0.4 : 1;
       res[it.dom].push([sim * (0.35 + 0.65 * it.qualite) * ton, i, sim]);
     }
     return ["film", "serie", "jeu"].sort((a, b) => (b === CAT[id].dom) - (a === CAT[id].dom))
       .flatMap(d => res[d].sort((a, b) => b[0] - a[0]).slice(0, d === CAT[id].dom ? 6 : 3))
       .map(([, i, sim]) => court(CAT[i], {themes: CAT[i].themes.slice(0, 3), parce_que: [], match: Math.round(sim * 100),
-        communs: Object.keys(VEC[i]).filter(th => th in VEC[id]).sort((a, b) => VEC[id][b] * VEC[i][b] - VEC[id][a] * VEC[i][a]).slice(0, 3)}));
+        communs: Object.keys(V()[i]).filter(th => th in V()[id]).sort((a, b) => V()[id][b] * V()[i][b] - V()[id][a] * V()[i][a]).slice(0, 3)}));
   }
 
   // Fiche : d'où vient le pourcentage (même calcul que les recos), ou null sans titre aimé
@@ -81,13 +122,13 @@ const Moteur = (() => {
     const aimes = Object.keys(poids).filter(j => poids[j] > 0);
     if (!aimes.length) return null;
     const prof = {};
-    for (const [i, x] of Object.entries(poids)) for (const [th, v] of Object.entries(VEC[i])) prof[th] = (prof[th] || 0) + x * v;
+    for (const [i, x] of Object.entries(poids)) for (const [th, v] of Object.entries(V()[i])) prof[th] = (prof[th] || 0) + x * v;
     const norme = Math.hypot(...Object.values(prof)) || 1;
-    const sim = Object.entries(VEC[id]).reduce((s, [th, x]) => s + (prof[th] || 0) * x, 0) / norme;
+    const sim = Object.entries(V()[id]).reduce((s, [th, x]) => s + (prof[th] || 0) * x, 0) / norme;
     const pourquoi = aimes.map(j => [dotV(id, j), j]).sort((a, b) => b[0] - a[0]).slice(0, 2).filter(([s]) => s > 0);
     return {match: Math.round(Math.max(sim, pourquoi[0]?.[0] || 0) * 100),
       parce_que: pourquoi.map(([s, j]) => ({id: j, dom: CAT[j].dom, titre: CAT[j].titre, sim: Math.round(s * 100)})),
-      communs: Object.keys(VEC[id]).filter(th => (prof[th] || 0) > 0).sort((a, b) => prof[b] * VEC[id][b] - prof[a] * VEC[id][a]).slice(0, 3)};
+      communs: Object.keys(V()[id]).filter(th => (prof[th] || 0) > 0).sort((a, b) => prof[b] * V()[id][b] - prof[a] * V()[id][a]).slice(0, 3)};
   }
 
   function profil() {
@@ -98,13 +139,13 @@ const Moteur = (() => {
 
   function classer(poids, cible, deja) {
     const prof = {};
-    for (const [i, x] of Object.entries(poids)) for (const [th, v] of Object.entries(VEC[i])) prof[th] = (prof[th] || 0) + x * v;
+    for (const [i, x] of Object.entries(poids)) for (const [th, v] of Object.entries(V()[i])) prof[th] = (prof[th] || 0) + x * v;
     const norme = Math.hypot(...Object.values(prof));
     if (!norme) return [[], prof];
     const res = [];
     for (const [i, it] of Object.entries(CAT)) {
       if (it.dom !== cible || deja.has(i)) continue;
-      let sim = 0; for (const [th, x] of Object.entries(VEC[i])) sim += (prof[th] || 0) * x;
+      let sim = 0; for (const [th, x] of Object.entries(V()[i])) sim += (prof[th] || 0) * x;
       sim /= norme;
       const a = it.annee || (it.dom === "jeu" && it.steam > 500000 ? 2016 : 2008);
       let recence = a >= 2015 ? 1 : a >= 2005 ? 0.85 : 0.7;
@@ -119,13 +160,15 @@ const Moteur = (() => {
     const poids = {};
     for (const [i, note] of Object.entries(p.notes)) if (CAT[i] && NOTES[note] && sources.includes(CAT[i].dom)) poids[i] = NOTES[note];
     const [res, prof] = classer(poids, cible, new Set(Object.keys(p.notes)));
-    const dot = (a, b) => Object.entries(VEC[a]).reduce((s, [th, x]) => s + (VEC[b][th] || 0) * x, 0);
+    const dot = (a, b) => Object.entries(V()[a]).reduce((s, [th, x]) => s + (V()[b][th] || 0) * x, 0);
     // Un seul profil additionné laisse un titre aux thèmes rares tout écraser (un Disney => que du Disney).
     // Chaque titre aimé a donc sa propre liste, et on pioche à tour de rôle (les « adoré » et les plus récents d'abord).
     const ok = res.filter(r => r[2] > 0.15 && CAT[r[1]].image);  // sans affiche, une reco donne une carte vide
-    const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim]));
+    const services = mesServices();
+    // Bonus : disponible sur un de tes services (×1,1), en tendance cette semaine (jusqu'à ×1,1)
+    const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim * (services.length && chezMoi(CAT[i], services).length ? 1.1 : 1) * (1 + 0.1 * (TENDANCES[i] || 0))]));
     const ancres = Object.keys(poids).filter(j => poids[j] > 0).reverse().sort((a, b) => poids[b] - poids[a]).slice(0, 15);
-    const ton = (i, j) => TONS.some(t => (t in VEC[i]) !== (t in VEC[j])) ? 0.4 : 1;
+    const ton = (i, j) => TONS.some(t => (t in V()[i]) !== (t in V()[j])) ? 0.4 : 1;
     const listes = ancres.map(j => ok.map(([, i]) => [dot(i, j) * qual.get(i) * ton(i, j), i]).filter(([s]) => s > 0.12).sort((a, b) => b[0] - a[0]).map(([, i]) => i));
     const choix = [], pris = new Set();
     for (let tour = 0; choix.length < n && listes.some(l => l.length); tour++)
@@ -136,7 +179,7 @@ const Moteur = (() => {
     return choix.map(([, i, sim]) => {
       const it = CAT[i];
       const pourquoi = Object.keys(poids).filter(j => poids[j] > 0).map(j => [dot(i, j), j]).sort((a, b) => b[0] - a[0]).slice(0, 2);
-      const communs = Object.keys(VEC[i]).sort((a, b) => (prof[b] || 0) * VEC[i][b] - (prof[a] || 0) * VEC[i][a]).slice(0, 3);
+      const communs = Object.keys(V()[i]).sort((a, b) => (prof[b] || 0) * V()[i][b] - (prof[a] || 0) * V()[i][a]).slice(0, 3);
       return {id: i, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki, ...notesExt(it),
         themes: communs.filter(t => (prof[t] || 0) > 0), parce_que: pourquoi.filter(([s]) => s > 0).map(([, j]) => ({id: j, dom: CAT[j].dom, titre: CAT[j].titre})), match: Math.round(Math.max(sim, pourquoi[0]?.[0] || 0) * 100)};
     });
@@ -223,7 +266,7 @@ const Moteur = (() => {
       let total = pool.reduce((s, r) => s + r[0], 0), x = Math.random() * total, choix = pool[0];
       for (const r of pool) { x -= r[0]; if (x <= 0) { choix = r; break; } }
       const [, i, sim] = choix, it = CAT[i];
-      const dot = j => Object.entries(VEC[i]).reduce((s, [th, v]) => s + (VEC[j][th] || 0) * v, 0);
+      const dot = j => Object.entries(V()[i]).reduce((s, [th, v]) => s + (V()[j][th] || 0) * v, 0);
       const parce = aimes.map(j => [dot(j), j]).sort((a, b) => b[0] - a[0])[0];
       return {id: i, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki, ...notesExt(it),
         themes: it.themes.slice(0, 3), parce_que: parce && parce[0] > 0 ? [{id: parce[1], dom: CAT[parce[1]].dom, titre: CAT[parce[1]].titre}] : [], match: Math.round(sim * 100)};
@@ -248,6 +291,21 @@ const Moteur = (() => {
       return [...new Set([...connus, ...reste])].filter(it => it.image).slice(0, n)
         .map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam, note: notes[it.id] || ""}));
     },
+    avecReddit: () => REDDIT,
+    // En ce moment : les tendances de la semaine, celles qui te ressemblent d'abord (moitié tendance, moitié goûts)
+    tendances(dom, n = 12) {
+      const p = profil(), poids = {};
+      for (const [i, note] of Object.entries(p.notes)) if (CAT[i] && NOTES[note]) poids[i] = NOTES[note];
+      const prof = {};
+      for (const [i, x] of Object.entries(poids)) for (const [th, v] of Object.entries(V()[i])) prof[th] = (prof[th] || 0) + x * v;
+      const norme = Math.hypot(...Object.values(prof)) || 1;
+      const sim = i => Object.entries(V()[i]).reduce((s, [th, x]) => s + (prof[th] || 0) * x, 0) / norme;
+      return Object.entries(TENDANCES).filter(([i]) => CAT[i]?.dom === dom && CAT[i].image && !p.notes[i])
+        .map(([i, t]) => [0.5 * t + 0.5 * Math.max(0, sim(i)), i]).sort((a, b) => b[0] - a[0]).slice(0, n)
+        .map(([, i]) => court(CAT[i], {themes: CAT[i].themes.slice(0, 3), parce_que: [], tendance: true}));
+    },
+    // Titres d'une liste partagée, dans l'ordre, sans ceux qui ne sont plus au catalogue
+    titres(ids) { return ids.filter(i => CAT[i]).map(i => court(CAT[i], {themes: CAT[i].themes.slice(0, 3), parce_que: []})); },
     fiche(id) {
       const it = CAT[id]; if (!it) return null;
       return {...it, note: profil().notes[id] || "", similaires: proches(id), pour_toi: pourToi(id)};
@@ -273,6 +331,7 @@ const Moteur = (() => {
       }
       sauver(p); return {source, reconnus, inconnus};
     },
+    chezMoi: it => chezMoi(it), pays,
     exporter: () => JSON.stringify(profil(), null, 1),
     restaurer(texte) { const p = JSON.parse(texte); if (!p || typeof p.notes !== "object") throw new Error("Fichier de profil invalide."); sauver({notes: p.notes}); },
     vider() { sauver({notes: {}}); },

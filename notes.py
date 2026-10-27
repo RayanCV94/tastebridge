@@ -8,8 +8,6 @@
 import csv, gzip, io, json, re, sys, time
 from pathlib import Path
 
-import requests
-
 ICI = Path(__file__).parent
 IMDB_LOCAL = ICI / "donnees" / "notes_imdb.json"
 UA = {"User-Agent": "tastebridge/1.0 (https://github.com/RayanCV94/tastebridge)"}
@@ -21,6 +19,7 @@ REQ = """SELECT ?i ?par ?score ?date WHERE { VALUES ?i { %s } VALUES ?par { wd:%
 
 
 def sparql(q):
+    import requests  # seulement pour construire le catalogue : la version locale n'en a pas besoin
     for essai in range(3):
         try:
             r = requests.get("https://query.wikidata.org/sparql", params={"query": q, "format": "json"}, headers=UA, timeout=180)
@@ -55,6 +54,7 @@ def notes_wikidata(cat):
 
 
 def notes_imdb(cat):
+    import requests
     voulus = {it["imdb"]: i for i, it in cat.items() if it.get("imdb")}
     r = requests.get("https://datasets.imdbws.com/title.ratings.tsv.gz", headers=UA, timeout=300)
     r.raise_for_status()

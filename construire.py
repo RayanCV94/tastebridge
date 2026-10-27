@@ -3,7 +3,7 @@
 import json, math, sys, time, requests
 from pathlib import Path
 from themes import THEMES, themes_wd, themes_steam
-import notes
+import notes, disponibilites
 
 ICI = Path(__file__).parent
 EXCLURE = {"Software", "Utilities", "Sexual Content", "Hentai", "Design & Illustration", "Animation & Modeling", "Massively Multiplayer"}
@@ -185,5 +185,6 @@ elif __name__ == "__main__" and sys.argv[1:] in ([], ["--imdb"]):
         sys.exit("Catalogue incomplet (Wikidata ou SteamSpy en panne) : ancien catalogue gardé.")
     cat = {**films, **series, **js}
     notes.ajouter(cat, imdb="--imdb" in sys.argv)  # Metacritic, Rotten Tomatoes ; IMDb en local seulement
+    disponibilites.ajouter(cat)  # où regarder, où jouer
     (ICI / "catalogue.json").write_text(json.dumps(cat, ensure_ascii=False), encoding="utf-8")
     print(f"Fini : {len(cat)} titres en {round(time.time() - t0)} s")

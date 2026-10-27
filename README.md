@@ -1,13 +1,39 @@
-# tastebridge
+# Tastebridge
 
-**Movie, TV show and video game recommendations that cross the line between screens.**
+**Movie, TV show and video game recommendations that cross the line between screens, with the reason and where to watch or play.**
+
+[![CI](https://github.com/RayanCV94/tastebridge/actions/workflows/ci.yml/badge.svg)](https://github.com/RayanCV94/tastebridge/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/demo-live-e8a33d)](https://rayancv94.github.io/tastebridge/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+![No dependencies](https://img.shields.io/badge/runtime%20dependencies-0-4fc59a)
+
+**▶ Live demo: https://rayancv94.github.io/tastebridge/** · no sign-up, installable on your phone, works offline.
+
+<p align="center"><img src="docs/medias/demo.gif" width="300" alt="Rating five titles on a phone, then cross-media recommendations, a title page and a shared list"></p>
+
 Liked *The Dark Knight*? Here are crime-noir superhero games. Played *Dying Light*? Here are zombie films.
-**Try it in your browser: https://rayancv94.github.io/tastebridge/** (no sign-up needed: your ratings stay in your browser; an optional free account syncs them across devices and lets you post reviews).
-Or run it locally, no account, no API key, no tracking.
+
+## Run it locally in one line
+
+```bash
+git clone https://github.com/RayanCV94/tastebridge && cd tastebridge && python3 recos.py
+```
+
+Python standard library only: nothing to install, no account, no API key, no tracking.
+
+## What it does
+
+- **Cross-media recommendations**: games from your films, films from your games, always with the reason (*"because you liked X and Y"*).
+- **A page for every title**: synopsis (Wikipedia), ratings with their source (Metacritic, Rotten Tomatoes, Steam, visitors), similar titles on every screen, and **where to watch or play** (platforms and stores; streaming offers via TMDB when configured).
+- **Mixed lists you can share with a link**: *"My fall list: 2 films, 1 show, 1 game"*, no account needed.
+- **Right now**: what is trending this week on Wikipedia and Steam, closest to your taste first (updated daily).
+- **Fast and mobile-first**: installable PWA, offline after the first visit, Lighthouse mobile performance 98. French and English.
+
+| Games tab | Title page | Shared list (phone) |
+|---|---|---|
+| ![Games tab](docs/medias/jeux.jpg) | ![Title page](docs/medias/fiche.jpg) | ![Shared list](docs/medias/liste-mobile.jpg) |
 
 *Version française plus bas.*
-
-![Games tab](docs/jeux.jpg)
 
 ## Why I built it
 
@@ -23,7 +49,7 @@ So I built **one taste profile across films, series and games** that recommends 
 I wanted something simple, explainable and light (no local LLM eating my GPU), so I went with a content-based approach:
 
 1. **Catalogue** (`construire.py`): ~14,500 films and ~8,000 series from [Wikidata](https://www.wikidata.org) (genres, main subjects, and whether a title is animated, so that tone counts: liking The Witcher should not bring cartoons), ~5,400 well-reviewed Steam games from [SteamSpy](https://steamspy.com) (community tags, review ratio), posters from Wikipedia. `animation.py` then tags animated films and series. All free, open sources, no key.
-2. **Shared theme vocabulary** (`themes.py`): Wikidata genres and Steam tags are mapped onto 27 common themes (horror, cyberpunk, heist, open world, souls-like...). This is the bridge between media.
+2. **Shared theme vocabulary** (`themes.py`): Wikidata genres and Steam tags are mapped onto 30 common themes (horror, cyberpunk, heist, open world, souls-like...). This is the bridge between media.
 3. **Vectors**: each title becomes a TF-IDF-weighted theme vector, so rare themes (Western) weigh more than ubiquitous ones (Action).
 4. **Profile**: weighted sum of the vectors of what you rated (loved +2, liked +1, watched +0.5, disliked -1, hated -2).
 5. **Ranking**: cosine similarity between profile and candidates, multiplied by a quality score (Wikipedia language coverage for screens, Steam review ratio and volume for games) and a recency factor that keeps acclaimed classics.
@@ -73,25 +99,25 @@ The website (`docs/`, GitHub Pages) runs the same engine in JavaScript (`moteur.
 
 Ratings shown on each title page: Metacritic and Rotten Tomatoes come from Wikidata (CC0) at build time (`notes.py`). IMDb ratings (`python notes.py --imdb`) come from IMDb's non-commercial datasets, which are for personal use only: they stay in `donnees/` for the local version and are not published on the website unless `site.py --avec-imdb` is used.
 
-The local version adds automatic Steam and Jellyfin detection:
-
+The local version adds automatic Steam and Jellyfin detection, and needs nothing beyond Python:
 
 ```bash
-pip install -r requirements.txt
-python recos.py
+python3 recos.py
 ```
 
 The page opens at http://127.0.0.1:5077. On Windows, double-click `lancer.vbs` to start it without a console window.
 The server stops by itself 3 minutes after the page is closed: nothing runs in the background.
 
-Rebuild the catalogue (about 1 hour, mostly polite SteamSpy rate limits): `python construire.py`, or `--jeux` / `--affiches` for one part.
+Rebuild the catalogue (about 1 hour, mostly polite SteamSpy rate limits): `pip install -r requirements.txt` then `python construire.py`, or `--jeux` / `--affiches` for one part. `python disponibilites.py` adds platforms and stores (Wikidata); with a free TMDB key (`TMDB_API_KEY`) it also adds streaming offers. `python tendances.py` refreshes this week's trends (done daily by GitHub Actions).
+
+Tests: `python -m unittest discover tests` and `npm test` (Playwright, for the browser tests).
 
 ## Privacy and security
 
 - The server listens on `127.0.0.1` only: not reachable from your network or the internet.
 - Requests from other websites are refused (Host and Origin checks, custom header required to write), so a malicious page cannot read or change your profile.
 - Your ratings, settings and logs live in `donnees/`, which is git-ignored.
-- No API key is needed or stored in the code. The only outgoing requests are poster images loaded by your browser (Wikipedia, Steam CDN).
+- No API key is needed or stored in the code. Outgoing requests from your browser: posters (Wikipedia, Steam CDN) and, on a title page, its Wikipedia summary.
 
 ## Data and licences
 
@@ -104,10 +130,10 @@ Code: MIT. Wikidata content is CC0. Game data comes from SteamSpy. Posters are n
 **J'ai créé ce projet parce que je voulais des recommandations qui passent d'un écran à l'autre** : des jeux d'après les films que j'aime, des films d'après mes jeux. Les plateformes ne recommandent que dans leur catalogue et un seul support à la fois. Tout tourne en local, sans compte ni clé ; sur le site, un compte est facultatif.
 
 - Un seul profil de goûts pour films, séries et jeux, avec deux sortes de recos : dans le même domaine, et d'un domaine à l'autre, chaque fois avec la raison (« parce que tu as aimé X et Y »). Je peux aimer un genre en jeu et pas en film, d'où la séparation.
-- Méthode : 27 thèmes communs (horreur, cyberpunk, braquage, monde ouvert...), vecteurs TF-IDF, similarité cosinus, pondérée par la qualité (avis Steam, couverture Wikipédia) et la récence.
+- Méthode : 30 thèmes communs (horreur, cyberpunk, braquage, monde ouvert...), vecteurs TF-IDF, similarité cosinus, pondérée par la qualité (avis Steam, couverture Wikipédia) et la récence.
 - Pour vérifier que ça marche, j'ai fait une évaluation « leave-one-out » sur mon propre profil : je cache un titre que j'ai aimé, et il ressort dans le top 10 dans 35 % des cas, contre 5 % pour « les plus populaires d'abord » et 0 % au hasard. Limites : testé sur moi seul, et pas encore de filtrage collaboratif (prochaine étape).
 - Import d'historique : Netflix (netflix.com/viewingactivity, « Télécharger tout »), IMDb, Letterboxd, ou tout CSV avec une colonne Title ; Steam est lu tout seul. Prime Video : demande de données à Amazon, plusieurs jours.
 - Site : https://rayancv94.github.io/tastebridge/ (sans inscription : tes goûts restent dans ton navigateur, sauvegardables dans un fichier ; un compte gratuit facultatif les synchronise entre appareils et permet de publier des avis).
-- Lancer en local : `pip install -r requirements.txt` puis `python recos.py` (ou double-clic sur `lancer.vbs` sous Windows). La page s'ouvre, et le serveur s'arrête seul 3 minutes après sa fermeture.
+- Lancer en local, en une ligne et sans rien installer : `git clone https://github.com/RayanCV94/tastebridge && cd tastebridge && python3 recos.py` (ou double-clic sur `lancer.vbs` sous Windows). La page s'ouvre, et le serveur s'arrête seul 3 minutes après sa fermeture.
 
-![Onglet films](docs/films.jpg)
+- Fiche de chaque titre (résumé, notes avec leur source, où regarder ou jouer), listes mixtes partageables par un lien, tendances de la semaine, site installable sur téléphone et utilisable hors ligne.

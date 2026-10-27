@@ -49,7 +49,7 @@ nav button[data-o="film"].on svg{color:var(--ambre)} nav button[data-o="serie"].
 .gh:hover{color:var(--texte);border-color:var(--trait2)}
 .gh svg{width:18px;height:18px}
 
-main{flex:1;width:100%;max-width:1480px;margin:auto;padding:0 var(--marge) 80px}
+main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 var(--marge) 80px}
 
 /* Grande affiche (meilleure reco) */
 .scene{position:relative;margin:24px 0 8px;border-radius:22px;overflow:hidden;isolation:isolate;min-height:clamp(380px,52vh,560px);display:grid;grid-template-columns:1fr auto;align-items:end;gap:40px;padding:clamp(24px,4vw,56px);border:1px solid rgba(255,255,255,.07)}
@@ -116,13 +116,16 @@ a.chip:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28)
 a.accroche{text-decoration:none;align-self:flex-start}
 a.accroche:hover{color:var(--texte)}
 .pq a,.parce a,.legende span a,.type-fiche a,.score a{color:inherit;text-decoration:underline;text-decoration-color:rgba(255,255,255,.28);text-underline-offset:3px}
+.legende span a,.legende em a{text-decoration:none}
+.legende span a:hover,.legende em a:hover{text-decoration:underline}
 .pq a:hover,.parce a:hover,.legende span a:hover,.type-fiche a:hover,.score a:hover{color:var(--texte);text-decoration-color:currentColor}
 .scene .pq a,.parce a{color:#fff;font-weight:600}
 .voile .pq{font-size:12.5px;line-height:1.4;color:#dcd9d1}
 .voile .pq b{color:#fff;font-weight:600}
 .mini-act{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
 .mini-act button,.mini-act a{display:grid;place-items:center;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;transition:background .15s,color .15s,transform .15s}
-.mini-act button svg{width:16px;height:16px}
+.mini-act button svg,.mini-act a svg{width:16px;height:16px}
+.mini-act button,.mini-act a{min-width:0;padding:0}
 .mini-act button:active{transform:scale(.92)}
 .mini-act .a1:hover{background:var(--rouge)} .mini-act .a2:hover{background:var(--menthe);color:var(--fond)} .mini-act .a3:hover{background:var(--bleu);color:var(--fond)} .mini-act .a4:hover{background:#3a3d4b} .mini-act .a5:hover{background:var(--ambre);color:var(--fond)}
 .legende{display:flex;flex-direction:column;gap:2px;padding:0 2px}
@@ -159,6 +162,7 @@ a.accroche:hover{color:var(--texte)}
 .pop-titre:hover{text-decoration:underline;text-underline-offset:3px}
 .pop-etat{min-height:18px;font-size:12px;font-weight:600;color:var(--pale)}
 .pop[data-n="aime"] .pop-etat{color:var(--menthe)} .pop[data-n="adore"] .pop-etat{color:var(--rouge)}
+.rail-cartes .c{flex:none;width:clamp(150px,40vw,190px);scroll-snap-align:start}
 .aide-rail{margin:24px 0 0;color:var(--doux);font-size:13.5px}
 .pop .cadre{box-shadow:0 0 0 2px transparent}
 .pop:hover .cadre{transform:translateY(-4px)}
@@ -310,6 +314,31 @@ footer a{color:var(--doux)}
 .notes-ext dt{color:var(--doux);font-size:13.5px;font-weight:600}
 .notes-ext dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
 .notes-ext dd small{display:block;font-weight:400;color:#8a8995;font-size:12px;max-width:26ch}
+.ou{display:flex;align-items:center;gap:6px;margin:3px 0 0;font-size:12px;color:var(--doux);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ou svg{width:13px;height:13px;flex:none;color:var(--pale)}
+.ou b,.chip.mien{color:var(--menthe);font-weight:600}
+.chip.mien{border-color:color-mix(in srgb,var(--menthe) 45%,transparent)}
+.offres h3{margin:12px 0 6px;font:600 12px Onest;color:var(--doux)}
+.offres h3:first-child{margin-top:0}
+.offres .chips{margin-bottom:4px}
+.boutiques{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.services{display:flex;flex-wrap:wrap;gap:6px}
+.services button{background:none;border:1px solid var(--trait2);color:var(--doux);font:500 13px Onest;padding:6px 12px;border-radius:30px;cursor:pointer}
+.services button[aria-pressed="true"]{background:color-mix(in srgb,var(--menthe) 18%,transparent);border-color:var(--menthe);color:var(--texte)}
+.listes-menu{width:100%;display:flex;flex-direction:column;gap:8px;margin-top:4px;padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--trait2)}
+.listes-menu label{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer}
+.listes-menu input[type=checkbox]{width:18px;height:18px;accent-color:var(--menthe)}
+.listes-menu form{display:flex;gap:8px;margin-top:4px}
+.listes-menu input[type=text],.nom-liste{flex:1;min-width:0;background:var(--fond);border:1px solid var(--trait2);border-radius:10px;padding:9px 12px;color:var(--texte);font:14px Onest}
+.mes-listes{display:flex;flex-direction:column;gap:10px}
+.une-liste{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;border:1px solid var(--trait);background:var(--surface)}
+.une-liste .vignettes{display:flex;flex:none}
+.une-liste .vignettes i{width:30px;height:45px;border-radius:5px;background:var(--surface2) center/cover;box-shadow:0 0 0 2px var(--surface);margin-left:-10px}
+.une-liste .vignettes i:first-child{margin-left:0}
+.une-liste a{flex:1;min-width:0;color:var(--texte);text-decoration:none;font-weight:600}
+.une-liste a small{display:block;font-weight:400;color:var(--doux);font-size:12.5px}
+.dans-liste{position:relative;min-width:0}
+.retirer{position:absolute;z-index:3;top:10px;right:10px;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(8,8,12,.8);color:#fff;cursor:pointer;font-size:16px}
 .nd{color:#8a8995;font-weight:400}  /* --pale manque de contraste sur --surface (4,4:1) */
 .liens-ext{display:flex;flex-wrap:wrap;gap:8px}
 #proches{scroll-margin-top:90px}
@@ -334,6 +363,10 @@ footer a{color:var(--doux)}
  <symbol id="etoile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 2.3a.53.53 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.1l5.2.8a.53.53 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.53.53 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.53.53 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.8a.53.53 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.1z"/></symbol>
  <symbol id="loupe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
  <symbol id="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+ <symbol id="ecran" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+ <symbol id="liste" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h13M3 12h13M3 18h9M19 14v6M16 17h6"/></symbol>
+ <symbol id="partage" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
+ <symbol id="corbeille" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></symbol>
  <symbol id="lien" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
  <symbol id="cadenas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
  <symbol id="eclair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
@@ -373,12 +406,13 @@ const WEB = typeof Moteur !== "undefined";
 const api = WEB ? {
  recos: async () => Moteur.recos(), gouts: async () => Moteur.gouts(), cherche: async q => Moteur.cherche(q),
  noter: async (id, note) => Moteur.noter(id, note),
- fiche: async id => Moteur.fiche(id), liste: async q => Moteur.liste(q),
+ fiche: async id => Moteur.fiche(id), liste: async q => Moteur.liste(q), titres: async ids => Moteur.titres(ids),
  importer: async (nom, texte) => { try { return Moteur.importer(texte); } catch (e) { return {erreur: e.message}; } },
 } : {
  recos: () => json("/api/recos"), gouts: () => json("/api/gouts"), cherche: q => json("/api/cherche?q="+encodeURIComponent(q)),
  noter: (id, note) => poster("/api/note",{id,note}),
  fiche: id => json("/api/fiche?id="+encodeURIComponent(id)),
+ titres: ids => json("/api/titres?ids="+ids.map(encodeURIComponent).join(".")),
  liste: q => json(`/api/liste?themes=${encodeURIComponent((q.themes || []).join("|"))}&annee=${q.annee || ""}`),
  importer: async (nom, texte) => (await poster("/api/import",{nom, texte})).json(),
 };
@@ -436,6 +470,49 @@ const lienTitre = x => `<a href="${lienFiche(x)}">${esc(x.titre)}</a>`;
 const raisons = (r, cls = "pq") => r.parce_que.length ? `<p class="${cls}">Parce que tu as aimé ${r.parce_que.map(lienTitre).join(" et ")}</p>` : "";
 const lienAnnee = a => a ? `<a href="${lienListe("annee", a)}">${a}</a>` : "";
 
+// ---------- Où regarder, où jouer (disponibilites.py) ----------
+const BOUTIQUES = {steam: ["Steam", id => `https://store.steampowered.com/app/${id}`], gog: ["GOG", id => `https://www.gog.com/${encodeURI(id)}`],
+ epic: ["Epic Games Store", id => `https://store.epicgames.com/p/${encodeURI(id)}`], ms: ["Microsoft Store", id => `https://apps.microsoft.com/detail/${encodeURI(id)}`],
+ ps: ["PlayStation Store", id => `https://store.playstation.com/product/${encodeURI(id)}`], eshop: ["Nintendo eShop", id => `https://www.nintendo.com/us/store/products/${encodeURI(id)}/`]};
+const SERVICES_NOMS = [["netflix", "Netflix"], ["prime", "Prime Video"], ["disney", "Disney+"], ["canal", "Canal+"], ["apple", "Apple TV+"], ["max", "Max"],
+ ["paramount", "Paramount+"], ["crunchyroll", "Crunchyroll"], ["pc", "PC"], ["playstation", "PlayStation"], ["xbox", "Xbox"], ["switch", "Switch"], ["mac", "Mac"]];
+const paysOffres = () => enAnglais() ? "US" : "FR";
+// Plateformes d'un jeu : celles de Wikidata, complétées par les boutiques (une fiche PlayStation Store = jouable sur PlayStation)
+const plateformesJeu = r => { const p = [...(r.plateformes || [])];
+ if (r.boutiques?.ps && !p.some(x => x.startsWith("PS"))) p.push("PlayStation");
+ if (r.boutiques?.eshop && !p.some(x => x.startsWith("Switch"))) p.push("Switch");
+ return p; };
+const mesServices = () => { try { return JSON.parse(localStorage.getItem("tastebridge-services")) || []; } catch { return []; } };
+const chezMoi = r => WEB ? Moteur.chezMoi(r) : [];
+// Ligne courte sous chaque carte : où regarder ou jouer, en vert si c'est sur un de tes services
+function ouCourt(r){
+ const liste = r.dom === "jeu" ? plateformesJeu(r) : r.dispo?.[paysOffres()]?.abo || [];
+ if (!liste.length) return "";
+ const moi = chezMoi(r).length > 0;
+ return `<p class="ou">${ico("ecran")}${moi ? "<b>Chez toi</b> · " : ""}${liste.slice(0, 3).map(esc).join(" · ")}</p>`;
+}
+function blocOu(r){
+ // Une offre ou une plateforme que tu as (réglage « Mes services ») ressort en vert
+ const marque = n => WEB && Moteur.chezMoi(r.dom === "jeu" ? {dom: "jeu", plateformes: [n]} : {dom: r.dom, dispo: {[Moteur.pays()]: {abo: [n]}}}).length ? " mien" : "";
+ if (r.dom === "jeu") {
+  const pl = plateformesJeu(r);
+  const b = [["steam", r.steam], ...Object.entries(r.boutiques || {})].filter(([k, id]) => id && BOUTIQUES[k]);
+  return `${pl.length ? `<div class="chips">${pl.map(x => `<span class="chip${marque(x)}">${esc(x)}</span>`).join("")}</div>` : `<p class="aide">Plateformes non disponibles.</p>`}
+   <div class="boutiques">${b.map(([k, id]) => `<a class="bt" href="${esc(BOUTIQUES[k][1](id))}" target="_blank" rel="noopener">${ico("lien")}${BOUTIQUES[k][0]}</a>`).join("")}</div>
+   <p class="aide">Plateformes et boutiques : Wikidata (incomplet, surtout pour les consoles).</p>`;
+ }
+ const o = r.dispo?.[paysOffres()], jw = enAnglais() ? `https://www.justwatch.com/us/search?q=${encodeURIComponent(r.titre)}` : `https://www.justwatch.com/fr/recherche?q=${encodeURIComponent(r.titre)}`;
+ const groupe = (titre, l) => l?.length ? `<h3>${titre}</h3><div class="chips">${l.map(x => `<span class="chip${marque(x)}">${esc(x)}</span>`).join("")}</div>` : "";
+ return `${o ? `<div class="offres">${groupe("Abonnement ou gratuit", o.abo)}${groupe("Location", o.loc)}${groupe("Achat", o.achat)}</div><p class="aide">Offres : JustWatch, via TMDB.</p>`
+  : `<p class="aide">Offres de streaming non disponibles ici.</p>`}
+  <a class="bt" href="${jw}" target="_blank" rel="noopener">${ico("lien")}Toutes les offres sur JustWatch</a>`;
+}
+function reglerServices(k){
+ const l = mesServices(), i = l.indexOf(k); if (i < 0) l.push(k); else l.splice(i, 1);
+ try { localStorage.setItem("tastebridge-services", JSON.stringify(l)); } catch {}
+ data = null; document.querySelectorAll(`.services [data-k="${k}"]`).forEach(b => b.setAttribute("aria-pressed", i < 0));
+}
+
 // Fiche d'une œuvre : une page entière à son adresse (#/film/ID), voir fichePage()
 const lienFiche = (r, ancre) => `#/${r.dom}/${encodeURIComponent(r.id)}${ancre ? "/" + ancre : ""}`;
 // Moyennes des avis de tout le monde (compte.js remplit window.NOTES : id -> [moyenne, nombre])
@@ -462,7 +539,7 @@ function carte(r){
    <div class="voile"><div class="mini-act">${b("a1","adore","coeur","J'adore")}${b("a2","aime","pouce","J'aime")}${b("a3","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("a4","bof","non","Pas pour moi")}${boutonAvis(r)}</div></div>
   </div>
   <div class="legende"><a class="titre" href="${lienFiche(r)}">${esc(r.titre)}</a><span>${lienAnnee(r.annee)}${r.annee ? " · " : ""}${r.themes?.[0] ? `<a href="${lienListe("theme", r.themes[0])}">${esc(r.themes[0])}</a>` : NOM[r.dom]}</span>
-   ${r.parce_que?.length ? raisons(r) : r.communs?.length ? `<p class="pq">Thèmes communs : ${r.communs.map(t => `<a href="${lienListe("theme", t)}">${esc(t)}</a>`).join(", ")}</p>`
+   ${ouCourt(r)}${r.parce_que?.length ? raisons(r) : r.communs?.length ? `<p class="pq">Thèmes communs : ${r.communs.map(t => `<a href="${lienListe("theme", t)}">${esc(t)}</a>`).join(", ")}</p>`
     : ambiances(r.themes, 1).map(a => `<em><a href="${lienListe("ambiance", a)}">${esc(a)}</a></em>`).join("")}</div>
  </article>`;
 }
@@ -486,7 +563,7 @@ function scene(r){
 }
 
 // compte.js a fusionné les notes du compte : on recalcule tout
-addEventListener("profil-recharge", () => { data = null; compter(); if (vue === "onglet") rendre(); else if (vue === "fiche") router(); else if (vue === "accueil") accueil(); });
+addEventListener("profil-recharge", () => { data = null; compter(); if (vue === "onglet") rendre(); else if (vue === "fiche" || vue === "listes") router(); else if (vue === "accueil") accueil(); });
 function rendre(){
  if (vue !== "onglet") return;
  const m = $("#main");
@@ -499,9 +576,17 @@ function rendre(){
  m.innerHTML = `${l1.length ? scene(l1[0]) : `<div class="section">${vide}</div>`}
   ${WEB && l1.length ? zoneDe() : ""}
   ${l1.length > 1 ? `<section class="section"><div class="tete"><h3>${t1}</h3><p>Ce qui ressemble le plus à ce que tu aimes, les titres récents et acclamés d'abord.</p>${barreTri()}</div><div class="grille">${trier(l1.slice(1)).map(carte).join("")}</div></section>` : ""}
+  ${WEB ? railTendances(onglet) : ""}
   <section class="section"><div class="tete"><h3>${t2}</h3><p>Mêmes ambiances, autre support : ce que ${autre} disent de toi.</p></div>
    ${l2.length ? `<div class="grille">${trier(l2).map(carte).join("")}</div>` : vide}</section>`;
  appliquerDefile();
+}
+
+// En ce moment : tendances de la semaine (Wikipédia, Steam), celles qui te ressemblent d'abord
+function railTendances(dom){
+ const l = Moteur.tendances(dom);
+ return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3><p>${Moteur.avecReddit() ? "Les plus lus sur Wikipédia, les plus joués sur Steam ou les plus discutés sur Reddit cette semaine, ceux qui te ressemblent d'abord." : "Les plus lus sur Wikipédia ou les plus joués sur Steam cette semaine, ceux qui te ressemblent d'abord."}</p></div>
+  <div class="rail rail-cartes">${l.map(carte).join("")}</div></section>` : "";
 }
 
 // ---------- Le dé : une découverte au hasard, mais qui te ressemble ----------
@@ -553,25 +638,30 @@ async function noter(id, note){
 }
 
 // Premier passage sur le site : présentation + titres connus à cocher
-function accueil(){
+// pret = false : le catalogue n'est pas encore là (premier passage), on affiche déjà le texte et des squelettes
+function accueil(pret = true){
  vue = "accueil";
  const m = $("#main"); m.className = "";
  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
- const mur = ["film","serie","film","jeu"].flatMap(d => Moteur.populaires(d, 12)).filter(x => x.image).slice(0, 40);
+ const mur = pret ? ["film","serie","film","jeu"].flatMap(d => Moteur.populaires(d, 12)).filter(x => x.image).slice(0, 40) : [];
  // L'affiche note (geste rapide), le titre en dessous ouvre la fiche, l'état est écrit sous chaque affiche
- const rang = (d, nom) => `<section class="section"><div class="tete"><h3>${nom}</h3></div><div class="rail">${Moteur.populaires(d, 40).map(x=>`<div class="pop" data-n="${x.note || ""}">
+ const rang = (d, nom) => `<section class="section"><div class="tete"><h3>${nom}</h3></div><div class="rail">${!pret ? '<div class="pop" aria-hidden="true"><div class="squelette"></div><span class="pop-titre">&nbsp;</span><span class="pop-etat"></span></div>'.repeat(10) : Moteur.populaires(d, 40).map(x=>`<div class="pop" data-n="${x.note || ""}">
   <button class="pop-note" onclick="choisir('${x.id}', this.parentElement)" aria-pressed="${!!x.note}" aria-label="${esc(x.titre)}"><div class="cadre"><div class="sans-image">${ico(ICONE[d])}${esc(x.titre)}</div>${image(x)}<span class="coche">${ico("ok")}</span></div></button>
   <a class="pop-titre" href="${lienFiche(x)}" title="Voir la fiche">${esc(x.titre)}</a><span class="pop-etat">${x.note ? esc(ETAT_POP[x.note] || TEXTE[x.note]) : ""}</span></div>`).join("")}</div></section>`;
- m.innerHTML = `<section class="accueil">
-   <div class="mur" aria-hidden="true">${mur.map(x=>`<img src="${esc(visuel(x))}" alt="" onerror="this.remove()">`).join("")}</div>
+ const murHtml = mur.map(x=>`<img src="${esc(visuel(x))}" alt="" onerror="this.style.visibility='hidden'">`).join("");
+ const rails = `<p class="aide-rail">Appuie sur une affiche : une fois pour J'aime, deux pour J'adore, trois pour retirer. Le titre ouvre la fiche.</p>${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}`;
+ // Déjà affiché sans catalogue : on complète le mur et les rails sans retoucher le texte (pas de nouveau rendu du titre)
+ if (pret && $(".accueil[data-attente]")) { $(".accueil").removeAttribute("data-attente"); $(".mur").innerHTML = murHtml; $("#choix").innerHTML = rails; majProgres(); return; }
+ m.innerHTML = `<section class="accueil"${pret ? "" : " data-attente"}>
+   <div class="mur" aria-hidden="true">${murHtml}</div>
    <h2>Tes films, séries et jeux, <em>enfin reliés.</em></h2>
    <p>Dis ce que tu as aimé, et Tastebridge te recommande quoi regarder et à quoi jouer, même d'un écran à l'autre : des jeux d'après tes films, des films d'après tes jeux.</p>
    <div class="actions"><button class="bt plein" onclick="document.getElementById('choix').scrollIntoView({behavior:'smooth'})">Commencer ${ico("fleche")}</button><button class="bt" onclick="aller('gouts')">${ico("televerse")}Importer Netflix, IMDb, Letterboxd</button></div>
    <div class="preuves"><span>${ico("cadenas")}Sans inscription, tes goûts restent dans ton navigateur</span><span>${ico("eclair")}Recos instantanées, sans IA lourde</span></div>
   </section>
-  <div id="choix"><p class="aide-rail">Appuie sur une affiche : une fois pour J'aime, deux pour J'adore, trois pour retirer. Le titre ouvre la fiche.</p>${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}</div>
+  <div id="choix">${rails}</div>
   <div class="progres"><div class="barre-p"><i id="jauge"></i></div><small id="nb">0 / 5</small><button class="bt plein" id="voir" disabled onclick="aller('film')">Voir mes recos ${ico("fleche")}</button></div>`;
- majProgres();
+ if (pret) majProgres();
 }
 async function majProgres(){ const n = await compter(); if (!$("#jauge")) return;
  $("#jauge").style.width = Math.min(100, n / 5 * 100) + "%"; $("#nb").textContent = `${Math.min(n,5)} / 5`; $("#voir").disabled = n < 5; }
@@ -593,12 +683,14 @@ async function gouts(){
    <section class="panneau"><h3>Ajouter un titre</h3><p class="aide">Un film, une série ou un jeu que tu as vu ou fait.</p>
     <div class="champ">${ico("loupe")}<input id="q" placeholder="Interstellar, The Last of Us, Elden Ring..." autocomplete="off"></div>
     <div class="lignes" id="res"></div></section>
+   ${WEB ? `<section class="panneau"><h3>Mes services</h3><p class="aide">Ce que tu as : les recos disponibles chez toi passent un peu devant, et sont signalées « Chez toi ».</p>
+    <div class="services">${SERVICES_NOMS.map(([k, v]) => `<button data-k="${k}" aria-pressed="${mesServices().includes(k)}" onclick="reglerServices('${k}')">${v}</button>`).join("")}</div></section>` : ""}
    <section class="panneau"><h3>Importer ton historique</h3><p class="aide">Le fichier est lu ${WEB ? "dans ton navigateur" : "sur ton PC"}, rien n'est envoyé.</p>
     <label class="depot" id="depot"><input type="file" accept=".csv" multiple hidden id="fichier">${ico("televerse")}<strong>Glisse un fichier CSV ici</strong>ou clique pour le choisir</label>
     <div class="sources"><span class="chip">Netflix : netflix.com/viewingactivity, Tout télécharger</span><span class="chip">IMDb : export de tes notes</span><span class="chip">Letterboxd : export</span><span class="chip">Tout CSV avec une colonne Title</span></div>
     <div id="bilan" role="status"></div></section>
   </div>
-  <section class="panneau"><h3>Tes goûts</h3><p class="aide">${WEB ? "Gardés dans ce navigateur. Connecte-toi pour les retrouver sur tous tes appareils, ou sauvegarde-les dans un fichier." : "Tes jeux Steam joués plus de 15 h sont listés : donne ton avis pour qu'ils comptent."}</p>
+  <section class="panneau"><h3>Tes goûts</h3><p><a class="bt" href="#/listes">${ico("liste")}Mes listes (${lireListes().length})</a></p><p class="aide">${WEB ? "Gardés dans ce navigateur. Connecte-toi pour les retrouver sur tous tes appareils, ou sauvegarde-les dans un fichier." : "Tes jeux Steam joués plus de 15 h sont listés : donne ton avis pour qu'ils comptent."}</p>
    ${WEB ? `<div class="outils"><button class="bt" id="sauve">${ico("telecharge")}Sauvegarder</button><label class="bt"><input type="file" accept=".json" hidden id="restaure">${ico("televerse")}Charger</label><button class="bt" id="vide">${ico("non")}Tout effacer</button></div>` : ""}
    <div class="filtres">${[["tout","Tout"],["film","Films"],["serie","Séries"],["jeu","Jeux"]].map(([k,v])=>`<button class="${k===filtre?"on":""}" onclick="filtre='${k}';gouts()">${v} ${k==="tout" ? liste.length : liste.filter(r=>r.dom===k).length}</button>`).join("")}</div>
    <div class="lignes liste-gouts">${vus.length ? vus.map(ligne).join("") : `<p class="aide">Rien ici pour l'instant.</p>`}</div>
@@ -733,6 +825,8 @@ async function fichePage(dom, id, ancre){
     <h2>Genres</h2><div class="chips">${r.themes.map(t => chip(t)).join("")}</div>
     ${amb.length ? `<h2>Ambiances</h2><div class="chips">${amb.map(t => chip(t, "ambiance")).join("")}</div>` : ""}
     <div class="actions" id="actions-fiche">${actionsFiche(r)}</div>
+    <div class="actions"><button class="bt" aria-expanded="false" aria-controls="menu-liste" onclick="menuListe(this, '${r.id}')">${ico("liste")}Ajouter à une liste</button></div>
+    <div id="menu-liste" hidden></div>
    </div>
   </header>
   <div class="fiche-corps">
@@ -743,6 +837,7 @@ async function fichePage(dom, id, ancre){
      : `<p class="aide">Les avis des visiteurs sont sur <a href="https://rayancv94.github.io/tastebridge/${lienFiche(r)}" target="_blank" rel="noopener">le site en ligne</a>.</p>`}</div></section>
    </div>
    <div>
+    <section class="bloc" id="ou"><h2>${r.dom === "jeu" ? "Où jouer" : "Où regarder"}</h2>${blocOu(r)}</section>
     <section class="bloc" id="notes"><h2>Notes</h2>${notesExternes(r)}</section>
     <section class="bloc" id="liens"><h2>Ailleurs</h2><div class="liens-ext">${liensExt(r)}</div></section>
    </div>
@@ -779,6 +874,75 @@ async function listePage(type, v){
  appliquerDefile();
 }
 
+// ---------- Listes mixtes (films, séries, jeux), partageables par un simple lien, sans compte ----------
+// Gardées dans ce navigateur ; le lien contient le titre et les identifiants : #/l/Ma liste/Q62730.steam292030
+const lireListes = () => { try { return JSON.parse(localStorage.getItem("tastebridge-listes")) || []; } catch { return []; } };
+// Connecté, compte.js envoie aussi les listes au compte (événement « listes-change »)
+const ecrireListes = l => { try { localStorage.setItem("tastebridge-listes", JSON.stringify(l)); } catch {} dispatchEvent(new CustomEvent("listes-change")); };
+const lienPartage = l => `#/l/${encodeURIComponent(l.titre)}/${l.items.map(encodeURIComponent).join(".")}`;
+const urlPartage = l => location.href.split("#")[0] + lienPartage(l);
+// « 2 films, 1 série, 1 jeu »
+function resumeListe(titres){
+ const n = d => titres.filter(x => x.dom === d).length, en = enAnglais();
+ const mots = {film: en ? ["movie", "movies"] : ["film", "films"], serie: en ? ["show", "shows"] : ["série", "séries"], jeu: en ? ["game", "games"] : ["jeu", "jeux"]};
+ return ["film", "serie", "jeu"].filter(n).map(d => `${n(d)} ${mots[d][n(d) > 1 ? 1 : 0]}`).join(", ") || (en ? "empty" : "vide");
+}
+function menuListe(bouton, id){
+ const m = $("#menu-liste"), ouvert = m.hidden;
+ m.hidden = !ouvert; bouton.setAttribute("aria-expanded", ouvert);
+ if (!ouvert) return;
+ const listes = lireListes();
+ m.innerHTML = `<div class="listes-menu">${listes.map((l, k) => `<label><input type="checkbox" ${l.items.includes(id) ? "checked" : ""} onchange="basculerDansListe(${k}, '${id}', this.checked)">${esc(l.titre)}</label>`).join("")}
+  <form onsubmit="event.preventDefault(); nouvelleListe(this.nom.value, '${id}')"><input type="text" name="nom" maxlength="60" placeholder="Nouvelle liste : Ma liste d'automne" aria-label="Nom de la nouvelle liste" required><button class="bt plein">Créer</button></form></div>`;
+}
+function basculerDansListe(k, id, dedans){
+ const l = lireListes(); if (!l[k]) return;
+ l[k].items = l[k].items.filter(x => x !== id); if (dedans) l[k].items.push(id);
+ ecrireListes(l); toast(dedans ? `Ajouté à « ${l[k].titre} »` : "Retiré de la liste");
+}
+function nouvelleListe(nom, id){
+ nom = nom.trim(); if (!nom) return;
+ const l = lireListes(); l.push({titre: nom, items: id ? [id] : [], cree: Date.now()}); ecrireListes(l);
+ toast(`Liste « ${nom} » créée`); const b = $("#menu-liste"); if (b) { b.hidden = true; menuListe($('[aria-controls="menu-liste"]'), id); }
+}
+async function partagerListe(l){
+ const url = urlPartage(l);
+ try { if (navigator.share) { await navigator.share({title: l.titre, text: `${l.titre} · Tastebridge`, url}); return; } } catch (e) { if (e.name === "AbortError") return; }
+ try { await navigator.clipboard.writeText(url); toast("Lien copié"); } catch { prompt("Copie ce lien :", url); }
+}
+async function mesListes(){
+ vue = "listes"; marquerNav("gouts");
+ const m = $("#main"), listes = lireListes(); m.className = "";
+ const tous = await api.titres([...new Set(listes.flatMap(l => l.items))]), par = Object.fromEntries(tous.map(x => [x.id, x]));
+ m.innerHTML = `<section class="section"><div class="tete"><div><h3>Mes listes</h3></div><p>Des films, des séries et des jeux dans une même liste. Partage-la d'un lien, sans compte.</p></div>
+  <form class="champ-liste" onsubmit="event.preventDefault(); nouvelleListe(this.nom.value); mesListes()" style="display:flex;gap:8px;margin-bottom:16px">
+   <input class="nom-liste" name="nom" maxlength="60" placeholder="Nouvelle liste : Ma liste d'automne" aria-label="Nom de la nouvelle liste" required><button class="bt plein">Créer</button></form>
+  ${listes.length ? `<div class="mes-listes">${listes.map((l, k) => { const t = l.items.map(i => par[i]).filter(Boolean);
+   return `<div class="une-liste"><span class="vignettes" aria-hidden="true">${t.slice(0, 4).map(x => `<i style="background-image:url('${esc(visuel(x) || "")}')"></i>`).join("")}</span>
+    <a href="${lienPartage(l)}">${esc(l.titre)}<small>${resumeListe(t)}</small></a>
+    <button class="bt" onclick="partagerListe(lireListes()[${k}])" aria-label="Partager ${esc(l.titre)}">${ico("partage")}</button>
+    <button class="bt" onclick="if(confirm('Supprimer cette liste ?')){const l=lireListes();l.splice(${k},1);ecrireListes(l);mesListes()}" aria-label="Supprimer ${esc(l.titre)}">${ico("corbeille")}</button></div>`; }).join("")}</div>`
+   : `<div class="vide">${ico("liste")}<span>Pas encore de liste. Crée-en une ici, ou depuis la fiche d'un titre (« Ajouter à une liste »).</span></div>`}</section>`;
+ appliquerDefile();
+}
+async function listePartagee(titre, ids){
+ vue = "liste-partagee"; marquerNav(null);
+ const m = $("#main"), ici = location.hash; m.className = "";
+ m.innerHTML = `<section class="section"><div class="grille">${'<div class="squelette"></div>'.repeat(6)}</div></section>`;
+ let t = null; try { t = await api.titres(ids); } catch {}
+ if (location.hash !== ici) return;
+ if (!t) { m.innerHTML = `<section class="section"><div class="vide">${ico("liste")}<span>Liste indisponible pour le moment.</span></div></section>`; return; }
+ const l = {titre, items: t.map(x => x.id)}, k = lireListes().findIndex(x => x.titre === titre && x.items.join() === l.items.join());
+ m.innerHTML = `<section class="section"><div class="tete"><div><p class="accroche">Liste</p><h3>${esc(titre)}</h3><p>${resumeListe(t)}</p></div>
+  <div class="actions"><button class="bt plein" id="partager">${ico("partage")}Partager</button>${k < 0 ? `<button class="bt" id="garder">${ico("liste")}Garder dans mes listes</button>` : ""}</div></div>
+  ${t.length ? `<div class="grille">${t.map(x => `<div class="dans-liste">${k >= 0 ? `<button class="retirer" aria-label="Retirer ${esc(x.titre)}" onclick="retirerDeListe(${k}, '${x.id}')">×</button>` : ""}${carte(x)}</div>`).join("")}</div>`
+   : `<div class="vide">${ico("liste")}<span>Cette liste est vide. Ajoute des titres depuis leur fiche.</span></div>`}</section>`;
+ $("#partager").onclick = () => partagerListe(l);
+ if ($("#garder")) $("#garder").onclick = () => { const ls = lireListes(); ls.push({...l, cree: Date.now()}); ecrireListes(ls); toast("Liste gardée"); listePartagee(titre, ids); };
+ appliquerDefile();
+}
+function retirerDeListe(k, id){ const l = lireListes(); if (!l[k]) return; l[k].items = l[k].items.filter(x => x !== id); ecrireListes(l); history.replaceState(null, "", lienPartage(l)); router(); }
+
 // ---------- Navigation par adresse : #/film, #/serie, #/jeu, #/gouts, #/film/ID[/ancre] ----------
 // Retour et Suivant du navigateur marchent, chaque page est partageable, la position est retrouvée au retour.
 const ONGLETS = ["film", "serie", "jeu", "gouts"], DEFILE = {};
@@ -798,6 +962,8 @@ function router(){
  if (b && NOM[a]) return fichePage(a, decodeURIComponent(b), c);
  document.title = titrePage;
  if (["theme", "ambiance", "annee"].includes(a) && b) return listePage(a, decodeURIComponent(b));
+ if (a === "l" && b) return listePartagee(decodeURIComponent(b), (c || "").split(".").filter(Boolean).map(decodeURIComponent));
+ if (a === "listes") return mesListes();
  if (ONGLETS.includes(a)) { vue = "onglet"; onglet = a; marquerNav(a); return rendre(); }
  if (WEB && nbNotes < 5) { marquerNav(null); accueil(); return appliquerDefile(); }  // premier passage
  history.replaceState(null, "", "#/film"); router();
@@ -805,7 +971,12 @@ function router(){
 function aller(o){ interne = true; if (location.hash === "#/" + o) router(); else location.hash = "#/" + o; }
 addEventListener("hashchange", router);
 $("#nav").onclick = e => { const b = e.target.closest("button"); if (b) aller(b.dataset.o); };
-if (WEB) Moteur.charger().then(async () => { await compter(); router(); });
+if (WEB) {
+ // Premier passage : le texte d'accueil s'affiche tout de suite, le catalogue (1,3 Mo) arrive pendant ce temps
+ let n0 = 0; try { n0 = Object.keys(JSON.parse(localStorage.getItem("tastebridge-profil"))?.notes || {}).length; } catch {}
+ if (n0 < 5 && !/^#\/./.test(location.hash)) accueil(false);
+ Moteur.charger().then(async () => { await compter(); router(); });
+}
 else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); compter().then(router); }
 </script>
 </body>

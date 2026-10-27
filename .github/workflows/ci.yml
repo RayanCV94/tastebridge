@@ -1,0 +1,41 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    name: Python (lint + tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff
+      - run: ruff check .
+      - run: python -m unittest discover tests -v
+
+  site:
+    name: Site (moteur, docs à jour, parcours navigateur)
+    runs-on: ubuntu-latest
+    # Une installation apt bloquée a déjà tenu un run des dizaines de minutes : on coupe
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Syntaxe JavaScript
+        run: for f in *.js; do node --check "$f"; done
+      - name: docs/ régénéré (python site.py) et commité
+        run: python site.py && git diff --exit-code -- docs
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
