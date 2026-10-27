@@ -20,11 +20,11 @@
     "Films": "Movies", "Séries": "Shows", "Jeux": "Games", "Mes goûts": "My taste", "Rechercher": "Search",
     "Sections": "Sections", "Rechercher un film, une série ou un jeu": "Search for a movie, a show or a game",
     "Le projet sur GitHub": "The project on GitHub", "titres notés": "titles rated", "titre noté": "title rated",
-    "Tastebridge : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.": "Tastebridge: one taste profile for movies, shows and games. Data from Wikidata, SteamSpy and Wikipedia.",
+    "Pontil : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.": "Pontil: one taste profile for movies, shows and games. Data from Wikidata, SteamSpy and Wikipedia.",
     "Comment ça marche": "How it works",
     // Accueil
     "Tes films, séries et jeux,": "Your movies, shows and games,", "enfin reliés.": "finally connected.",
-    "Dis ce que tu as aimé, et Tastebridge te recommande quoi regarder et à quoi jouer, même d'un écran à l'autre : des jeux d'après tes films, des films d'après tes jeux.": "Tell it what you loved, and Tastebridge recommends what to watch and what to play, even across screens: games based on your movies, movies based on your games.",
+    "Dis ce que tu as aimé, et Pontil te recommande quoi regarder et à quoi jouer, même d'un écran à l'autre : des jeux d'après tes films, des films d'après tes jeux.": "Tell it what you loved, and Pontil recommends what to watch and what to play, even across screens: games based on your movies, movies based on your games.",
     "Commencer": "Get started", "Importer Netflix, IMDb, Letterboxd": "Import Netflix, IMDb, Letterboxd",
     "Sans inscription, tes goûts restent dans ton navigateur": "No sign-up needed, your taste stays in your browser",
     "Recos instantanées, sans IA lourde": "Instant picks, no heavy AI",
@@ -79,7 +79,7 @@
     "Garder tes goûts sur tous tes appareils": "Keep your taste on all your devices",
     "Tes goûts sont sauvegardés et te suivent sur tous tes appareils. Ceux déjà notés ici sont repris dans ton compte.": "Your taste is saved and follows you on every device. Titles already rated here move into your account.",
     "Tu vas recevoir un e-mail de confirmation envoyé par": "You'll get a confirmation e-mail sent by",
-    ", le service qui gère les comptes de Tastebridge (pense à regarder dans les spams).": ", the service that runs Tastebridge accounts (check your spam folder).",
+    ", le service qui gère les comptes de Pontil (pense à regarder dans les spams).": ", the service that runs Pontil accounts (check your spam folder).",
     "E-mail": "E-mail", "Mot de passe": "Password", "Mot de passe (8 caractères minimum)": "Password (8 characters minimum)",
     "Pas encore de compte ?": "No account yet?", "Déjà un compte ?": "Already have an account?",
     "Compte créé. Clique le lien de l'e-mail « Supabase » pour l'activer (regarde aussi les spams).": "Account created. Click the link in the \"Supabase\" e-mail to activate it (check spam too).",
@@ -124,7 +124,7 @@
     "Pas encore noté.": "Not rated yet.", "Ta note :": "Your rating:", "Titre français": "French title", "Titre anglais": "English title", "Titre français :": "French title:", "Titre anglais :": "English title:",
     "de correspondance avec tes goûts": "match with your taste", "Le plus proche de ce que tu as aimé :": "Closest to what you liked:", "Thèmes en commun avec ton profil :": "Themes shared with your profile:",
     "Le pourcentage compare les thèmes de ce titre à ceux des titres que tu as notés (les thèmes rares comptent plus). C'est le meilleur score entre ton profil entier et ton titre aimé le plus proche.": "The percentage compares this title's themes with those of the titles you rated (rare themes count more). It is the best score between your whole profile and your closest liked title.",
-    "Note quelques titres que tu aimes : Tastebridge t'expliquera ici ce qui te rapproche de celui-ci.": "Rate a few titles you like: Tastebridge will explain here what connects you to this one.",
+    "Note quelques titres que tu aimes : Pontil t'expliquera ici ce qui te rapproche de celui-ci.": "Rate a few titles you like: Pontil will explain here what connects you to this one.",
     "Résumé non disponible.": "Synopsis not available.", "Résumé indisponible pour le moment : Wikipédia ne répond pas.": "Synopsis unavailable right now: Wikipedia is not responding.",
     "Lire l'article sur Wikipédia": "Read the article on Wikipedia", "Wikipédia": "Wikipedia", "Ce titre n'est pas (ou plus) dans le catalogue.": "This title is not (or no longer) in the catalog.",
     "Retour aux recos": "Back to recommendations", "Les avis des visiteurs sont sur": "Visitor reviews are on", "le site en ligne": "the website",
@@ -192,7 +192,7 @@
     for (let n; (n = w.nextNode());) { if (n.parentElement.closest("script,style")) continue; const v = traduire(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; }
   };
   document.documentElement.lang = "en";
-  document.title = "Tastebridge: your movies, shows and games, connected";
+  document.title = "Pontil: your movies, shows and games, connected";
   const conf = window.confirm;
   window.confirm = m => conf({"Effacer tous tes goûts de ce navigateur ?": "Clear all your ratings from this browser?", "Supprimer cette liste ?": "Delete this list?"}[m] || m);
   passer(document.body);

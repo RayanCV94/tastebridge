@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tastebridge : tes films, séries et jeux, reliés</title>
+<title>Pontil : tes films, séries et jeux, reliés</title>
 <meta name="description" content="Des recommandations de films, séries et jeux vidéo qui passent d'un écran à l'autre. Sans inscription obligatoire, compte gratuit si tu veux les retrouver partout.">
 <meta name="theme-color" content="#0b0b0f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e8a33d'/%3E%3Cpath d='M7 10v13M25 10v13M7 14c4 0 6 4 9 4s5-4 9-4' stroke='%230b0b0f' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -336,10 +336,10 @@ footer a{color:var(--doux)}
 @media(max-width:760px){.bloc,#proches{scroll-margin-top:130px}.fiche-tete{grid-template-columns:1fr;align-items:start}.aff-fiche{width:140px}.fiche-tete .actions .bt{padding:10px 13px}}
 </style>
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://makingdreamscometrue.github.io/tastebridge/">
-<meta property="og:title" content="Tastebridge : films, séries et jeux, reliés">
+<meta property="og:url" content="https://makingdreamscometrue.github.io/pontil/">
+<meta property="og:title" content="Pontil : films, séries et jeux, reliés">
 <meta property="og:description" content="Tu as aimé un film ? Voici le jeu. Un jeu ? Voici la série. Avec la raison, et où regarder ou jouer.">
-<meta property="og:image" content="https://makingdreamscometrue.github.io/tastebridge/medias/social.png">
+<meta property="og:image" content="https://makingdreamscometrue.github.io/pontil/medias/social.png">
 <meta property="og:image:width" content="1280"><meta property="og:image:height" content="640">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="manifest.webmanifest">
@@ -390,7 +390,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  <symbol id="telecharge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 10l5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
 </svg>
 <header><div class="barre">
- <a class="logo" href="#/film"><b><svg aria-hidden="true"><use href="#pont"/></svg></b>Tastebridge</a>
+ <a class="logo" href="#/film"><b><svg aria-hidden="true"><use href="#pont"/></svg></b>Pontil</a>
  <nav id="nav" aria-label="Sections">
   <button data-o="film" class="on"><svg><use href="#film"/></svg>Films</button>
   <button data-o="serie"><svg><use href="#tv"/></svg>Séries</button>
@@ -401,9 +401,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  <span class="compte" id="compte"></span>
 </div></header>
 <main id="main"></main>
-<footer><div><span>Tastebridge : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
+<footer><div><span>Pontil : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=228bf3e52a"></script>
+<script src="langue.js?v=dece43a2cb"></script>
 <script src="moteur.js?v=53010fab9c"></script>
 <script>
 let onglet = "film", data = null;
@@ -680,7 +680,7 @@ function accueil(pret = true){
  m.innerHTML = `<section class="accueil"${pret ? "" : " data-attente"}>
    <div class="mur" aria-hidden="true">${murHtml}</div>
    <h2>Tes films, séries et jeux, <em>enfin reliés.</em></h2>
-   <p>Dis ce que tu as aimé, et Tastebridge te recommande quoi regarder et à quoi jouer, même d'un écran à l'autre : des jeux d'après tes films, des films d'après tes jeux.</p>
+   <p>Dis ce que tu as aimé, et Pontil te recommande quoi regarder et à quoi jouer, même d'un écran à l'autre : des jeux d'après tes films, des films d'après tes jeux.</p>
    <div class="actions"><button class="bt plein" onclick="document.getElementById('choix').scrollIntoView({behavior:'smooth'})">Commencer ${ico("fleche")}</button><button class="bt" onclick="aller('gouts')">${ico("televerse")}Importer Netflix, IMDb, Letterboxd</button></div>
    <div class="preuves"><span>${ico("cadenas")}Sans inscription, tes goûts restent dans ton navigateur</span><span>${ico("eclair")}Recos instantanées, sans IA lourde</span></div>
   </section>
@@ -729,7 +729,7 @@ async function gouts(){
  const d = $("#depot"); d.ondragover = e => { e.preventDefault(); d.classList.add("sur"); }; d.ondragleave = () => d.classList.remove("sur");
  d.ondrop = e => { e.preventDefault(); d.classList.remove("sur"); envoyer(e.dataTransfer.files); };
  if (WEB) {
-  $("#sauve").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([Moteur.exporter()],{type:"application/json"})); a.download = "mes-gouts-tastebridge.json"; a.click(); };
+  $("#sauve").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([Moteur.exporter()],{type:"application/json"})); a.download = "mes-gouts-pontil.json"; a.click(); };
   $("#restaure").onchange = async e => { try { Moteur.restaurer(await e.target.files[0].text()); data = null; toast("Goûts chargés"); compter(); gouts(); } catch (x) { toast(x.message); } };
   $("#vide").onclick = () => { if (confirm("Effacer tous tes goûts de ce navigateur ?")) { Moteur.vider(); data = null; compter(); gouts(); } };
  }
@@ -768,7 +768,7 @@ const nombre = n => n.toLocaleString(enAnglais() ? "en-US" : "fr-FR");
 const decimal = n => enAnglais() ? n.toFixed(1) : n.toFixed(1).replace(".", ",");
 const ND = `<span class="nd">non disponible</span>`;
 const chip = (t, type = "theme") => `<a class="chip${type === "ambiance" ? " amb" : ""}" href="${lienListe(type, t)}">${esc(t)}</a>`;
-// Moyenne des avis Tastebridge (compte.js remplit window.NOTES ; null = Supabase injoignable)
+// Moyenne des avis Pontil (compte.js remplit window.NOTES ; null = Supabase injoignable)
 const noteTb = id => !WEB ? ND : window.NOTES === undefined ? `<span class="nd">chargement…</span>` : window.NOTES === null ? ND
  : window.NOTES[id] ? `${decimal(window.NOTES[id][0])} /5 · ${window.NOTES[id][1]} avis` : `<span class="nd">aucun avis</span>`;
 function actionsFiche(r){
@@ -785,12 +785,12 @@ function notesExternes(r){
   l.push(ligne("Metacritic", r.metacritic != null ? `${r.metacritic} /100` : ND, r.metacritic != null && "note de la presse, via Wikidata"));
   l.push(ligne("Rotten Tomatoes", r.rt != null ? `${r.rt} %` : ND, r.rt != null && "critiques positives, via Wikidata"));
  }
- l.push(ligne("Tastebridge", `<span id="note-tb">${noteTb(r.id)}</span>`, "avis des visiteurs, sur 5"));
+ l.push(ligne("Pontil", `<span id="note-tb">${noteTb(r.id)}</span>`, "avis des visiteurs, sur 5"));
  return `<dl class="notes-ext">${l.join("")}</dl>`;
 }
 function pourToiBloc(r){
  const p = r.pour_toi;
- if (!p) return `<p class="aide">Note quelques titres que tu aimes : Tastebridge t'expliquera ici ce qui te rapproche de celui-ci.</p>`;
+ if (!p) return `<p class="aide">Note quelques titres que tu aimes : Pontil t'expliquera ici ce qui te rapproche de celui-ci.</p>`;
  return `<p class="score"><b>${p.match} %</b>de correspondance avec tes goûts</p>
   ${p.parce_que.length ? `<p>Le plus proche de ce que tu as aimé : ${p.parce_que.map(x => `<a href="${lienFiche(x)}">${esc(x.titre)}</a> (${x.sim} %)`).join(", ")}</p>` : ""}
   ${p.communs.length ? `<p>Thèmes en commun avec ton profil : ${p.communs.map(t => chip(t)).join(" ")}</p>` : ""}
@@ -835,7 +835,7 @@ async function fichePage(dom, id, ancre){
  if (vue !== "fiche" || decodeURIComponent(location.hash.split("/")[2] || "") !== id) return;  // on est déjà ailleurs
  if (!r){ m.innerHTML = `<div class="section"><div class="vide">${ico(ICONE[dom] || "film")}<span>Ce titre n'est pas (ou plus) dans le catalogue. <a href="#/film">Retour aux recos</a></span></div></div>`; appliquerDefile(); return; }
  if (r.dom !== dom) history.replaceState(null, "", lienFiche(r, ancre));
- FICHE = r; document.title = `${r.titre}${r.annee ? ` (${r.annee})` : ""} · Tastebridge`;
+ FICHE = r; document.title = `${r.titre}${r.annee ? ` (${r.annee})` : ""} · Pontil`;
  const amb = ambiances(r.themes), autre = r.titre_en && r.titre_en !== r.titre ? r.titre_en : "";
  m.className = r.dom;
  m.innerHTML = `<article class="fiche-page">
@@ -858,7 +858,7 @@ async function fichePage(dom, id, ancre){
     <section class="bloc" id="resume"><h2>Résumé</h2><div class="contenu"><p class="aide">Chargement du résumé…</p></div></section>
     <section class="bloc" id="score"><h2>Pourquoi ce titre pour toi</h2>${pourToiBloc(r)}</section>
     <section class="bloc" id="avis"><h2>Avis des visiteurs</h2><div class="avis-zone">${WEB ? `<p class="aide">Chargement des avis…</p>`
-     : `<p class="aide">Les avis des visiteurs sont sur <a href="https://makingdreamscometrue.github.io/tastebridge/${lienFiche(r)}" target="_blank" rel="noopener">le site en ligne</a>.</p>`}</div></section>
+     : `<p class="aide">Les avis des visiteurs sont sur <a href="https://makingdreamscometrue.github.io/pontil/${lienFiche(r)}" target="_blank" rel="noopener">le site en ligne</a>.</p>`}</div></section>
    </div>
    <div>
     <section class="bloc" id="ou"><h2>${r.dom === "jeu" ? "Où jouer" : "Où regarder"}</h2>${blocOu(r)}</section>
@@ -936,7 +936,7 @@ function nouvelleListe(nom, id){
 }
 async function partagerListe(l){
  const url = urlPartage(l);
- try { if (navigator.share) { await navigator.share({title: l.titre, text: `${l.titre} · Tastebridge`, url}); return; } } catch (e) { if (e.name === "AbortError") return; }
+ try { if (navigator.share) { await navigator.share({title: l.titre, text: `${l.titre} · Pontil`, url}); return; } } catch (e) { if (e.name === "AbortError") return; }
  try { await navigator.clipboard.writeText(url); toast("Lien copié"); } catch { prompt("Copie ce lien :", url); }
 }
 // Mentions légales (LCEN), confidentialité (RGPD), sources et licences. Bilingue ici plutôt que dans langue.js (longs paragraphes).
@@ -963,8 +963,8 @@ function mentions(){
    <li>${t("Tendances : nombre de lectures Wikipédia (Wikimedia) et de joueurs (SteamSpy).", "Trends: Wikipedia page views (Wikimedia) and player counts (SteamSpy).")}</li>
    <li>${t("Polices Onest et Gloock : SIL Open Font License 1.1. Icônes : Lucide, licence ISC. Bibliothèque supabase-js : licence MIT.", "Onest and Gloock fonts: SIL Open Font License 1.1. Icons: Lucide, ISC licence. supabase-js library: MIT licence.")}</li>
   </ul>
-  <p>${t("Aucune affiche ni jaquette n'est reproduite : chaque titre a une couverture dessinée par Tastebridge. Les titres, marques et noms cités (Netflix, Steam, IMDb, Letterboxd, JustWatch, Metacritic, Rotten Tomatoes…) appartiennent à leurs propriétaires ; Tastebridge n'est affilié à aucun d'eux.",
-   "No poster or cover art is reproduced: every title gets a cover drawn by Tastebridge. Titles, trademarks and names mentioned (Netflix, Steam, IMDb, Letterboxd, JustWatch, Metacritic, Rotten Tomatoes…) belong to their owners; Tastebridge is not affiliated with any of them.")}</p>
+  <p>${t("Aucune affiche ni jaquette n'est reproduite : chaque titre a une couverture dessinée par Pontil. Les titres, marques et noms cités (Netflix, Steam, IMDb, Letterboxd, JustWatch, Metacritic, Rotten Tomatoes…) appartiennent à leurs propriétaires ; Pontil n'est affilié à aucun d'eux.",
+   "No poster or cover art is reproduced: every title gets a cover drawn by Pontil. Titles, trademarks and names mentioned (Netflix, Steam, IMDb, Letterboxd, JustWatch, Metacritic, Rotten Tomatoes…) belong to their owners; Pontil is not affiliated with any of them.")}</p>
  </section>`;
  scrollTo(0, 0);
 }
@@ -1039,7 +1039,7 @@ if (WEB) {
 else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); compter().then(router); }
 </script>
 <script src="vendor/supabase.js?v=34035ac76d"></script>
-<script src="compte.js?v=d387590717"></script>
+<script src="compte.js?v=dfe8f49913"></script>
 <script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
 </body>
 </html>

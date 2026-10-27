@@ -53,7 +53,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
     v.className = "voile-compte";
     v.innerHTML = `<form class="boite">
   <h3>${nouveau ? "Créer un compte" : "Se connecter"}</h3>
-  <p>Tes goûts sont sauvegardés et te suivent sur tous tes appareils. Ceux déjà notés ici sont repris dans ton compte.${nouveau ? `<span class="note-mail">${ICONE_MAIL}<span>Tu vas recevoir un e-mail de confirmation envoyé par <b>Supabase</b>, le service qui gère les comptes de Tastebridge (pense à regarder dans les spams).</span></span>` : ""}</p>
+  <p>Tes goûts sont sauvegardés et te suivent sur tous tes appareils. Ceux déjà notés ici sont repris dans ton compte.${nouveau ? `<span class="note-mail">${ICONE_MAIL}<span>Tu vas recevoir un e-mail de confirmation envoyé par <b>Supabase</b>, le service qui gère les comptes de Pontil (pense à regarder dans les spams).</span></span>` : ""}</p>
   <label for="c-mail">E-mail</label><input id="c-mail" type="email" autocomplete="email" required>
   <label for="c-mdp">Mot de passe${nouveau ? " (8 caractères minimum)" : ""}</label>
   <input id="c-mdp" type="password" minlength="${nouveau ? 8 : 1}" autocomplete="${nouveau ? "new-password" : "current-password"}" required>
