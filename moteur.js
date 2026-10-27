@@ -53,6 +53,43 @@ const Moteur = (() => {
     }
   }
 
+  // Le ton compte : un dessin animé familial colle mal à The Witcher même s'ils partagent « Fantasy »
+  const TONS = ["Animation, famille", "Sombre, adulte"];
+  const dotV = (a, b) => Object.entries(VEC[a]).reduce((s, [th, x]) => s + (VEC[b][th] || 0) * x, 0);
+  const court = (it, plus) => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki, ...notesExt(it), ...plus});
+
+  // Fiche : les titres les plus proches (même similarité cosinus que les recos), du même support d'abord, puis des autres
+  function proches(id) {
+    const res = {film: [], serie: [], jeu: []};
+    for (const [i, it] of Object.entries(CAT)) {
+      if (i === id || !it.image) continue;
+      const sim = dotV(id, i);
+      if (sim < 0.3) continue;
+      const ton = TONS.some(t => (t in VEC[i]) !== (t in VEC[id])) ? 0.4 : 1;
+      res[it.dom].push([sim * (0.35 + 0.65 * it.qualite) * ton, i, sim]);
+    }
+    return ["film", "serie", "jeu"].sort((a, b) => (b === CAT[id].dom) - (a === CAT[id].dom))
+      .flatMap(d => res[d].sort((a, b) => b[0] - a[0]).slice(0, d === CAT[id].dom ? 6 : 3))
+      .map(([, i, sim]) => court(CAT[i], {themes: CAT[i].themes.slice(0, 3), parce_que: [], match: Math.round(sim * 100),
+        communs: Object.keys(VEC[i]).filter(th => th in VEC[id]).sort((a, b) => VEC[id][b] * VEC[i][b] - VEC[id][a] * VEC[i][a]).slice(0, 3)}));
+  }
+
+  // Fiche : d'où vient le pourcentage (même calcul que les recos), ou null sans titre aimé
+  function pourToi(id) {
+    const poids = {};
+    for (const [i, note] of Object.entries(profil().notes)) if (CAT[i] && NOTES[note] && i !== id) poids[i] = NOTES[note];
+    const aimes = Object.keys(poids).filter(j => poids[j] > 0);
+    if (!aimes.length) return null;
+    const prof = {};
+    for (const [i, x] of Object.entries(poids)) for (const [th, v] of Object.entries(VEC[i])) prof[th] = (prof[th] || 0) + x * v;
+    const norme = Math.hypot(...Object.values(prof)) || 1;
+    const sim = Object.entries(VEC[id]).reduce((s, [th, x]) => s + (prof[th] || 0) * x, 0) / norme;
+    const pourquoi = aimes.map(j => [dotV(id, j), j]).sort((a, b) => b[0] - a[0]).slice(0, 2).filter(([s]) => s > 0);
+    return {match: Math.round(Math.max(sim, pourquoi[0]?.[0] || 0) * 100),
+      parce_que: pourquoi.map(([s, j]) => ({id: j, dom: CAT[j].dom, titre: CAT[j].titre, sim: Math.round(s * 100)})),
+      communs: Object.keys(VEC[id]).filter(th => (prof[th] || 0) > 0).sort((a, b) => prof[b] * VEC[id][b] - prof[a] * VEC[id][a]).slice(0, 3)};
+  }
+
   function profil() {
     try { return JSON.parse(localStorage.getItem(CLE)) || {notes: {}}; } catch { return {notes: {}}; }
   }
@@ -88,8 +125,6 @@ const Moteur = (() => {
     const ok = res.filter(r => r[2] > 0.15 && CAT[r[1]].image);  // sans affiche, une reco donne une carte vide
     const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim]));
     const ancres = Object.keys(poids).filter(j => poids[j] > 0).reverse().sort((a, b) => poids[b] - poids[a]).slice(0, 15);
-    // Le ton compte : un dessin animé familial colle mal à The Witcher même s'ils partagent « Fantasy »
-    const TONS = ["Animation, famille", "Sombre, adulte"];
     const ton = (i, j) => TONS.some(t => (t in VEC[i]) !== (t in VEC[j])) ? 0.4 : 1;
     const listes = ancres.map(j => ok.map(([, i]) => [dot(i, j) * qual.get(i) * ton(i, j), i]).filter(([s]) => s > 0.12).sort((a, b) => b[0] - a[0]).map(([, i]) => i));
     const choix = [], pris = new Set();
@@ -211,6 +246,16 @@ const Moteur = (() => {
       const reste = Object.values(CAT).filter(it => it.dom === dom && it.image && (it.annee || 0) >= 2008).sort((a, b) => b.qualite - a.qualite);
       return [...new Set([...connus, ...reste])].filter(it => it.image && !notes[it.id]).slice(0, n)
         .map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam}));
+    },
+    fiche(id) {
+      const it = CAT[id]; if (!it) return null;
+      return {...it, note: profil().notes[id] || "", similaires: proches(id), pour_toi: pourToi(id)};
+    },
+    // Liste d'un thème (ou d'une ambiance = plusieurs thèmes) et/ou d'une année, tous supports, les plus acclamés d'abord
+    liste({themes = [], annee = null} = {}) {
+      const l = Object.values(CAT).filter(it => it.image && themes.every(t => it.themes.includes(t)) && (!annee || it.annee === annee))
+        .sort((a, b) => b.qualite - a.qualite);
+      return {total: l.length, titres: l.slice(0, 60).map(it => court(it, {themes: it.themes.slice(0, 3), parce_que: []}))};
     },
     noter(id, note) {
       const p = profil(); if (!CAT[id]) return;

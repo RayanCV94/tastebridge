@@ -197,6 +197,66 @@ def mes_gouts(p):
     return sorted(out, key=lambda x: (x["dom"], x["titre"]))
 
 
+TONS = ("Animation, famille", "Sombre, adulte")
+
+
+def dot(a, b):
+    return sum(VEC[b].get(th, 0) * x for th, x in VEC[a].items())
+
+
+def court(it, **plus):
+    return {**{k: it.get(k) for k in ("id", "dom", "titre", "annee", "image", "avis", "steam", "wiki") + NOTES_EXT}, **plus}
+
+
+def proches(id_):
+    # Fiche : les titres les plus proches (même similarité cosinus que les recos), du même support d'abord
+    res = {"film": [], "serie": [], "jeu": []}
+    for i, it in CAT.items():
+        if i == id_ or not it.get("image"):
+            continue
+        sim = dot(id_, i)
+        if sim < 0.3:
+            continue
+        ton = 0.4 if any((t in VEC[i]) != (t in VEC[id_]) for t in TONS) else 1
+        res[it["dom"]].append((sim * (0.35 + 0.65 * it["qualite"]) * ton, i, sim))
+    dom0, out = CAT[id_]["dom"], []
+    for d in sorted(res, key=lambda d: d != dom0):
+        for _, i, sim in sorted(res[d], reverse=True)[:6 if d == dom0 else 3]:
+            communs = sorted((th for th in VEC[i] if th in VEC[id_]), key=lambda th: -VEC[id_][th] * VEC[i][th])[:3]
+            out.append(court(CAT[i], themes=CAT[i]["themes"][:3], parce_que=[], match=round(sim * 100), communs=communs))
+    return out
+
+
+def pour_toi(p, id_):
+    # Fiche : d'où vient le pourcentage (même calcul que les recos), ou None sans titre aimé
+    poids = {i: w for i, w in poids_profil(p).items() if i != id_}
+    aimes = [j for j, w in poids.items() if w > 0]
+    if not aimes:
+        return None
+    prof = {}
+    for i, x in poids.items():
+        for th, v in VEC[i].items():
+            prof[th] = prof.get(th, 0) + x * v
+    norme = math.sqrt(sum(x * x for x in prof.values())) or 1
+    sim = sum(prof.get(th, 0) * x for th, x in VEC[id_].items()) / norme
+    pourquoi = [(s, j) for s, j in sorted(((dot(id_, j), j) for j in aimes), reverse=True)[:2] if s > 0]
+    return {"match": round(max(sim, pourquoi[0][0] if pourquoi else 0) * 100),
+            "parce_que": [{"id": j, "dom": CAT[j]["dom"], "titre": CAT[j]["titre"], "sim": round(s * 100)} for s, j in pourquoi],
+            "communs": sorted((th for th in VEC[id_] if prof.get(th, 0) > 0), key=lambda th: -prof[th] * VEC[id_][th])[:3]}
+
+
+def fiche(p, id_):
+    if id_ not in CAT:
+        return None
+    return {**CAT[id_], "note": p["notes"].get(id_, ""), "similaires": proches(id_), "pour_toi": pour_toi(p, id_)}
+
+
+def liste(themes, annee):
+    l = sorted((it for it in CAT.values() if it.get("image") and all(t in it["themes"] for t in themes)
+                and (not annee or it.get("annee") == annee)), key=lambda it: -it["qualite"])
+    return {"total": len(l), "titres": [court(it, themes=it["themes"][:3], parce_que=[]) for it in l[:60]]}
+
+
 def chercher(q):
     q = simple(q)
     if len(q) < 2:
@@ -266,6 +326,12 @@ class H(BaseHTTPRequestHandler):
             self.envoyer(mes_gouts(p))
         elif u.path == "/api/cherche":
             self.envoyer(chercher(parse_qs(u.query).get("q", [""])[0]))
+        elif u.path == "/api/fiche":
+            self.envoyer(fiche(p, parse_qs(u.query).get("id", [""])[0]))
+        elif u.path == "/api/liste":
+            q = parse_qs(u.query)
+            annee = q.get("annee", [""])[0]
+            self.envoyer(liste([t for t in q.get("themes", [""])[0].split("|") if t], int(annee) if annee.isdigit() else None))
         elif u.path == "/api/ping":
             self.envoyer({"ok": True})
         else:
