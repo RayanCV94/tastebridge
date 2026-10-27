@@ -127,6 +127,12 @@
     "Aucun titre assez proche dans le catalogue.": "No close enough title in the catalog.", "Thèmes communs :": "Shared themes:",
     // Liens et listes (page.html)
     "Appuie sur une affiche : une fois pour J'aime, deux pour J'adore, trois pour retirer. Le titre ouvre la fiche.": "Tap a poster: once for Like, twice for Love, three times to remove. The title opens the details page.",
+    // Listes
+    "Ajouter à une liste": "Add to a list", "Nouvelle liste : Ma liste d'automne": "New list: My fall list", "Nom de la nouvelle liste": "New list name", "Créer": "Create",
+    "Des films, des séries et des jeux dans une même liste. Partage-la d'un lien, sans compte.": "Movies, shows and games in one list. Share it with a link, no account needed.",
+    "Pas encore de liste. Crée-en une ici, ou depuis la fiche d'un titre (« Ajouter à une liste »).": "No list yet. Create one here, or from a title page (\u201cAdd to a list\u201d).",
+    "Liste": "List", "Partager": "Share", "Garder dans mes listes": "Save to my lists", "Cette liste est vide. Ajoute des titres depuis leur fiche.": "This list is empty. Add titles from their page.",
+    "Liste indisponible pour le moment.": "List unavailable right now.", "Lien copié": "Link copied", "Liste gardée": "List saved", "Retiré de la liste": "Removed from the list", "Mes listes": "My lists",
     // Où regarder, où jouer
     "Où jouer": "Where to play", "Où regarder": "Where to watch", "Chez toi": "You have it", "Plateformes non disponibles.": "Platforms not available.",
     "Plateformes et boutiques : Wikidata (incomplet, surtout pour les consoles).": "Platforms and stores: Wikidata (incomplete, especially for consoles).",
@@ -150,6 +156,8 @@
     [/^([\d.,]+) \/5 · (\d+) avis$/, (_, m, n) => `${m} /5 · ${n} review${n > 1 ? "s" : ""}`],
     [/^sur 5 · (\d+) avis$/, (_, n) => `out of 5 · ${n} review${n > 1 ? "s" : ""}`],
     [/^(J'adore|J'aime|Déjà vu|Déjà joué|Pas pour moi) : (.+)$/, (_, k, t) => `${T(k)}: ${t}`],
+    [/^Ajouté à « (.+) »$/, (_, t) => `Added to \u201c${t}\u201d`], [/^Liste « (.+) » créée$/, (_, t) => `List \u201c${t}\u201d created`],
+    [/^Mes listes \((\d+)\)$/, (_, n) => `My lists (${n})`], [/^(Partager|Supprimer|Retirer) (.+)$/, (_, v, t) => `${{Partager: "Share", Supprimer: "Delete", Retirer: "Remove"}[v]} ${t}`],
     [/^Fiche et avis : (.+)$/, (_, t) => `Details and reviews: ${t}`],
     [/^Les (\d+) premiers sont affichés\.$/, (_, n) => `The first ${n} are shown.`],
     [/^Avis sur (.+)$/, (_, t) => `Reviews of ${t}`],
@@ -178,7 +186,7 @@
   document.documentElement.lang = "en";
   document.title = "Tastebridge: your movies, shows and games, connected";
   const conf = window.confirm;
-  window.confirm = m => conf(m === "Effacer tous tes goûts de ce navigateur ?" ? "Clear all your ratings from this browser?" : m);
+  window.confirm = m => conf({"Effacer tous tes goûts de ce navigateur ?": "Clear all your ratings from this browser?", "Supprimer cette liste ?": "Delete this list?"}[m] || m);
   passer(document.body);
   new MutationObserver(l => l.forEach(m => {
     if (m.type === "characterData") passer(m.target);

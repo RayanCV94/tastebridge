@@ -116,13 +116,16 @@ a.chip:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28)
 a.accroche{text-decoration:none;align-self:flex-start}
 a.accroche:hover{color:var(--texte)}
 .pq a,.parce a,.legende span a,.type-fiche a,.score a{color:inherit;text-decoration:underline;text-decoration-color:rgba(255,255,255,.28);text-underline-offset:3px}
+.legende span a,.legende em a{text-decoration:none}
+.legende span a:hover,.legende em a:hover{text-decoration:underline}
 .pq a:hover,.parce a:hover,.legende span a:hover,.type-fiche a:hover,.score a:hover{color:var(--texte);text-decoration-color:currentColor}
 .scene .pq a,.parce a{color:#fff;font-weight:600}
 .voile .pq{font-size:12.5px;line-height:1.4;color:#dcd9d1}
 .voile .pq b{color:#fff;font-weight:600}
 .mini-act{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
 .mini-act button,.mini-act a{display:grid;place-items:center;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;transition:background .15s,color .15s,transform .15s}
-.mini-act button svg{width:16px;height:16px}
+.mini-act button svg,.mini-act a svg{width:16px;height:16px}
+.mini-act button,.mini-act a{min-width:0;padding:0}
 .mini-act button:active{transform:scale(.92)}
 .mini-act .a1:hover{background:var(--rouge)} .mini-act .a2:hover{background:var(--menthe);color:var(--fond)} .mini-act .a3:hover{background:var(--bleu);color:var(--fond)} .mini-act .a4:hover{background:#3a3d4b} .mini-act .a5:hover{background:var(--ambre);color:var(--fond)}
 .legende{display:flex;flex-direction:column;gap:2px;padding:0 2px}
@@ -321,6 +324,20 @@ footer a{color:var(--doux)}
 .services{display:flex;flex-wrap:wrap;gap:6px}
 .services button{background:none;border:1px solid var(--trait2);color:var(--doux);font:500 13px Onest;padding:6px 12px;border-radius:30px;cursor:pointer}
 .services button[aria-pressed="true"]{background:color-mix(in srgb,var(--menthe) 18%,transparent);border-color:var(--menthe);color:var(--texte)}
+.listes-menu{width:100%;display:flex;flex-direction:column;gap:8px;margin-top:4px;padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--trait2)}
+.listes-menu label{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer}
+.listes-menu input[type=checkbox]{width:18px;height:18px;accent-color:var(--menthe)}
+.listes-menu form{display:flex;gap:8px;margin-top:4px}
+.listes-menu input[type=text],.nom-liste{flex:1;min-width:0;background:var(--fond);border:1px solid var(--trait2);border-radius:10px;padding:9px 12px;color:var(--texte);font:14px Onest}
+.mes-listes{display:flex;flex-direction:column;gap:10px}
+.une-liste{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;border:1px solid var(--trait);background:var(--surface)}
+.une-liste .vignettes{display:flex;flex:none}
+.une-liste .vignettes i{width:30px;height:45px;border-radius:5px;background:var(--surface2) center/cover;box-shadow:0 0 0 2px var(--surface);margin-left:-10px}
+.une-liste .vignettes i:first-child{margin-left:0}
+.une-liste a{flex:1;min-width:0;color:var(--texte);text-decoration:none;font-weight:600}
+.une-liste a small{display:block;font-weight:400;color:var(--doux);font-size:12.5px}
+.dans-liste{position:relative;min-width:0}
+.retirer{position:absolute;z-index:3;top:10px;right:10px;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(8,8,12,.8);color:#fff;cursor:pointer;font-size:16px}
 .nd{color:#8a8995;font-weight:400}  /* --pale manque de contraste sur --surface (4,4:1) */
 .liens-ext{display:flex;flex-wrap:wrap;gap:8px}
 #proches{scroll-margin-top:90px}
@@ -348,6 +365,9 @@ footer a{color:var(--doux)}
  <symbol id="loupe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
  <symbol id="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
  <symbol id="ecran" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+ <symbol id="liste" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h13M3 12h13M3 18h9M19 14v6M16 17h6"/></symbol>
+ <symbol id="partage" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
+ <symbol id="corbeille" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></symbol>
  <symbol id="lien" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
  <symbol id="cadenas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
  <symbol id="eclair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
@@ -370,8 +390,8 @@ footer a{color:var(--doux)}
 <main id="main"></main>
 <footer><div><span>Tastebridge : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="https://github.com/RayanCV94/tastebridge#how-it-works" target="_blank" rel="noopener">Comment ça marche</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=011b375a5e"></script>
-<script src="moteur.js?v=b3ba2fe481"></script>
+<script src="langue.js?v=568722454e"></script>
+<script src="moteur.js?v=7e8cecfee3"></script>
 <script>
 let onglet = "film", data = null;
 const $ = s => document.querySelector(s);
@@ -389,12 +409,13 @@ const WEB = typeof Moteur !== "undefined";
 const api = WEB ? {
  recos: async () => Moteur.recos(), gouts: async () => Moteur.gouts(), cherche: async q => Moteur.cherche(q),
  noter: async (id, note) => Moteur.noter(id, note),
- fiche: async id => Moteur.fiche(id), liste: async q => Moteur.liste(q),
+ fiche: async id => Moteur.fiche(id), liste: async q => Moteur.liste(q), titres: async ids => Moteur.titres(ids),
  importer: async (nom, texte) => { try { return Moteur.importer(texte); } catch (e) { return {erreur: e.message}; } },
 } : {
  recos: () => json("/api/recos"), gouts: () => json("/api/gouts"), cherche: q => json("/api/cherche?q="+encodeURIComponent(q)),
  noter: (id, note) => poster("/api/note",{id,note}),
  fiche: id => json("/api/fiche?id="+encodeURIComponent(id)),
+ titres: ids => json("/api/titres?ids="+ids.map(encodeURIComponent).join(".")),
  liste: q => json(`/api/liste?themes=${encodeURIComponent((q.themes || []).join("|"))}&annee=${q.annee || ""}`),
  importer: async (nom, texte) => (await poster("/api/import",{nom, texte})).json(),
 };
@@ -664,7 +685,7 @@ async function gouts(){
     <div class="sources"><span class="chip">Netflix : netflix.com/viewingactivity, Tout télécharger</span><span class="chip">IMDb : export de tes notes</span><span class="chip">Letterboxd : export</span><span class="chip">Tout CSV avec une colonne Title</span></div>
     <div id="bilan" role="status"></div></section>
   </div>
-  <section class="panneau"><h3>Tes goûts</h3><p class="aide">${WEB ? "Gardés dans ce navigateur. Connecte-toi pour les retrouver sur tous tes appareils, ou sauvegarde-les dans un fichier." : "Tes jeux Steam joués plus de 15 h sont listés : donne ton avis pour qu'ils comptent."}</p>
+  <section class="panneau"><h3>Tes goûts</h3><p><a class="bt" href="#/listes">${ico("liste")}Mes listes (${lireListes().length})</a></p><p class="aide">${WEB ? "Gardés dans ce navigateur. Connecte-toi pour les retrouver sur tous tes appareils, ou sauvegarde-les dans un fichier." : "Tes jeux Steam joués plus de 15 h sont listés : donne ton avis pour qu'ils comptent."}</p>
    ${WEB ? `<div class="outils"><button class="bt" id="sauve">${ico("telecharge")}Sauvegarder</button><label class="bt"><input type="file" accept=".json" hidden id="restaure">${ico("televerse")}Charger</label><button class="bt" id="vide">${ico("non")}Tout effacer</button></div>` : ""}
    <div class="filtres">${[["tout","Tout"],["film","Films"],["serie","Séries"],["jeu","Jeux"]].map(([k,v])=>`<button class="${k===filtre?"on":""}" onclick="filtre='${k}';gouts()">${v} ${k==="tout" ? liste.length : liste.filter(r=>r.dom===k).length}</button>`).join("")}</div>
    <div class="lignes liste-gouts">${vus.length ? vus.map(ligne).join("") : `<p class="aide">Rien ici pour l'instant.</p>`}</div>
@@ -799,6 +820,8 @@ async function fichePage(dom, id, ancre){
     <h2>Genres</h2><div class="chips">${r.themes.map(t => chip(t)).join("")}</div>
     ${amb.length ? `<h2>Ambiances</h2><div class="chips">${amb.map(t => chip(t, "ambiance")).join("")}</div>` : ""}
     <div class="actions" id="actions-fiche">${actionsFiche(r)}</div>
+    <div class="actions"><button class="bt" aria-expanded="false" aria-controls="menu-liste" onclick="menuListe(this, '${r.id}')">${ico("liste")}Ajouter à une liste</button></div>
+    <div id="menu-liste" hidden></div>
    </div>
   </header>
   <div class="fiche-corps">
@@ -846,6 +869,74 @@ async function listePage(type, v){
  appliquerDefile();
 }
 
+// ---------- Listes mixtes (films, séries, jeux), partageables par un simple lien, sans compte ----------
+// Gardées dans ce navigateur ; le lien contient le titre et les identifiants : #/l/Ma liste/Q62730.steam292030
+const lireListes = () => { try { return JSON.parse(localStorage.getItem("tastebridge-listes")) || []; } catch { return []; } };
+const ecrireListes = l => { try { localStorage.setItem("tastebridge-listes", JSON.stringify(l)); } catch {} };
+const lienPartage = l => `#/l/${encodeURIComponent(l.titre)}/${l.items.map(encodeURIComponent).join(".")}`;
+const urlPartage = l => location.href.split("#")[0] + lienPartage(l);
+// « 2 films, 1 série, 1 jeu »
+function resumeListe(titres){
+ const n = d => titres.filter(x => x.dom === d).length, en = enAnglais();
+ const mots = {film: en ? ["movie", "movies"] : ["film", "films"], serie: en ? ["show", "shows"] : ["série", "séries"], jeu: en ? ["game", "games"] : ["jeu", "jeux"]};
+ return ["film", "serie", "jeu"].filter(n).map(d => `${n(d)} ${mots[d][n(d) > 1 ? 1 : 0]}`).join(", ") || (en ? "empty" : "vide");
+}
+function menuListe(bouton, id){
+ const m = $("#menu-liste"), ouvert = m.hidden;
+ m.hidden = !ouvert; bouton.setAttribute("aria-expanded", ouvert);
+ if (!ouvert) return;
+ const listes = lireListes();
+ m.innerHTML = `<div class="listes-menu">${listes.map((l, k) => `<label><input type="checkbox" ${l.items.includes(id) ? "checked" : ""} onchange="basculerDansListe(${k}, '${id}', this.checked)">${esc(l.titre)}</label>`).join("")}
+  <form onsubmit="event.preventDefault(); nouvelleListe(this.nom.value, '${id}')"><input type="text" name="nom" maxlength="60" placeholder="Nouvelle liste : Ma liste d'automne" aria-label="Nom de la nouvelle liste" required><button class="bt plein">Créer</button></form></div>`;
+}
+function basculerDansListe(k, id, dedans){
+ const l = lireListes(); if (!l[k]) return;
+ l[k].items = l[k].items.filter(x => x !== id); if (dedans) l[k].items.push(id);
+ ecrireListes(l); toast(dedans ? `Ajouté à « ${l[k].titre} »` : "Retiré de la liste");
+}
+function nouvelleListe(nom, id){
+ nom = nom.trim(); if (!nom) return;
+ const l = lireListes(); l.push({titre: nom, items: id ? [id] : [], cree: Date.now()}); ecrireListes(l);
+ toast(`Liste « ${nom} » créée`); const b = $("#menu-liste"); if (b) { b.hidden = true; menuListe($('[aria-controls="menu-liste"]'), id); }
+}
+async function partagerListe(l){
+ const url = urlPartage(l);
+ try { if (navigator.share) { await navigator.share({title: l.titre, text: `${l.titre} · Tastebridge`, url}); return; } } catch (e) { if (e.name === "AbortError") return; }
+ try { await navigator.clipboard.writeText(url); toast("Lien copié"); } catch { prompt("Copie ce lien :", url); }
+}
+async function mesListes(){
+ vue = "listes"; marquerNav("gouts");
+ const m = $("#main"), listes = lireListes(); m.className = "";
+ const tous = await api.titres([...new Set(listes.flatMap(l => l.items))]), par = Object.fromEntries(tous.map(x => [x.id, x]));
+ m.innerHTML = `<section class="section"><div class="tete"><div><h3>Mes listes</h3></div><p>Des films, des séries et des jeux dans une même liste. Partage-la d'un lien, sans compte.</p></div>
+  <form class="champ-liste" onsubmit="event.preventDefault(); nouvelleListe(this.nom.value); mesListes()" style="display:flex;gap:8px;margin-bottom:16px">
+   <input class="nom-liste" name="nom" maxlength="60" placeholder="Nouvelle liste : Ma liste d'automne" aria-label="Nom de la nouvelle liste" required><button class="bt plein">Créer</button></form>
+  ${listes.length ? `<div class="mes-listes">${listes.map((l, k) => { const t = l.items.map(i => par[i]).filter(Boolean);
+   return `<div class="une-liste"><span class="vignettes" aria-hidden="true">${t.slice(0, 4).map(x => `<i style="background-image:url('${esc(visuel(x) || "")}')"></i>`).join("")}</span>
+    <a href="${lienPartage(l)}">${esc(l.titre)}<small>${resumeListe(t)}</small></a>
+    <button class="bt" onclick="partagerListe(lireListes()[${k}])" aria-label="Partager ${esc(l.titre)}">${ico("partage")}</button>
+    <button class="bt" onclick="if(confirm('Supprimer cette liste ?')){const l=lireListes();l.splice(${k},1);ecrireListes(l);mesListes()}" aria-label="Supprimer ${esc(l.titre)}">${ico("corbeille")}</button></div>`; }).join("")}</div>`
+   : `<div class="vide">${ico("liste")}<span>Pas encore de liste. Crée-en une ici, ou depuis la fiche d'un titre (« Ajouter à une liste »).</span></div>`}</section>`;
+ appliquerDefile();
+}
+async function listePartagee(titre, ids){
+ vue = "liste-partagee"; marquerNav(null);
+ const m = $("#main"), ici = location.hash; m.className = "";
+ m.innerHTML = `<section class="section"><div class="grille">${'<div class="squelette"></div>'.repeat(6)}</div></section>`;
+ let t = null; try { t = await api.titres(ids); } catch {}
+ if (location.hash !== ici) return;
+ if (!t) { m.innerHTML = `<section class="section"><div class="vide">${ico("liste")}<span>Liste indisponible pour le moment.</span></div></section>`; return; }
+ const l = {titre, items: t.map(x => x.id)}, k = lireListes().findIndex(x => x.titre === titre && x.items.join() === l.items.join());
+ m.innerHTML = `<section class="section"><div class="tete"><div><p class="accroche">Liste</p><h3>${esc(titre)}</h3><p>${resumeListe(t)}</p></div>
+  <div class="actions"><button class="bt plein" id="partager">${ico("partage")}Partager</button>${k < 0 ? `<button class="bt" id="garder">${ico("liste")}Garder dans mes listes</button>` : ""}</div></div>
+  ${t.length ? `<div class="grille">${t.map(x => `<div class="dans-liste">${k >= 0 ? `<button class="retirer" aria-label="Retirer ${esc(x.titre)}" onclick="retirerDeListe(${k}, '${x.id}')">×</button>` : ""}${carte(x)}</div>`).join("")}</div>`
+   : `<div class="vide">${ico("liste")}<span>Cette liste est vide. Ajoute des titres depuis leur fiche.</span></div>`}</section>`;
+ $("#partager").onclick = () => partagerListe(l);
+ if ($("#garder")) $("#garder").onclick = () => { const ls = lireListes(); ls.push({...l, cree: Date.now()}); ecrireListes(ls); toast("Liste gardée"); listePartagee(titre, ids); };
+ appliquerDefile();
+}
+function retirerDeListe(k, id){ const l = lireListes(); if (!l[k]) return; l[k].items = l[k].items.filter(x => x !== id); ecrireListes(l); history.replaceState(null, "", lienPartage(l)); router(); }
+
 // ---------- Navigation par adresse : #/film, #/serie, #/jeu, #/gouts, #/film/ID[/ancre] ----------
 // Retour et Suivant du navigateur marchent, chaque page est partageable, la position est retrouvée au retour.
 const ONGLETS = ["film", "serie", "jeu", "gouts"], DEFILE = {};
@@ -865,6 +956,8 @@ function router(){
  if (b && NOM[a]) return fichePage(a, decodeURIComponent(b), c);
  document.title = titrePage;
  if (["theme", "ambiance", "annee"].includes(a) && b) return listePage(a, decodeURIComponent(b));
+ if (a === "l" && b) return listePartagee(decodeURIComponent(b), (c || "").split(".").filter(Boolean).map(decodeURIComponent));
+ if (a === "listes") return mesListes();
  if (ONGLETS.includes(a)) { vue = "onglet"; onglet = a; marquerNav(a); return rendre(); }
  if (WEB && nbNotes < 5) { marquerNav(null); accueil(); return appliquerDefile(); }  // premier passage
  history.replaceState(null, "", "#/film"); router();

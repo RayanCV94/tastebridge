@@ -65,6 +65,8 @@ test("cartes : tout est lien, la raison est visible sans survol (tactile)", asyn
   assert.ok(liens.some(h => h.startsWith("#/annee/")) && liens.some(h => h.startsWith("#/theme/")));
   assert.equal(await c.$eval(".legende .pq", e => getComputedStyle(e).display), "block");
   assert.equal(await p.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, "pas de défilement horizontal");
+  // Aucune icône d'action démesurée (régression : icône de « Fiche et avis » en taille naturelle)
+  assert.ok(await c.$$eval(".mini-act svg", l => l.every(s => s.getBoundingClientRect().width <= 20)));
   assert.deepEqual(erreurs, []);
 });
 
@@ -103,6 +105,28 @@ test("mes services : un jeu Xbox ressort « chez toi »", async () => {
   await p.goto(base + "#/jeu/steam2358720"); await p.waitForSelector("#ou");
   assert.deepEqual(await p.$$eval("#ou .chip.mien", l => l.map(e => e.textContent)), ["Xbox Series"]);
   assert.deepEqual(erreurs, []);
+});
+
+test("listes mixtes : créer depuis une fiche, partager par lien, ouvrir ailleurs", async () => {
+  const {p, erreurs} = await page();
+  await p.goto(base + "#/film/Q62730"); await p.waitForSelector(".fiche-page");
+  await p.click('[aria-controls="menu-liste"]');
+  await p.fill('#menu-liste input[name="nom"]', "Automne <b>test</b>");
+  await p.click("#menu-liste .bt.plein");
+  await p.goto(base + "#/jeu/steam292030"); await p.waitForSelector(".fiche-page");
+  await p.click('[aria-controls="menu-liste"]');
+  await p.check("#menu-liste input[type=checkbox]");
+  await p.goto(base + "#/listes"); await p.waitForSelector(".une-liste");
+  assert.match(await p.$eval(".une-liste a", e => e.innerText), /Automne <b>test<\/b>\s+1 film, 1 jeu/);
+  const lien = await p.$eval(".une-liste a", a => a.href);
+  // Le lien s'ouvre ailleurs (autre navigateur, sans la liste en mémoire)
+  const autre = await page();
+  await autre.p.goto(lien); await autre.p.waitForSelector("#main .c");
+  assert.equal(await autre.p.$eval("#main h3", e => e.textContent), "Automne <b>test</b>");  // texte, pas du HTML
+  assert.equal(await autre.p.$$eval("#main .c", l => l.length), 2);
+  assert.equal(await autre.p.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  assert.ok(await autre.p.$("#garder"));
+  assert.deepEqual([...erreurs, ...autre.erreurs], []);
 });
 
 test("version anglaise : textes traduits", async () => {

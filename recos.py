@@ -250,6 +250,10 @@ def fiche(p, id_):
     return {**CAT[id_], "note": p["notes"].get(id_, ""), "similaires": proches(id_), "pour_toi": pour_toi(p, id_)}
 
 
+def titres(ids):
+    return [court(CAT[i], themes=CAT[i]["themes"][:3], parce_que=[]) for i in ids if i in CAT]
+
+
 def liste(themes, annee):
     l = sorted((it for it in CAT.values() if it.get("image") and all(t in it["themes"] for t in themes)
                 and (not annee or it.get("annee") == annee)), key=lambda it: -it["qualite"])
@@ -327,6 +331,8 @@ class H(BaseHTTPRequestHandler):
             self.envoyer(chercher(parse_qs(u.query).get("q", [""])[0]))
         elif u.path == "/api/fiche":
             self.envoyer(fiche(p, parse_qs(u.query).get("id", [""])[0]))
+        elif u.path == "/api/titres":
+            self.envoyer(titres([i for i in parse_qs(u.query).get("ids", [""])[0].split(".") if i]))
         elif u.path == "/api/liste":
             q = parse_qs(u.query)
             annee = q.get("annee", [""])[0]

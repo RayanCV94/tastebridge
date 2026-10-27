@@ -282,6 +282,8 @@ const Moteur = (() => {
       return [...new Set([...connus, ...reste])].filter(it => it.image).slice(0, n)
         .map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam, note: notes[it.id] || ""}));
     },
+    // Titres d'une liste partagée, dans l'ordre, sans ceux qui ne sont plus au catalogue
+    titres(ids) { return ids.filter(i => CAT[i]).map(i => court(CAT[i], {themes: CAT[i].themes.slice(0, 3), parce_que: []})); },
     fiche(id) {
       const it = CAT[id]; if (!it) return null;
       return {...it, note: profil().notes[id] || "", similaires: proches(id), pour_toi: pourToi(id)};
