@@ -74,6 +74,16 @@ assert "moteur.js" in page
 page = page.replace("</body>", f'<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>\n<script src="compte.js?v={v(compte)}"></script>\n</body>', 1)
 assert "compte.js" in page and "langue.js" in page
 # Application installable (PWA) : manifest, icônes, service worker (site uniquement)
+# Aperçu des liens partagés (X, LinkedIn, Reddit, messageries)
+URL_SITE = "https://rayancv94.github.io/tastebridge/"
+page = page.replace("</head>", f'''<meta property="og:type" content="website">
+<meta property="og:url" content="{URL_SITE}">
+<meta property="og:title" content="Tastebridge : films, séries et jeux, reliés">
+<meta property="og:description" content="Tu as aimé un film ? Voici le jeu. Un jeu ? Voici la série. Avec la raison, et où regarder ou jouer.">
+<meta property="og:image" content="{URL_SITE}medias/social.png">
+<meta property="og:image:width" content="1280"><meta property="og:image:height" content="640">
+<meta name="twitter:card" content="summary_large_image">
+</head>''', 1)
 page = page.replace("</head>", '<link rel="manifest" href="manifest.webmanifest">\n<link rel="apple-touch-icon" href="icones/icone-192.png">\n</head>', 1)
 page = page.replace("</body>", '<script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>\n</body>', 1)
 (DOCS / "index.html").write_text(page, encoding="utf-8")
