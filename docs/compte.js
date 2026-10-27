@@ -148,6 +148,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
 .fiche .type{font-size:12.5px;color:var(--pale)}
 .fiche h3{margin:4px 40px 10px 0}
 .fiche .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.fiche h5{margin:0 0 6px;font:600 11.5px Onest,sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--pale)}
 .fiche .ext{font-size:13px;color:var(--doux)}
 .avis-boite .sous{font:600 13px Onest,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--pale);margin:12px 0 10px;padding-top:14px;border-top:1px solid var(--trait)}
 .avis-boite .liste{flex:none!important}
@@ -178,10 +179,11 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
     v.className = "voile-compte";
     // En-tête de fiche : affiche, infos, lien externe (FICHES est rempli par la page)
     const f = typeof FICHES !== "undefined" ? FICHES[item] : null;
-    const ext = f ? (f.steam ? `https://store.steampowered.com/app/${f.steam}` : `https://fr.wikipedia.org/wiki/Special:Search/${encodeURIComponent(f.titre)}`) : "";
+    const ext = f ? lien(f) : "";
     const tete = f ? `<div class="fiche"><div class="aff">${f.image ? `<img src="${echap(visuel(f))}" alt="">` : ""}</div><div>
 <span class="type">${{film: "Film", serie: "Série", jeu: "Jeu"}[f.dom]}${f.annee ? " · " + f.annee : ""}</span><h3>${echap(titre)}</h3>
-<div class="chips">${(f.themes || []).map(t => `<span class="chip">${echap(t)}</span>`).join("")}</div>
+<h5>Genres</h5><div class="chips">${(f.themes || []).map(t => `<span class="chip">${echap(t)}</span>`).join("")}</div>
+${typeof ambiances === "function" && ambiances(f.themes).length ? `<h5>Ambiances</h5><div class="chips">${ambiances(f.themes).map(t => `<span class="chip">${echap(t)}</span>`).join("")}</div>` : ""}
 <div class="resume">Chargement des avis...</div>
 <a class="ext" href="${ext}" target="_blank" rel="noopener">${f.steam ? "Voir sur Steam" : "Voir sur Wikipédia"}</a></div></div>` : `<h3>${echap(titre)}</h3><div class="resume">Chargement des avis...</div>`;
     const fond = f?.image ? `<div class="fond-fiche" style="background-image:url('${echap(f.image)}')"></div>` : "";
