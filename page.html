@@ -162,6 +162,7 @@ a.accroche:hover{color:var(--texte)}
 .pop-titre:hover{text-decoration:underline;text-underline-offset:3px}
 .pop-etat{min-height:18px;font-size:12px;font-weight:600;color:var(--pale)}
 .pop[data-n="aime"] .pop-etat{color:var(--menthe)} .pop[data-n="adore"] .pop-etat{color:var(--rouge)}
+.rail-cartes .c{flex:none;width:clamp(150px,40vw,190px);scroll-snap-align:start}
 .aide-rail{margin:24px 0 0;color:var(--doux);font-size:13.5px}
 .pop .cadre{box-shadow:0 0 0 2px transparent}
 .pop:hover .cadre{transform:translateY(-4px)}
@@ -562,7 +563,7 @@ function scene(r){
 }
 
 // compte.js a fusionné les notes du compte : on recalcule tout
-addEventListener("profil-recharge", () => { data = null; compter(); if (vue === "onglet") rendre(); else if (vue === "fiche") router(); else if (vue === "accueil") accueil(); });
+addEventListener("profil-recharge", () => { data = null; compter(); if (vue === "onglet") rendre(); else if (vue === "fiche" || vue === "listes") router(); else if (vue === "accueil") accueil(); });
 function rendre(){
  if (vue !== "onglet") return;
  const m = $("#main");
@@ -575,9 +576,17 @@ function rendre(){
  m.innerHTML = `${l1.length ? scene(l1[0]) : `<div class="section">${vide}</div>`}
   ${WEB && l1.length ? zoneDe() : ""}
   ${l1.length > 1 ? `<section class="section"><div class="tete"><h3>${t1}</h3><p>Ce qui ressemble le plus à ce que tu aimes, les titres récents et acclamés d'abord.</p>${barreTri()}</div><div class="grille">${trier(l1.slice(1)).map(carte).join("")}</div></section>` : ""}
+  ${WEB ? railTendances(onglet) : ""}
   <section class="section"><div class="tete"><h3>${t2}</h3><p>Mêmes ambiances, autre support : ce que ${autre} disent de toi.</p></div>
    ${l2.length ? `<div class="grille">${trier(l2).map(carte).join("")}</div>` : vide}</section>`;
  appliquerDefile();
+}
+
+// En ce moment : tendances de la semaine (Wikipédia, Steam), celles qui te ressemblent d'abord
+function railTendances(dom){
+ const l = Moteur.tendances(dom);
+ return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3><p>Les plus lus sur Wikipédia ou les plus joués sur Steam cette semaine, ceux qui te ressemblent d'abord.</p></div>
+  <div class="rail rail-cartes">${l.map(carte).join("")}</div></section>` : "";
 }
 
 // ---------- Le dé : une découverte au hasard, mais qui te ressemble ----------
@@ -868,7 +877,8 @@ async function listePage(type, v){
 // ---------- Listes mixtes (films, séries, jeux), partageables par un simple lien, sans compte ----------
 // Gardées dans ce navigateur ; le lien contient le titre et les identifiants : #/l/Ma liste/Q62730.steam292030
 const lireListes = () => { try { return JSON.parse(localStorage.getItem("tastebridge-listes")) || []; } catch { return []; } };
-const ecrireListes = l => { try { localStorage.setItem("tastebridge-listes", JSON.stringify(l)); } catch {} };
+// Connecté, compte.js envoie aussi les listes au compte (événement « listes-change »)
+const ecrireListes = l => { try { localStorage.setItem("tastebridge-listes", JSON.stringify(l)); } catch {} dispatchEvent(new CustomEvent("listes-change")); };
 const lienPartage = l => `#/l/${encodeURIComponent(l.titre)}/${l.items.map(encodeURIComponent).join(".")}`;
 const urlPartage = l => location.href.split("#")[0] + lienPartage(l);
 // « 2 films, 1 série, 1 jeu »

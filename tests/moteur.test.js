@@ -12,7 +12,7 @@ const source = JSON.parse(fs.readFileSync(path.join(ICI, "catalogue.json"), "utf
 async function moteur(langue = "fr", services = []) {
   const stockage = new Map([["tastebridge-langue", langue], ["tastebridge-services", JSON.stringify(services)]]);
   const bac = {
-    fetch: async () => ({json: async () => JSON.parse(fs.readFileSync(path.join(ICI, "docs", "catalogue.json"), "utf8"))}),
+    fetch: async url => ({ok: true, json: async () => JSON.parse(fs.readFileSync(path.join(ICI, "docs", url.split("?")[0]), "utf8"))}),
     localStorage: {getItem: k => stockage.get(k) ?? null, setItem: (k, v) => stockage.set(k, String(v)), removeItem: k => stockage.delete(k)},
     navigator: {language: "fr-FR"}, dispatchEvent() {}, CustomEvent: class {},
   };
@@ -84,6 +84,16 @@ test("où jouer : plateformes Wikidata, « chez moi » selon mes services", asyn
   assert.deepEqual(liste(X.chezMoi({dom: "jeu", boutiques: {ms: "x"}})), []);  // Microsoft Store = PC, pas forcément Xbox
   const N = await moteur("fr", ["netflix"]);
   assert.deepEqual(liste(N.chezMoi({dom: "film", dispo: {FR: {abo: ["Netflix"]}}})), ["netflix"]);
+});
+
+test("tendances : titres du bon support, jamais déjà notés", async () => {
+  const M = await moteur();
+  const t = JSON.parse(fs.readFileSync(path.join(ICI, "docs", "tendances.json"), "utf8"));
+  const l = M.tendances("jeu");
+  assert.ok(l.length > 0 && l.length <= 12);
+  assert.ok(l.every(x => x.dom === "jeu" && x.tendance && t.jeu.some(([i]) => i === x.id)));
+  M.noter(l[0].id, "aime");
+  assert.ok(!M.tendances("jeu").some(x => x.id === l[0].id));
 });
 
 test("site en anglais : titre anglais affiché", async () => {

@@ -22,7 +22,7 @@ const Moteur = (() => {
       "Ghost of Tsushima DIRECTOR'S CUT", "Outer Wilds", "Sid Meier's Civilization VI", "Left 4 Dead 2", "Valheim", "Inscryption", "Dead Cells",
       "Minecraft Dungeons", "Half-Life: Alyx", "Persona 5 Royal", "Subnautica", "Monster Hunter: World"],
   };
-  let CAT, INDEX, PAR_IMDB, VEC;
+  let CAT, INDEX, PAR_IMDB, VEC, TENDANCES = {};
 
   const simple = t => (t || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const trouver = (dom, titre) => INDEX.get(dom + "|" + simple(titre));
@@ -31,7 +31,11 @@ const Moteur = (() => {
     tmdb: it.tmdb, plateformes: it.plateformes, boutiques: it.boutiques, dispo: it.dispo});
 
   async function charger() {
+    // Tendances de la semaine (tendances.py, mis à jour chaque jour) : facultatives, le site marche sans
+    const tend = fetch("tendances.json?v=eb8e8be442").then(r => r.ok ? r.json() : {}).catch(() => ({}));
     const brut = await (await fetch("catalogue.json?v=5fa7c9322e")).json();
+    TENDANCES = {};
+    for (const [d, l] of Object.entries(await tend)) if (Array.isArray(l)) for (const [i, t] of l) TENDANCES[i] = t;
     CAT = brut.v === 1 ? deplier(brut) : brut;
     INDEX = new Map(); PAR_IMDB = new Map();
     for (const it of Object.values(CAT).sort((a, b) => a.qualite - b.qualite)) {
@@ -157,7 +161,8 @@ const Moteur = (() => {
     // Chaque titre aimé a donc sa propre liste, et on pioche à tour de rôle (les « adoré » et les plus récents d'abord).
     const ok = res.filter(r => r[2] > 0.15 && CAT[r[1]].image);  // sans affiche, une reco donne une carte vide
     const services = mesServices();
-    const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim * (services.length && chezMoi(CAT[i], services).length ? 1.1 : 1)]));
+    // Bonus : disponible sur un de tes services (×1,1), en tendance cette semaine (jusqu'à ×1,1)
+    const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim * (services.length && chezMoi(CAT[i], services).length ? 1.1 : 1) * (1 + 0.1 * (TENDANCES[i] || 0))]));
     const ancres = Object.keys(poids).filter(j => poids[j] > 0).reverse().sort((a, b) => poids[b] - poids[a]).slice(0, 15);
     const ton = (i, j) => TONS.some(t => (t in V()[i]) !== (t in V()[j])) ? 0.4 : 1;
     const listes = ancres.map(j => ok.map(([, i]) => [dot(i, j) * qual.get(i) * ton(i, j), i]).filter(([s]) => s > 0.12).sort((a, b) => b[0] - a[0]).map(([, i]) => i));
@@ -281,6 +286,18 @@ const Moteur = (() => {
       // Les titres déjà notés restent, avec leur note : en revenant sur l'accueil, on voit où on en est
       return [...new Set([...connus, ...reste])].filter(it => it.image).slice(0, n)
         .map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam, note: notes[it.id] || ""}));
+    },
+    // En ce moment : les tendances de la semaine, celles qui te ressemblent d'abord (moitié tendance, moitié goûts)
+    tendances(dom, n = 12) {
+      const p = profil(), poids = {};
+      for (const [i, note] of Object.entries(p.notes)) if (CAT[i] && NOTES[note]) poids[i] = NOTES[note];
+      const prof = {};
+      for (const [i, x] of Object.entries(poids)) for (const [th, v] of Object.entries(V()[i])) prof[th] = (prof[th] || 0) + x * v;
+      const norme = Math.hypot(...Object.values(prof)) || 1;
+      const sim = i => Object.entries(V()[i]).reduce((s, [th, x]) => s + (prof[th] || 0) * x, 0) / norme;
+      return Object.entries(TENDANCES).filter(([i]) => CAT[i]?.dom === dom && CAT[i].image && !p.notes[i])
+        .map(([i, t]) => [0.5 * t + 0.5 * Math.max(0, sim(i)), i]).sort((a, b) => b[0] - a[0]).slice(0, n)
+        .map(([, i]) => court(CAT[i], {themes: CAT[i].themes.slice(0, 3), parce_que: [], tendance: true}));
     },
     // Titres d'une liste partagée, dans l'ordre, sans ceux qui ne sont plus au catalogue
     titres(ids) { return ids.filter(i => CAT[i]).map(i => court(CAT[i], {themes: CAT[i].themes.slice(0, 3), parce_que: []})); },

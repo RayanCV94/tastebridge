@@ -56,7 +56,9 @@ def compact(items):
 
 
 cat = compact(json.loads(cat))
+tend = (ICI / "tendances.json").read_bytes() if (ICI / "tendances.json").exists() else b"{}"
 moteur = (ICI / "moteur.js").read_text(encoding="utf-8").replace('fetch("catalogue.json")', f'fetch("catalogue.json?v={v(cat)}")', 1)
+moteur = moteur.replace('fetch("tendances.json")', f'fetch("tendances.json?v={v(tend)}")', 1)
 assert "catalogue.json?v=" in moteur
 compte = (ICI / "compte.js").read_bytes()
 langue = (ICI / "langue.js").read_bytes()
@@ -81,5 +83,6 @@ for f in (ICI / "icones").glob("*.png"):
 (DOCS / "compte.js").write_bytes(compte)
 (DOCS / "langue.js").write_bytes(langue)
 (DOCS / "catalogue.json").write_bytes(cat)
+(DOCS / "tendances.json").write_bytes(tend)
 (DOCS / ".nojekyll").touch()
 print("Site prêt dans docs/")

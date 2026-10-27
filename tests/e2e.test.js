@@ -129,6 +129,14 @@ test("listes mixtes : créer depuis une fiche, partager par lien, ouvrir ailleur
   assert.deepEqual([...erreurs, ...autre.erreurs], []);
 });
 
+test("en ce moment : rail des tendances sur l'onglet", async () => {
+  const {p, erreurs} = await page();
+  await noterCinq(p);
+  const rail = await p.$$eval(".rail-cartes .c", l => l.length);
+  assert.ok(rail > 0, "rail des tendances");
+  assert.deepEqual(erreurs, []);
+});
+
 test("version anglaise : textes traduits", async () => {
   const {p, erreurs} = await page({}, "en");
   await noterCinq(p);
