@@ -23,6 +23,8 @@ const Moteur = (() => {
       "Minecraft Dungeons", "Half-Life: Alyx", "Persona 5 Royal", "Subnautica", "Monster Hunter: World"],
   };
   let CAT, INDEX, PAR_IMDB, VEC, TENDANCES = {};
+  // « Aimés ensemble » par les comptes Pontil (compte.js, fonction Supabase aimes_ensemble) : {id: nombre de comptes}
+  let ENSEMBLE = {};
 
   const simple = t => (t || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const trouver = (dom, titre) => INDEX.get(dom + "|" + simple(titre));
@@ -34,7 +36,7 @@ const Moteur = (() => {
     // Tendances de la semaine (tendances.py), mises à jour chaque jour : facultatives, le site marche sans.
     const facultatif = url => fetch(url).then(r => r.ok ? r.json() : {}).catch(() => ({}));
     const signaux = Promise.all([facultatif("tendances.json?v=ebc55ee1ae")]);
-    const brut = await (await fetch("catalogue.json?v=5fa7c9322e")).json();
+    const brut = await (await fetch("catalogue.json?v=ceebc112c4")).json();
     TENDANCES = {};
     for (const s of await signaux) for (const l of Object.values(s)) if (Array.isArray(l)) for (const [i, t] of l) TENDANCES[i] = Math.max(TENDANCES[i] || 0, t);
     CAT = brut.v === 1 ? deplier(brut) : brut;
@@ -90,6 +92,9 @@ const Moteur = (() => {
   const endroits = it => it.dom === "jeu" ? ["steam", ...(it.plateformes || []), ...Object.keys(it.boutiques || {})].map(x => x.toLowerCase())
     : (it.dispo?.[pays()]?.abo || []).map(x => x.toLowerCase());
   const chezMoi = (it, services = mesServices()) => { const e = endroits(it); return services.filter(k => (SERVICES[k] || []).some(a => e.some(x => x === a || x.startsWith(a + " ")))); };
+
+  // Bonus « aimé aussi par les gens qui aiment tes titres » : de ×1 (aucun compte) à ×1,5 (le titre le plus partagé)
+  const ensemble = i => { const n = ENSEMBLE[i] || 0, max = Math.max(0, ...Object.values(ENSEMBLE)); return n ? 1 + 0.5 * n / max : 1; };
 
   // Le ton compte : un dessin animé familial colle mal à The Witcher même s'ils partagent « Fantasy »
   const TONS = ["Animation, famille", "Sombre, adulte"];
@@ -165,7 +170,7 @@ const Moteur = (() => {
     const ok = res.filter(r => r[2] > 0.15 && CAT[r[1]].image);  // sans affiche, une reco donne une carte vide
     const services = mesServices();
     // Bonus : disponible sur un de tes services (×1,1), en tendance cette semaine (jusqu'à ×1,1)
-    const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim * (services.length && chezMoi(CAT[i], services).length ? 1.1 : 1) * (1 + 0.1 * (TENDANCES[i] || 0))]));
+    const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim * (services.length && chezMoi(CAT[i], services).length ? 1.1 : 1) * (1 + 0.1 * (TENDANCES[i] || 0)) * ensemble(i)]));
     const ancres = Object.keys(poids).filter(j => poids[j] > 0).reverse().sort((a, b) => poids[b] - poids[a]).slice(0, 15);
     const ton = (i, j) => TONS.some(t => (t in V()[i]) !== (t in V()[j])) ? 0.4 : 1;
     const listes = ancres.map(j => ok.map(([, i]) => [dot(i, j) * qual.get(i) * ton(i, j), i]).filter(([s]) => s > 0.12).sort((a, b) => b[0] - a[0]).map(([, i]) => i));
@@ -237,6 +242,8 @@ const Moteur = (() => {
   // ---------- API identique à celle du serveur local ----------
   return {
     charger,
+    ensemble(lignes) { ENSEMBLE = Object.fromEntries((lignes || []).map(l => [l.item, l.n])); },
+    aimes() { return Object.entries(profil().notes).filter(([i, n]) => CAT[i] && NOTES[n] > 0).map(([i]) => i); },
     recos() {
       const p = profil(), ecrans = ["film", "serie"];
       return {

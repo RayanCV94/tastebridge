@@ -407,7 +407,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 <footer><div><span>Pontil : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="langue.js?v=5731897bab"></script>
-<script src="moteur.js?v=9d9c2e9468"></script>
+<script src="moteur.js?v=341655d6a9"></script>
 <script>
 let onglet = "film", data = null;
 const $ = s => document.querySelector(s);
@@ -958,8 +958,8 @@ function mentions(){
   <h4>${t("Données personnelles", "Personal data")}</h4>
   <p>${t("Sans compte, rien ne quitte ton navigateur : tes notes, tes listes et tes réglages restent dans son stockage local. Pas de publicité, pas de mesure d'audience, pas de cookie de suivi.",
    "Without an account, nothing leaves your browser: your ratings, lists and settings stay in its local storage. No ads, no analytics, no tracking cookies.")}</p>
-  <p>${t("Avec un compte (facultatif) : ton e-mail, ton mot de passe (haché par Supabase, jamais visible par nous), tes notes pour les synchroniser entre appareils, et les avis que tu publies avec ton pseudo (visibles par tous). Ces données servent uniquement à faire fonctionner ton compte et sont gardées tant qu'il existe. Tu peux demander à y accéder, les corriger ou les supprimer via le contact ci-dessus, et saisir la CNIL (cnil.fr) en cas de désaccord.",
-   "With an (optional) account: your email, your password (hashed by Supabase, never visible to us), your ratings to sync them across devices, and the reviews you publish under your nickname (visible to everyone). This data is only used to run your account and is kept while it exists. You can ask to access, correct or delete it through the contact above, and complain to the CNIL (cnil.fr).")}</p>
+  <p>${t("Avec un compte (facultatif) : ton e-mail, ton mot de passe (haché par Supabase, jamais visible par nous), tes notes pour les synchroniser entre appareils, et les avis que tu publies avec ton pseudo (visibles par tous). Ces données servent à faire fonctionner ton compte et sont gardées tant qu'il existe. Tes notes servent aussi, de façon anonyme et seulement en totaux (jamais moins de 3 comptes par titre), à calculer « les gens qui ont aimé ce titre ont aussi aimé celui-là ». Tu peux demander à y accéder, les corriger ou les supprimer via le contact ci-dessus, et saisir la CNIL (cnil.fr) en cas de désaccord.",
+   "With an (optional) account: your email, your password (hashed by Supabase, never visible to us), your ratings to sync them across devices, and the reviews you publish under your nickname (visible to everyone). This data is used to run your account and is kept while it exists. Your ratings are also used anonymously, only as totals (never fewer than 3 accounts per title), to work out “people who liked this also liked that”. You can ask to access, correct or delete it through the contact above, and complain to the CNIL (cnil.fr).")}</p>
   <p>${t("Quand tu ouvres la fiche d'un film ou d'une série, ton navigateur demande le résumé directement à Wikipédia (Wikimedia Foundation).", "When you open a film or show page, your browser fetches the synopsis directly from Wikipedia (Wikimedia Foundation).")}</p>
   <h4>${t("Sources et licences", "Sources and licences")}</h4>
   <ul>
@@ -1045,7 +1045,7 @@ if (WEB) {
 else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); compter().then(router); }
 </script>
 <script src="vendor/supabase.js?v=34035ac76d"></script>
-<script src="compte.js?v=5b24c348f0"></script>
+<script src="compte.js?v=4fb629d9ee"></script>
 <script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
 </body>
 </html>

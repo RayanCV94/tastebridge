@@ -137,6 +137,21 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
     envoi = setTimeout(envoyer, 800);
   });
 
+  // « Aimés ensemble » : totaux anonymes des comptes (au moins 3 par titre), pour tous les visiteurs.
+  // Fonction absente ou injoignable : rien ne change, les recos restent celles des thèmes.
+  let derniers = "", attente = null;
+  async function ensemble() {
+    const ids = Moteur.aimes().sort(), cle = ids.join(",");
+    if (!ids.length || cle === derniers) return;
+    derniers = cle;
+    const { data, error } = await sb.rpc("aimes_ensemble", { ids });
+    if (error || !data?.length) return;
+    Moteur.ensemble(data);
+    rafraichir();
+  }
+  addEventListener("profil-change", () => { clearTimeout(attente); attente = setTimeout(ensemble, 1500); });
+  setTimeout(ensemble, 1500);
+
   // ---------- Avis et commentaires ----------
   // Tout texte venant d'un visiteur passe par echap() avant d'entrer dans la page (pas d'injection de HTML)
   const echap = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
