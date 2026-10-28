@@ -30,13 +30,14 @@ const Moteur = (() => {
   const trouver = (dom, titre) => INDEX.get(dom + "|" + simple(titre));
   // Notes externes (notes.py ; IMDb seulement si le site a été publié avec --avec-imdb) et disponibilités (disponibilites.py)
   const notesExt = it => ({imdb: it.imdb, note_imdb: it.note_imdb, votes_imdb: it.votes_imdb, metacritic: it.metacritic, rt: it.rt,
-    tmdb: it.tmdb, plateformes: it.plateformes, boutiques: it.boutiques, dispo: it.dispo});
+    tmdb: it.tmdb, plateformes: it.plateformes, boutiques: it.boutiques, dispo: it.dispo,
+    duree: it.duree, gratuit: it.gratuit, modes: it.modes});  // infos pratiques aussi, pour les filtres
 
   async function charger() {
     // Tendances de la semaine (tendances.py), mises à jour chaque jour : facultatives, le site marche sans.
     const facultatif = url => fetch(url).then(r => r.ok ? r.json() : {}).catch(() => ({}));
     const signaux = Promise.all([facultatif("tendances.json?v=ebc55ee1ae")]);
-    const brut = await (await fetch("catalogue.json?v=70a3a1d0eb")).json();
+    const brut = await (await fetch("catalogue.json?v=14d354a69f")).json();
     TENDANCES = {};
     for (const s of await signaux) for (const l of Object.values(s)) if (Array.isArray(l)) for (const [i, t] of l) TENDANCES[i] = Math.max(TENDANCES[i] || 0, t);
     CAT = brut.v === 1 ? deplier(brut) : brut;
@@ -55,13 +56,14 @@ const Moteur = (() => {
   // Catalogue compact du site (site.py) : on reconstruit les objets
   function deplier({themes, prefixes, lignes}) {
     const cat = {}, milliers = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    for (const [id, d, titre, titre_en, annee, q, th, img, wiki, imdb, steam, avis, metacritic, rt, note_imdb, votes_imdb, plateformes, boutiques, dispo] of lignes) {
+    for (const [id, d, titre, titre_en, annee, q, th, img, wiki, imdb, steam, avis, metacritic, rt, note_imdb, votes_imdb, plateformes, boutiques, dispo, duree, gratuit, modes] of lignes) {
       const dom = ["film", "serie", "jeu"][d];
       const image = dom === "jeu" && steam ? `https://cdn.akamai.steamstatic.com/steam/apps/${steam}/header.jpg` : !img ? undefined : /^\d:/.test(img) ? prefixes[+img[0]] + img.slice(2) : img;
       cat[id] = {id, dom, titre, titre_en: titre_en || titre, annee: annee || undefined, qualite: q / 1e4, themes: th.map(k => themes[k]), image,
         wiki: wiki || undefined, imdb: imdb || undefined, steam: steam || undefined, avis: avis ? `${avis[0]} % positifs sur ${milliers(avis[1])} avis` : undefined,
         metacritic: metacritic ?? undefined, rt: rt ?? undefined, note_imdb: note_imdb ?? undefined, votes_imdb: votes_imdb ?? undefined,
-        plateformes: plateformes || undefined, boutiques: boutiques || undefined, dispo: dispo || undefined};
+        plateformes: plateformes || undefined, boutiques: boutiques || undefined, dispo: dispo || undefined,
+        duree: duree || undefined, gratuit: gratuit || undefined, modes: modes || undefined};
     }
     return cat;
   }

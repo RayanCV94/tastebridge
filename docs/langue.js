@@ -100,7 +100,7 @@
     "Romance": "Romance", "Histoire forte": "Strong story", "Historique": "Historical", "Anime": "Anime", "Survie": "Survival",
     "Espionnage, infiltration": "Spy, stealth", "Vengeance, vigilante": "Revenge, vigilante", "Monde ouvert": "Open world",
     "Souls-like": "Souls-like", "RPG": "RPG", "Tir": "Shooter", "Roguelike": "Roguelike", "Stratégie": "Strategy", "Course, sport": "Racing, sports",
-    "Compétitif en ligne": "Online competitive", "Coop entre amis": "Co-op with friends",
+    "Compétitif en ligne": "Online competitive", "Court": "Short", "Gratuit": "Free", "À plusieurs": "Multiplayer", "Même écran": "Same screen", "Meilleur prix": "Best price", "Rien avec ces filtres.": "Nothing with these filters.", "d'histoire": "of story", ", gratuit": ", free", "Coop entre amis": "Co-op with friends",
     "Parties classées et e-sport": "Ranked matches and esports", "À jouer à plusieurs": "Better with friends",
     // Ambiances (page.html)
     "Ambiances": "Themes", "Batailles historiques et héroïsme épique": "Historical battles and epic heroism", "Polars noirs et poisseux": "Gritty noir crime",

@@ -231,7 +231,12 @@ a.mini{display:block}
 .outils .bt{padding:8px 13px;font-size:13px;font-weight:500}
 .liste-gouts{max-height:640px;overflow-y:auto;margin:0 -8px;padding:0 8px}
 .filtres{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap}
+.filtres-recos .filtres{margin-bottom:0}
 .filtres button{background:none;border:1px solid var(--trait2);color:var(--doux);font:500 13px var(--f-texte);padding:5px 13px;border-radius:30px;cursor:pointer}
+.filtres button svg{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.legende .duree,.legende .gratuit{font:inherit;margin-left:10px;white-space:nowrap}
+.legende .duree svg{width:12px;height:12px;vertical-align:-1px;margin-right:4px}
+.legende .gratuit{color:var(--menthe)}
 .filtres button.on{background:var(--texte);color:var(--fond);border-color:transparent}
 
 /* États */
@@ -421,7 +426,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  <symbol id="corbeille" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></symbol>
  <symbol id="lien" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
  <symbol id="cadenas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
- <symbol id="eclair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+ <symbol id="horloge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol><symbol id="eclair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
  <symbol id="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
  <symbol id="telecharge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 10l5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
 </svg>
@@ -440,8 +445,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 <main id="main"></main>
 <footer><div><span>Pontil : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=cba51e1a58"></script>
-<script src="moteur.js?v=426acd3e3f"></script>
+<script src="langue.js?v=8281c44f51"></script>
+<script src="moteur.js?v=df91da5cef"></script>
 <script>
 let onglet = "film", data = null;
 const $ = s => document.querySelector(s);
@@ -545,6 +550,16 @@ const plateformesJeu = r => { const p = [...(r.plateformes || [])];
 const mesServices = () => { try { return JSON.parse(localStorage.getItem("tastebridge-services")) || []; } catch { return []; } };
 const chezMoi = r => WEB ? Moteur.chezMoi(r) : [];
 // Ligne courte sous chaque carte : où regarder ou jouer, en vert si c'est sur un de tes services
+const duree = r => !r.duree ? "" : r.dom === "jeu" ? `${r.duree < 1 ? "< 1" : Math.round(r.duree)} h` : `${Math.floor(r.duree / 60)} h ${String(r.duree % 60).padStart(2, "0")}`;
+const badgeDuree = r => r.duree ? `<small class="duree">${ico("horloge")}${duree(r)}</small>` : "";
+// Filtres des recos : une pastille par critère, cumulables
+const FILTRES = {court: ["Court", r => r.duree && (r.dom === "jeu" ? r.duree <= 10 : r.duree <= 100)], gratuit: ["Gratuit", r => r.gratuit, "jeu"],
+ plusieurs: ["À plusieurs", r => r.modes, "jeu"], ecran: ["Même écran", r => r.modes?.includes("ecran"), "jeu"]};
+let filtresOn = new Set();
+const garde = r => [...filtresOn].every(k => FILTRES[k][1](r));
+function basculerFiltre(k){ filtresOn.has(k) ? filtresOn.delete(k) : filtresOn.add(k); rendre(); }
+const barreFiltres = dom => `<div class="filtres">${Object.entries(FILTRES).filter(([, f]) => !f[2] || f[2] === dom).filter(([k]) => k !== "court" || dom !== "serie")
+ .map(([k, [nom]]) => `<button class="${filtresOn.has(k) ? "on" : ""}" aria-pressed="${filtresOn.has(k)}" onclick="basculerFiltre('${k}')">${k === "court" ? ico("horloge") : ""}${nom}</button>`).join("")}</div>`;
 function ouCourt(r){
  const liste = r.dom === "jeu" ? plateformesJeu(r) : r.dispo?.[paysOffres()]?.abo || [];
  if (!liste.length) return "";
@@ -606,7 +621,7 @@ function carte(r){
    ${r.match != null ? `<a class="pct" href="${lienFiche(r, "score")}" title="D'où vient ce score"><span class="vh">Correspondance :</span><i></i>${r.match} %</a>` : ""}${etoile(r)}
    <div class="voile"><div class="mini-act">${b("a1","adore","coeur","J'adore")}${b("a2","aime","pouce","J'aime")}${b("a3","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("a4","bof","non","Pas pour moi")}${boutonAvis(r)}</div></div>
   </div>
-  <div class="legende"><a class="titre" href="${lienFiche(r)}">${esc(r.titre)}</a><span>${lienAnnee(r.annee)}${r.annee ? ", " : ""}${r.themes?.[0] ? `<a href="${lienListe("theme", r.themes[0])}">${esc(r.themes[0])}</a>` : NOM[r.dom]}</span>
+  <div class="legende"><a class="titre" href="${lienFiche(r)}">${esc(r.titre)}</a><span>${lienAnnee(r.annee)}${r.annee ? ", " : ""}${r.themes?.[0] ? `<a href="${lienListe("theme", r.themes[0])}">${esc(r.themes[0])}</a>` : NOM[r.dom]}${badgeDuree(r)}${r.gratuit ? `<small class="gratuit">Gratuit</small>` : ""}</span>
    ${ouCourt(r)}${r.parce_que?.length ? raisons(r) : r.communs?.length ? `<p class="pq">Thèmes communs : ${r.communs.map(t => `<a href="${lienListe("theme", t)}">${esc(t)}</a>`).join(", ")}</p>`
     : ambiances(r.themes, 1).map(a => `<em><a href="${lienListe("ambiance", a)}">${esc(a)}</a></em>`).join("")}</div>
  </article>`;
@@ -637,11 +652,12 @@ function rendre(){
  if (onglet === "gouts") return gouts();
  m.className = onglet;
  if (!data){ m.innerHTML = `<div class="scene chargement"></div><div class="section"><div class="grille">${'<div class="squelette"></div>'.repeat(12)}</div></div>`; charger(); return; }
- const [[t1, l1], [t2, l2]] = data[onglet];
+ const [[t1, l1t], [t2, l2t]] = data[onglet], l1 = l1t.filter(garde), l2 = l2t.filter(garde);
  const autre = onglet === "jeu" ? "tes films et séries" : "tes jeux";
- const vide = `<div class="vide">${ico(ICONE[onglet])}<span>Pas encore assez de goûts notés pour ça. <a href="#/gouts">Ajoute quelques titres</a> et les recos apparaissent.</span></div>`;
+ const vide = filtresOn.size && l1t.length ? `<div class="vide">${ico(ICONE[onglet])}<span>Rien avec ces filtres.</span></div>` : `<div class="vide">${ico(ICONE[onglet])}<span>Pas encore assez de goûts notés pour ça. <a href="#/gouts">Ajoute quelques titres</a> et les recos apparaissent.</span></div>`;
  m.innerHTML = `${l1.length ? scene(l1[0]) : `<div class="section">${vide}</div>`}
   ${WEB && l1.length ? zoneDe() : ""}
+  <div class="section filtres-recos">${barreFiltres(onglet)}</div>
   ${l1.length > 1 ? `<section class="section"><div class="tete"><h3>${t1}</h3>${barreTri()}</div><div class="grille">${trier(l1.slice(1)).map(carte).join("")}</div></section>` : ""}
   ${WEB ? railTendances(onglet) : ""}
   <section class="section"><div class="tete"><h3>${t2}</h3></div>
@@ -851,6 +867,7 @@ function liensExt(r){
  if (r.imdb) l.push([`https://www.imdb.com/title/${encodeURIComponent(r.imdb)}/`, "IMDb"]);
  if (r.dom !== "jeu") l.push([lien(r), "Wikipédia"]);
  if (r.steam) l.push([`https://store.steampowered.com/app/${encodeURIComponent(r.steam)}`, "Steam"]);
+ if (r.dom === "jeu" && !r.gratuit) l.push([`https://isthereanydeal.com/search/?q=${encodeURIComponent(r.titre_en || r.titre)}`, "Meilleur prix"]);
  return l.length ? l.map(([u, t]) => `<a class="bt" href="${esc(u)}" target="_blank" rel="noopener">${ico("lien")}${t}</a>`).join("") : ND;
 }
 // Résumé : API REST de Wikipédia (sans clé), dans la langue affichée ; repli sur l'anglais si pas d'article français
@@ -892,7 +909,7 @@ async function fichePage(dom, id, ancre){
   <header class="fiche-tete">
     <div class="aff-fiche">${couverture(r)}</div>
    <div class="texte">
-    <p class="type-fiche">${ico(ICONE[r.dom])}${NOM[r.dom]}${r.annee ? ", " : ""}${lienAnnee(r.annee)}</p>
+    <p class="type-fiche">${ico(ICONE[r.dom])}${NOM[r.dom]}${r.annee ? ", " : ""}${lienAnnee(r.annee)}${r.duree ? `, ${duree(r)}${r.dom === "jeu" ? " d'histoire" : ""}` : ""}${r.gratuit ? ", gratuit" : ""}</p>
     ${amb[0] ? `<a class="accroche" href="${lienListe("ambiance", amb[0])}">${esc(amb[0])}</a>` : ""}
     <h1>${esc(r.titre)}</h1>
     ${autre ? `<p class="autre-titre">${enAnglais() ? "Titre français" : "Titre anglais"} : <i>${esc(autre)}</i></p>` : ""}
@@ -1009,6 +1026,7 @@ function mentions(){
   <ul>
    <li>${t("Titres, genres, notes Metacritic et Rotten Tomatoes : Wikidata, licence CC0.", "Titles, genres, Metacritic and Rotten Tomatoes scores: Wikidata, CC0 licence.")}</li>
    <li>${t("Résumés : Wikipédia, par ses contributeurs, licence", "Synopses: Wikipedia, by its contributors, licence")} <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</li>
+   <li>${t("Durées des jeux :", "Game lengths:")} <a href="https://howlongtobeat.com" target="_blank" rel="noopener">HowLongToBeat</a>.</li>
    <li>${t("Affiches des séries :", "Show posters:")} <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVmaze</a>, ${t("licence", "licence")} <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</li>
    <li>${t("Jeux, tags et part d'avis positifs : SteamSpy et Steam.", "Games, tags and share of positive reviews: SteamSpy and Steam.")}</li>
    <li>${t("Tendances : nombre de lectures Wikipédia (Wikimedia) et de joueurs (SteamSpy).", "Trends: Wikipedia page views (Wikimedia) and player counts (SteamSpy).")}</li>
