@@ -190,7 +190,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
     if (error) { res.textContent = "Avis indisponibles pour le moment."; return; }
     const moy = data.length ? data.reduce((s, a) => s + a.note, 0) / data.length : 0;
     const par = [1, 2, 3, 4, 5].map(n => data.filter(a => a.note === n).length), haut = Math.max(1, ...par);
-    res.innerHTML = data.length ? `<div class="moyenne"><b>${en() ? moy.toFixed(1) : moy.toFixed(1).replace(".", ",")}</b><span>sur 5 · ${data.length} avis</span></div>
+    res.innerHTML = data.length ? `<div class="moyenne"><b>${en() ? moy.toFixed(1) : moy.toFixed(1).replace(".", ",")}</b><span>sur 5, ${data.length} avis</span></div>
 <div class="histo" role="img" aria-label="Répartition des notes : ${par.map((c, i) => `${c} × ${i + 1}★`).join(", ")}">${par.map((c, i) => `<i style="height:${Math.max(4, c / haut * 100)}%" title="${i + 1} sur 5"></i>`).join("")}</div>` : "<span>Aucun avis pour l'instant. Sois le premier.</span>";
     liste.innerHTML = data.map(a => `<div class="un-avis"><div class="haut"><span><strong>${echap(a.pseudo)}</strong> <span class="st" aria-label="${a.note} sur 5">${etoiles(a.note)}</span></span><span>${new Date(a.cree).toLocaleDateString(en() ? "en-GB" : "fr-FR")}</span></div>
 ${a.texte ? `<p>${echap(a.texte)}</p>` : ""}${user && a.user_id === user.id ? `<button class="suppr" data-sup="${a.id}">Supprimer mon avis</button>` : ""}</div>`).join("");

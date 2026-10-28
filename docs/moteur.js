@@ -36,7 +36,7 @@ const Moteur = (() => {
     // Tendances de la semaine (tendances.py), mises à jour chaque jour : facultatives, le site marche sans.
     const facultatif = url => fetch(url).then(r => r.ok ? r.json() : {}).catch(() => ({}));
     const signaux = Promise.all([facultatif("tendances.json?v=ebc55ee1ae")]);
-    const brut = await (await fetch("catalogue.json?v=ceebc112c4")).json();
+    const brut = await (await fetch("catalogue.json?v=e6e4d3e0d3")).json();
     TENDANCES = {};
     for (const s of await signaux) for (const l of Object.values(s)) if (Array.isArray(l)) for (const [i, t] of l) TENDANCES[i] = Math.max(TENDANCES[i] || 0, t);
     CAT = brut.v === 1 ? deplier(brut) : brut;
@@ -282,8 +282,10 @@ const Moteur = (() => {
         .sort((a, b) => (a.dom + a.titre).localeCompare(b.dom + b.titre));
     },
     cherche(q) {
-      q = simple(q); if (q.length < 2) return [];
-      return Object.values(CAT).filter(it => simple(it.titre).includes(q) || simple(it.titre_en).includes(q))
+      // Dès la première lettre : avec une seule, seulement les titres qui commencent par elle (sinon presque tout correspond)
+      q = simple(q); if (!q) return [];
+      const ok = t => q.length < 2 ? simple(t).startsWith(q) : simple(t).includes(q);
+      return Object.values(CAT).filter(it => ok(it.titre) || ok(it.titre_en))
         .sort((a, b) => (simple(a.titre).startsWith(q) ? 0 : 1) - (simple(b.titre).startsWith(q) ? 0 : 1) || b.qualite - a.qualite)
         .slice(0, 20).map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam, themes: it.themes.slice(0, 3), ...notesExt(it)}));
     },
