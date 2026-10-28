@@ -226,6 +226,7 @@ footer a{color:var(--doux)}
 .toast.v{transform:translateX(-50%) translateY(0)}
 
 @media(max-width:980px){.colonnes{grid-template-columns:1fr}.compte{display:none}}
+@media(max-width:1060px) and (min-width:761px){.barre{gap:14px} nav button{padding:8px 11px;white-space:nowrap} .chercher span{display:none} .chercher{padding:0 10px}}
 @media(max-width:760px){
  .barre{flex-wrap:wrap;gap:12px;padding-top:10px;padding-bottom:10px}
  nav{order:3;width:100%;justify-content:space-between}
@@ -403,7 +404,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 <main id="main"></main>
 <footer><div><span>Pontil : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=dece43a2cb"></script>
+<script src="langue.js?v=5731897bab"></script>
 <script src="moteur.js?v=53010fab9c"></script>
 <script>
 let onglet = "film", data = null;
@@ -1039,7 +1040,7 @@ if (WEB) {
 else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); compter().then(router); }
 </script>
 <script src="vendor/supabase.js?v=34035ac76d"></script>
-<script src="compte.js?v=dfe8f49913"></script>
+<script src="compte.js?v=5b24c348f0"></script>
 <script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
 </body>
 </html>
