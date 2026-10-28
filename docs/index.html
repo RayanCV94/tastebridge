@@ -116,10 +116,26 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 .voile .mini-act{pointer-events:auto}
 .couvre{position:absolute;inset:0;display:block;width:100%;padding:0;border:0;background:none;cursor:pointer}
 .couvre:focus-visible{outline:2px solid var(--ambre);outline-offset:2px}
-.couvre .coche{display:none}
-.c[data-n="aime"] .cadre{box-shadow:0 0 0 3px var(--menthe)} .c[data-n="adore"] .cadre{box-shadow:0 0 0 3px var(--rouge)}
-.c[data-n="aime"] .pop-etat{color:var(--menthe)} .c[data-n="adore"] .pop-etat{color:var(--rouge)}
 .c .pop-etat{display:block}
+/* Avis : 4 choix posés sur l'affiche, du moins bon au meilleur */
+.palette{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;padding:8px;background:linear-gradient(transparent,color-mix(in srgb,var(--noir) 92%,transparent) 30%);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .18s var(--sortie),transform .25s var(--sortie),visibility 0s .25s}
+.ouvert .palette,.mode .palette{opacity:1;visibility:visible;transform:none;transition:opacity .18s var(--sortie),transform .25s var(--sortie)}
+.palette>*{display:flex;align-items:center;gap:6px;min-height:34px;padding:0 8px;border-radius:10px;border:1px solid color-mix(in srgb,var(--texte) 14%,transparent);background:color-mix(in srgb,var(--noir) 55%,transparent);color:var(--blanc);white-space:nowrap;font:600 12px/1.1 var(--f-texte);text-align:left;cursor:pointer;transition:background .15s,color .15s,transform .15s}
+.palette svg{width:16px;height:16px;flex:none}
+.palette button:active{transform:scale(.96)}
+.palette button:focus-visible{outline:2px solid var(--ambre);outline-offset:1px}
+.palette [data-v="bof"]:hover,[data-n="bof"] .palette [data-v="bof"]{background:var(--trait2)}
+.palette [data-v="vu"]:hover,[data-n="vu"] .palette [data-v="vu"]{background:var(--bleu);color:var(--fond)}
+.palette [data-v="aime"]:hover,[data-n="aime"] .palette [data-v="aime"]{background:var(--menthe);color:var(--fond)}
+.palette [data-v="adore"]:hover,[data-n="adore"] .palette [data-v="adore"],.palette .choisi{background:var(--rouge);color:var(--blanc)}
+.coche:empty{display:none}
+.c .coche,.pop .coche{position:absolute;z-index:2;top:8px;right:8px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;color:var(--fond);opacity:1;transform:none;border:0}
+.coche svg{width:16px;height:16px}
+[data-n="aime"] .coche{background:var(--menthe)} [data-n="adore"] .coche{background:var(--rouge);color:var(--blanc)} [data-n="vu"] .coche{background:var(--bleu)} [data-n="bof"] .coche{background:var(--trait2);color:var(--blanc)}
+[data-n="aime"] .cadre{box-shadow:0 0 0 3px var(--menthe)} [data-n="adore"] .cadre{box-shadow:0 0 0 3px var(--rouge)} [data-n="vu"] .cadre{box-shadow:0 0 0 3px var(--bleu)}
+[data-n="bof"] .couvre{opacity:.4}
+[data-n="aime"] .pop-etat{color:var(--menthe)} [data-n="adore"] .pop-etat{color:var(--rouge)} [data-n="vu"] .pop-etat{color:var(--bleu)}
+@media(prefers-reduced-motion:reduce){.palette{transition:none;transform:none}}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 a.pct,a.moy{text-decoration:none;color:var(--blanc);transition:background .15s,border-color .15s}
 a.pct:hover,a.moy:hover{background:color-mix(in srgb,var(--noir) 95%,transparent);border-color:color-mix(in srgb,var(--texte) 35%,transparent)}
@@ -182,21 +198,14 @@ a.accroche:hover{color:var(--texte)}
 .mode ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,150px));gap:clamp(16px,4vw,40px)}
 .mode li{display:flex;flex-direction:column;gap:6px;min-width:0}
 .mode .cadre{margin-bottom:8px;cursor:default}
-.mode .m1 .cadre{box-shadow:0 0 0 3px var(--menthe)} .mode .m2 .cadre{box-shadow:0 0 0 3px var(--rouge)} .mode .m3 .cadre{opacity:.45}
+.mode .m2 .cadre{box-shadow:0 0 0 3px var(--rouge)}
 .mode .marque{position:absolute;z-index:2;top:8px;right:8px;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;color:var(--fond)}
 .mode .marque svg{width:17px;height:17px}
 .mode .m1 .marque{background:var(--menthe)} .mode .m2 .marque{background:var(--rouge);color:var(--blanc)}
 .mode li b{font:400 24px/1 var(--f-titre)}
 .mode li>span{font-size:15px;font-weight:600;color:var(--doux)}
 .mode .m1>span{color:var(--menthe)} .mode .m2>span{color:var(--rouge)}
-.pop .cadre{box-shadow:0 0 0 2px transparent}
 .pop:hover .cadre{transform:translateY(-4px)}
-.js .pop .coche{opacity:0;transform:scale(.6)}
-.pop .coche{position:absolute;z-index:2;top:8px;right:8px;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb,var(--noir) 70%,transparent);border:1px solid color-mix(in srgb,var(--texte) 20%,transparent);transition:opacity .2s,transform .3s var(--sortie)}
-.pop .coche svg{width:15px;height:15px}
-.pop[data-n="aime"] .cadre{box-shadow:0 0 0 3px var(--menthe)} .pop[data-n="adore"] .cadre{box-shadow:0 0 0 3px var(--rouge)}
-.pop[data-n="aime"] .coche,.pop[data-n="adore"] .coche{opacity:1;transform:none}
-.pop[data-n="aime"] .coche{background:var(--menthe);color:var(--fond)} .pop[data-n="adore"] .coche{background:var(--rouge)}
 .progres{position:sticky;bottom:18px;z-index:10;margin:28px auto 0;width:min(560px,100%);display:flex;align-items:center;gap:16px;padding:13px 13px 13px 20px;border-radius:16px;background:color-mix(in srgb,var(--surface2) 90%,transparent);box-shadow:var(--ombre)}
 .progres .barre-p{flex:1;height:6px;border-radius:6px;background:var(--trait);overflow:hidden}
 .progres .barre-p i{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,var(--ambre),var(--rouge));border-radius:6px;transition:transform .4s var(--sortie)}
@@ -450,7 +459,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 <main id="main"></main>
 <footer><div><span>Pontil : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=3ad1812d6a"></script>
+<script src="langue.js?v=d80034feb4"></script>
 <script src="moteur.js?v=df91da5cef"></script>
 <script>
 let onglet = "film", data = null;
@@ -619,9 +628,9 @@ function boutonAvis(r, cls = "a5", texte = ""){
  return `<a class="${cls}" href="${lienFiche(r, WEB ? "avis" : "")}" title="Fiche et avis"${texte ? "" : ` aria-label="Fiche et avis : ${esc(r.titre)}"`}>${ico("bulle")}${texte}</a>`;
 }
 function carte(r){
- return `<article class="c" id="c-${r.id}">
+ return `<article class="c" id="c-${r.id}" data-n="">
   <div class="cadre">
-   <button class="couvre" onclick="toucher('${r.id}', this)" aria-label="Noter ${esc(r.titre)}">${couverture(r)}<span class="coche">${ico("ok")}</span></button>
+   <button class="couvre" onclick="ouvrir(this)" aria-expanded="false" aria-label="Donner ton avis : ${esc(r.titre)}">${couverture(r)}</button><span class="coche"></span>${palette(r.id)}
    ${r.match != null ? `<a class="pct" href="${lienFiche(r, "score")}" title="D'où vient ce score"><span class="vh">Correspondance :</span><i></i>${r.match} %</a>` : ""}${etoile(r)}
   </div>
   <div class="legende"><a class="titre" href="${lienFiche(r)}">${esc(r.titre)}</a><span>${lienAnnee(r.annee)}${r.annee ? ", " : ""}${r.themes?.[0] ? `<a href="${lienListe("theme", r.themes[0])}">${esc(r.themes[0])}</a>` : NOM[r.dom]}${badgeDuree(r)}${r.gratuit ? `<small class="gratuit">Gratuit</small>` : ""}</span>
@@ -666,12 +675,6 @@ function rendre(){
 
 // En ce moment : tendances de la semaine (Wikipédia, Steam), celles qui te ressemblent d'abord
 const TITRE_ONGLET = {film: "Films pour toi", serie: "Séries pour toi", jeu: "Jeux pour toi"};
-// Toucher une affiche : 1 fois j'aime, 2 fois j'adore, 3 fois retirée (comme à l'accueil). La grille ne se recharge pas sous le doigt.
-function toucher(id, el){
- const c = el.closest(".c"), n = c.dataset.n === "aime" ? "adore" : c.dataset.n === "adore" ? "" : "aime";
- c.dataset.n = n; el.setAttribute("aria-pressed", !!n); c.querySelector(".pop-etat").textContent = ETAT_POP[n] || "";
- api.noter(id, n); data = null; compter();
-}
 function railTendances(dom){
  const l = Moteur.tendances(dom);
  return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3></div>
@@ -734,13 +737,14 @@ function accueil(pret = true){
  const mur = pret ? ["film","serie","film","jeu"].flatMap(d => Moteur.populaires(d, 12)).filter(x => x.image).slice(0, 40) : [];
  // L'affiche note (geste rapide), le titre en dessous ouvre la fiche, l'état est écrit sous chaque affiche
  const rang = (d, nom) => `<section class="section"><div class="tete"><h3>${nom}</h3></div><div class="rail">${!pret ? '<div class="pop" aria-hidden="true"><div class="squelette"></div><span class="pop-titre">&nbsp;</span><span class="pop-etat"></span></div>'.repeat(10) : Moteur.populaires(d, 40).map(x=>`<div class="pop" data-n="${x.note || ""}">
-  <button class="pop-note" onclick="choisir('${x.id}', this.parentElement)" aria-pressed="${!!x.note}" aria-label="${esc(x.titre)}"><div class="cadre">${couverture(x)}<span class="coche">${ico("ok")}</span></div></button>
+  <div class="cadre"><button class="pop-note couvre" onclick="ouvrir(this)" aria-expanded="false" aria-label="Donner ton avis : ${esc(x.titre)}">${couverture(x)}</button><span class="coche">${x.note && ICO_AVIS[x.note] ? ico(ICO_AVIS[x.note]) : ""}</span>${palette(x.id)}</div>
   <a class="pop-titre" href="${lienFiche(x)}" title="Voir la fiche">${esc(x.titre)}</a><span class="pop-etat">${x.note ? esc(ETAT_POP[x.note] || TEXTE[x.note]) : ""}</span></div>`).join("")}</div></section>`;
  const murHtml = mur.map(x=>`<div class="tuile">${couverture(x, "eager")}</div>`).join("");
  const demo = pret ? Moteur.populaires("film", 1)[0] : null;
- const etape = (n, cls, icone, mot) => `<li class="${cls}"><div class="cadre">${demo ? couverture(demo) : ""}${icone ? `<span class="marque">${ico(icone)}</span>` : ""}</div><b>${n}</b><span>${mot}</span></li>`;
+ const demoPal = c => `<div class="palette" aria-hidden="true">${AVIS.map(([k, i, t]) => `<span data-v="${k}"${k === "adore" ? ` class="${c}"` : ""}>${ico(i)}${t}</span>`).join("")}</div>`;
+ const etape = (cls, mot, dedans) => `<li class="${cls}"><div class="cadre">${demo ? couverture(demo) : ""}${dedans}</div><span>${mot}</span></li>`;
  const rails = `<section class="mode" aria-label="Comment noter"><h3>Touche une affiche</h3><ol>
-  ${etape("1 fois", "m1", "pouce", "J'aime")}${etape("2 fois", "m2", "coeur", "J'adore")}${etape("3 fois", "m3", "", "Retirée")}</ol></section>${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}`;
+  ${etape("m1", "Choisis ton avis", demoPal(""))}${etape("m2", "C'est noté", `<span class="marque">${ico("coeur")}</span>`)}${etape("m3", "Retouche pour l'enlever", demoPal("choisi"))}</ol></section>${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}`;
  // Déjà affiché sans catalogue : on complète le mur et les rails sans retoucher le texte (pas de nouveau rendu du titre)
  if (pret && $(".accueil[data-attente]")) { $(".accueil").removeAttribute("data-attente"); $(".mur").innerHTML = murHtml; $("#choix").innerHTML = rails; majProgres(); return; }
  m.innerHTML = `<section class="accueil"${pret ? "" : " data-attente"}>
@@ -756,11 +760,22 @@ function accueil(pret = true){
 }
 async function majProgres(){ const n = await compter(); if (!$("#jauge")) return;
  $("#jauge").style.transform = `scaleX(${Math.min(1, n / 5)})`; $("#nb").textContent = `${Math.min(n,5)} / 5`; $("#voir").disabled = n < 5; }
-// Un clic sur une affiche = « J'aime », un second = « J'adore », un troisième = retiré
-const ETAT_POP = {aime: "J'aime", adore: "J'adore"};
-function choisir(id, el){ const n = el.dataset.n === "aime" ? "adore" : el.dataset.n === "adore" ? "" : "aime";
- el.dataset.n = n; el.querySelector(".pop-note").setAttribute("aria-pressed", !!n); el.querySelector(".pop-etat").textContent = ETAT_POP[n] || "";
- api.noter(id, n); data = null; majProgres(); }
+// Toucher une affiche ouvre 4 avis, du moins bon au meilleur ; retoucher l'avis choisi l'enlève. Même geste à l'accueil et dans les onglets.
+// « Vu, sans plus » : vu sans aimer ; « Pas pour moi » : pas aimé ou pas envie, ne revient plus.
+const AVIS = [["bof", "non", "Non merci"], ["vu", "oeil", "Sans plus"], ["aime", "pouce", "J'aime"], ["adore", "coeur", "J'adore"]];
+const ICO_AVIS = Object.fromEntries(AVIS.map(([k, i]) => [k, i]));
+const ETAT_POP = Object.fromEntries(AVIS.map(([k, , t]) => [k, t]));
+const palette = id => `<div class="palette" role="group" aria-label="Ton avis">${AVIS.map(([k, i, t]) => `<button data-v="${k}" onclick="avis('${id}','${k}',this)">${ico(i)}${t}</button>`).join("")}</div>`;
+function fermer(sauf){ document.querySelectorAll(".ouvert").forEach(x => { if (x !== sauf) { x.classList.remove("ouvert"); x.querySelector(".couvre")?.setAttribute("aria-expanded", "false"); } }); }
+function ouvrir(el){ const b = el.closest("[data-n]"), o = !b.classList.contains("ouvert"); fermer(b);
+ b.classList.toggle("ouvert", o); el.setAttribute("aria-expanded", o); }
+function avis(id, v, el){
+ const b = el.closest("[data-n]"), n = b.dataset.n === v ? "" : v;
+ b.dataset.n = n; fermer(); b.querySelector(".pop-etat").textContent = ETAT_POP[n] || ""; b.querySelector(".coche").innerHTML = n ? ico(ICO_AVIS[n]) : "";
+ api.noter(id, n); data = null; if (vue === "accueil") majProgres(); else compter();
+}
+addEventListener("click", e => { if (!e.target.closest(".ouvert")) fermer(); });
+addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
 
 let filtre = "tout";
 async function gouts(){
