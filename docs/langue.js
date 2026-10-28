@@ -100,6 +100,8 @@
     "Romance": "Romance", "Histoire forte": "Strong story", "Historique": "Historical", "Anime": "Anime", "Survie": "Survival",
     "Espionnage, infiltration": "Spy, stealth", "Vengeance, vigilante": "Revenge, vigilante", "Monde ouvert": "Open world",
     "Souls-like": "Souls-like", "RPG": "RPG", "Tir": "Shooter", "Roguelike": "Roguelike", "Stratégie": "Strategy", "Course, sport": "Racing, sports",
+    "Compétitif en ligne": "Online competitive", "Coop entre amis": "Co-op with friends",
+    "Parties classées et e-sport": "Ranked matches and esports", "À jouer à plusieurs": "Better with friends",
     // Ambiances (page.html)
     "Ambiances": "Themes", "Batailles historiques et héroïsme épique": "Historical battles and epic heroism", "Polars noirs et poisseux": "Gritty noir crime",
     "Enquêtes tendues à rebondissements": "Tense, twisty investigations", "Horreur crue et dérangeante": "Raw, disturbing horror", "Survivre la peur au ventre": "Survival with dread",

@@ -36,7 +36,7 @@ const Moteur = (() => {
     // Tendances de la semaine (tendances.py), mises à jour chaque jour : facultatives, le site marche sans.
     const facultatif = url => fetch(url).then(r => r.ok ? r.json() : {}).catch(() => ({}));
     const signaux = Promise.all([facultatif("tendances.json?v=ebc55ee1ae")]);
-    const brut = await (await fetch("catalogue.json?v=e6e4d3e0d3")).json();
+    const brut = await (await fetch("catalogue.json?v=70a3a1d0eb")).json();
     TENDANCES = {};
     for (const s of await signaux) for (const l of Object.values(s)) if (Array.isArray(l)) for (const [i, t] of l) TENDANCES[i] = Math.max(TENDANCES[i] || 0, t);
     CAT = brut.v === 1 ? deplier(brut) : brut;
@@ -57,7 +57,7 @@ const Moteur = (() => {
     const cat = {}, milliers = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     for (const [id, d, titre, titre_en, annee, q, th, img, wiki, imdb, steam, avis, metacritic, rt, note_imdb, votes_imdb, plateformes, boutiques, dispo] of lignes) {
       const dom = ["film", "serie", "jeu"][d];
-      const image = dom === "jeu" ? `https://cdn.akamai.steamstatic.com/steam/apps/${steam}/header.jpg` : !img ? undefined : /^\d:/.test(img) ? prefixes[+img[0]] + img.slice(2) : img;
+      const image = dom === "jeu" && steam ? `https://cdn.akamai.steamstatic.com/steam/apps/${steam}/header.jpg` : !img ? undefined : /^\d:/.test(img) ? prefixes[+img[0]] + img.slice(2) : img;
       cat[id] = {id, dom, titre, titre_en: titre_en || titre, annee: annee || undefined, qualite: q / 1e4, themes: th.map(k => themes[k]), image,
         wiki: wiki || undefined, imdb: imdb || undefined, steam: steam || undefined, avis: avis ? `${avis[0]} % positifs sur ${milliers(avis[1])} avis` : undefined,
         metacritic: metacritic ?? undefined, rt: rt ?? undefined, note_imdb: note_imdb ?? undefined, votes_imdb: votes_imdb ?? undefined,
