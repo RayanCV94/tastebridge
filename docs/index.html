@@ -97,6 +97,8 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 .sans-image svg{width:24px;height:24px;flex:none;color:var(--dom)}
 .sans-image .filigrane{position:absolute;right:-22%;bottom:-12%;width:85%;height:auto;aspect-ratio:1;color:var(--dom);opacity:.13}
 .aff-fiche .sans-image,.scene .affiche .sans-image,.tirage .sans-image{font-size:30px;padding:22px}
+.affiche-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}
+.affiche-img.ok{opacity:1}
 .pct{position:absolute;z-index:2;top:10px;left:10px;display:flex;align-items:center;gap:6px;font:600 12px Onest;font-variant-numeric:tabular-nums;color:#fff;padding:4px 9px 4px 8px;border-radius:30px;background:rgba(8,8,12,.72);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)}
 .pct i{width:7px;height:7px;border-radius:50%;background:var(--dom)}
 /* Survol : la raison et les avis apparaissent sur l'affiche */
@@ -436,12 +438,15 @@ const api = WEB ? {
 function toast(t){const e=$("#toast");e.innerHTML=ico("ok")+esc(t);e.classList.add("v");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("v"),1900)}
 // Wikipédia dans la langue affichée (r.wiki = article anglais, connu depuis Wikidata)
 function lien(r){return r.steam?`https://store.steampowered.com/app/${r.steam}`:enAnglais()?(r.wiki?`https://en.wikipedia.org/wiki/${r.wiki}`:`https://en.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`):`https://fr.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`}
-// Pas d'affiches ni de jaquettes : ce sont des œuvres protégées (studios, éditeurs), inutilisables dans un projet
-// commercial sans licence. Chaque titre a une couverture originale : icône du support, titre, teinte du support.
+// Vraie affiche (jaquette verticale Steam pour les jeux), posée sur une couverture dessinée qui sert de repli
+// tant qu'elle charge ou si elle manque : icône du support, titre, teinte du support.
 const TEINTE = {film:"var(--ambre)", serie:"var(--violet)", jeu:"var(--menthe)"};
 // Variation stable par titre (angle du dégradé), pour que deux couvertures voisines ne se ressemblent pas
 const angle = id => 120 + [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 100;
-const couverture = r => `<div class="sans-image" style="--dom:${TEINTE[r.dom]};--a:${angle(r.id)}deg">${ico(ICONE[r.dom])}<span>${esc(r.titre)}</span><svg class="filigrane" aria-hidden="true"><use href="#${ICONE[r.dom]}"/></svg></div>`;
+const visuel = r => r.dom === "jeu" && r.steam ? `https://cdn.akamai.steamstatic.com/steam/apps/${r.steam}/library_600x900.jpg` : r.image;
+const repli = r => r.dom === "jeu" && r.image ? `this.onerror=()=>this.remove();this.src='${esc(r.image)}'` : "this.remove()";
+const affiche = (r, charge = "lazy") => visuel(r) ? `<img class="affiche-img" src="${esc(visuel(r))}" loading="${charge}" alt="" onload="this.classList.add('ok')" onerror="${repli(r)}">` : "";
+const couverture = (r, charge) => `<div class="sans-image" style="--dom:${TEINTE[r.dom]};--a:${angle(r.id)}deg">${ico(ICONE[r.dom])}<span>${esc(r.titre)}</span><svg class="filigrane" aria-hidden="true"><use href="#${ICONE[r.dom]}"/></svg></div>${affiche(r, charge)}`;
 // Ambiances à la Letterboxd : des combinaisons de thèmes décrites en une phrase (affichage seulement)
 const AMBIANCES = [
  [["Guerre","Historique"], "Batailles historiques et héroïsme épique"],
@@ -674,7 +679,7 @@ function accueil(pret = true){
  const rang = (d, nom) => `<section class="section"><div class="tete"><h3>${nom}</h3></div><div class="rail">${!pret ? '<div class="pop" aria-hidden="true"><div class="squelette"></div><span class="pop-titre">&nbsp;</span><span class="pop-etat"></span></div>'.repeat(10) : Moteur.populaires(d, 40).map(x=>`<div class="pop" data-n="${x.note || ""}">
   <button class="pop-note" onclick="choisir('${x.id}', this.parentElement)" aria-pressed="${!!x.note}" aria-label="${esc(x.titre)}"><div class="cadre">${couverture(x)}<span class="coche">${ico("ok")}</span></div></button>
   <a class="pop-titre" href="${lienFiche(x)}" title="Voir la fiche">${esc(x.titre)}</a><span class="pop-etat">${x.note ? esc(ETAT_POP[x.note] || TEXTE[x.note]) : ""}</span></div>`).join("")}</div></section>`;
- const murHtml = mur.map(x=>`<div class="tuile">${couverture(x)}</div>`).join("");
+ const murHtml = mur.map(x=>`<div class="tuile">${couverture(x, "eager")}</div>`).join("");
  const rails = `<p class="aide-rail">Appuie sur une couverture : une fois pour J'aime, deux pour J'adore, trois pour retirer. Le titre ouvre la fiche.</p>${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}`;
  // Déjà affiché sans catalogue : on complète le mur et les rails sans retoucher le texte (pas de nouveau rendu du titre)
  if (pret && $(".accueil[data-attente]")) { $(".accueil").removeAttribute("data-attente"); $(".mur").innerHTML = murHtml; $("#choix").innerHTML = rails; majProgres(); return; }
@@ -702,7 +707,7 @@ async function gouts(){
  const m = $("#main"); m.className = "";
  const liste = await api.gouts();
  const sel = r => `<select aria-label="Ton avis sur ${esc(r.titre)}" onchange="noter('${r.id}',this.value)">${r.note ? "" : `<option value="">Ton avis...</option>`}${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}" ${k===r.note?"selected":""}>${v}</option>`).join("")}${r.note ? `<option value="">Retirer</option>` : ""}</select>`;
- const ligne = r => `<div class="l"><a class="mini" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true" style="--dom:${TEINTE[r.dom]}">${ico(ICONE[r.dom])}</a><div class="nom"><a href="${lienFiche(r)}">${esc(r.titre)}</a><small>${NOM[r.dom]}${r.annee ? " · " + r.annee : ""}</small></div>${r.heures ? `<span class="h">${r.heures} h</span>` : ""}${sel(r)}</div>`;
+ const ligne = r => `<div class="l"><a class="mini" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true" style="--dom:${TEINTE[r.dom]};${visuel(r) ? `background:center/cover url('${esc(visuel(r))}')` : ""}">${visuel(r) ? "" : ico(ICONE[r.dom])}</a><div class="nom"><a href="${lienFiche(r)}">${esc(r.titre)}</a><small>${NOM[r.dom]}${r.annee ? " · " + r.annee : ""}</small></div>${r.heures ? `<span class="h">${r.heures} h</span>` : ""}${sel(r)}</div>`;
  const vus = liste.filter(r => filtre === "tout" || r.dom === filtre);
  m.innerHTML = `<div class="colonnes">
   <div>
@@ -736,7 +741,7 @@ async function gouts(){
  }
  let t; $("#q").oninput = e => { clearTimeout(t); t = setTimeout(async () => {
   const r = await api.cherche(e.target.value);
-  $("#res").innerHTML = r.map(x=>`<div class="l"><a class="mini" href="${lienFiche(x)}" tabindex="-1" aria-hidden="true" style="--dom:${TEINTE[x.dom]}">${ico(ICONE[x.dom])}</a><div class="nom"><a href="${lienFiche(x)}">${esc(x.titre)}</a><small>${NOM[x.dom]}${x.annee ? " · " + x.annee : ""}</small></div>
+  $("#res").innerHTML = r.map(x=>`<div class="l"><a class="mini" href="${lienFiche(x)}" tabindex="-1" aria-hidden="true" style="--dom:${TEINTE[x.dom]};${visuel(x) ? `background:center/cover url('${esc(visuel(x))}')` : ""}">${visuel(x) ? "" : ico(ICONE[x.dom])}</a><div class="nom"><a href="${lienFiche(x)}">${esc(x.titre)}</a><small>${NOM[x.dom]}${x.annee ? " · " + x.annee : ""}</small></div>
    <select aria-label="Ton avis sur ${esc(x.titre)}" onchange="noter('${x.id}',this.value)"><option value="">Ton avis...</option>${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>`).join("");
  }, 200); };
 }
@@ -964,8 +969,8 @@ function mentions(){
    <li>${t("Tendances : nombre de lectures Wikipédia (Wikimedia) et de joueurs (SteamSpy).", "Trends: Wikipedia page views (Wikimedia) and player counts (SteamSpy).")}</li>
    <li>${t("Polices Onest et Gloock : SIL Open Font License 1.1. Icônes : Lucide, licence ISC. Bibliothèque supabase-js : licence MIT.", "Onest and Gloock fonts: SIL Open Font License 1.1. Icons: Lucide, ISC licence. supabase-js library: MIT licence.")}</li>
   </ul>
-  <p>${t("Aucune affiche ni jaquette n'est reproduite : chaque titre a une couverture dessinée par Pontil. Les titres, marques et noms cités (Netflix, Steam, IMDb, Letterboxd, JustWatch, Metacritic, Rotten Tomatoes…) appartiennent à leurs propriétaires ; Pontil n'est affilié à aucun d'eux.",
-   "No poster or cover art is reproduced: every title gets a cover drawn by Pontil. Titles, trademarks and names mentioned (Netflix, Steam, IMDb, Letterboxd, JustWatch, Metacritic, Rotten Tomatoes…) belong to their owners; Pontil is not affiliated with any of them.")}</p>
+  <p>${t("Les affiches et jaquettes appartiennent à leurs studios et éditeurs (images Wikipédia et Steam, affichées depuis leur source). Les titres, marques et noms cités (Netflix, Steam, IMDb, Letterboxd, JustWatch, Metacritic, Rotten Tomatoes…) appartiennent à leurs propriétaires ; Pontil n'est affilié à aucun d'eux.",
+   "Posters and cover art belong to their studios and publishers (Wikipedia and Steam images, shown from their source). Titles, trademarks and names mentioned (Netflix, Steam, IMDb, Letterboxd, JustWatch, Metacritic, Rotten Tomatoes…) belong to their owners; Pontil is not affiliated with any of them.")}</p>
  </section>`;
  scrollTo(0, 0);
 }
@@ -977,7 +982,7 @@ async function mesListes(){
   <form class="champ-liste" onsubmit="event.preventDefault(); nouvelleListe(this.nom.value); mesListes()" style="display:flex;gap:8px;margin-bottom:16px">
    <input class="nom-liste" name="nom" maxlength="60" placeholder="Nouvelle liste : Ma liste d'automne" aria-label="Nom de la nouvelle liste" required><button class="bt plein">Créer</button></form>
   ${listes.length ? `<div class="mes-listes">${listes.map((l, k) => { const t = l.items.map(i => par[i]).filter(Boolean);
-   return `<div class="une-liste"><span class="vignettes" aria-hidden="true">${t.slice(0, 4).map(x => `<i style="--dom:${TEINTE[x.dom]}"></i>`).join("")}</span>
+   return `<div class="une-liste"><span class="vignettes" aria-hidden="true">${t.slice(0, 4).map(x => `<i style="--dom:${TEINTE[x.dom]};${visuel(x) ? `background:center/cover url('${esc(visuel(x))}')` : ""}"></i>`).join("")}</span>
     <a href="${lienPartage(l)}">${esc(l.titre)}<small>${resumeListe(t)}</small></a>
     <button class="bt" onclick="partagerListe(lireListes()[${k}])" aria-label="Partager ${esc(l.titre)}">${ico("partage")}</button>
     <button class="bt" onclick="if(confirm('Supprimer cette liste ?')){const l=lireListes();l.splice(${k},1);ecrireListes(l);mesListes()}" aria-label="Supprimer ${esc(l.titre)}">${ico("corbeille")}</button></div>`; }).join("")}</div>`
