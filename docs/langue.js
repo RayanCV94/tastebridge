@@ -37,6 +37,7 @@
     "Avis et commentaires": "Reviews and comments",
     "Un coup de dé": "Roll the dice", "Coup de dé": "Dice", "Touche une affiche": "Tap a poster", "Retirée": "Removed", "Note ce que tu aimes, Pontil trouve la suite.": "Rate what you love, Pontil finds what's next.", "Sans inscription": "No sign-up", "Note des titres pour voir ce qui vous relie.": "Rate a few titles to see the link.", "Touche une affiche pour la noter": "Tap a poster to rate it", "1 fois": "Once", "2 fois": "Twice", "3 fois": "3 times", "J'enlève": "Remove", "Le nom sous l'affiche ouvre sa fiche.": "The name under the poster opens its page.", "Un titre au hasard qui colle à tes goûts": "A random pick that fits your taste", "Tout": "All", "Film": "Movie", "Série": "Show", "Jeu": "Game", "Relancer": "Roll again",
     "Type de découverte": "Discovery type", "Trier": "Sort", "Pour toi": "For you", "Mieux notés": "Top rated",
+    "Films pour toi": "Movies for you", "Séries pour toi": "Shows for you", "Jeux pour toi": "Games for you",
     "Critique": "Critics", "Récents": "Newest", "Tendance": "Trending", "Visiteurs": "Visitors", "Acclamés": "Acclaimed",
     "Metacritic, sinon Rotten Tomatoes, sinon avis Steam": "Metacritic, else Rotten Tomatoes, else Steam reviews",
     "Les plus lus sur Wikipédia ou joués sur Steam cette semaine": "Most read on Wikipedia or played on Steam this week",

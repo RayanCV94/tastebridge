@@ -114,7 +114,12 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 .voile{position:absolute;inset:0;z-index:1;pointer-events:none;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;padding:14px;background:linear-gradient(transparent 25%,color-mix(in srgb,var(--noir) 94%,transparent) 78%);opacity:0;transition:opacity .3s var(--sortie)}
 .c:hover .voile,.c:focus-within .voile{opacity:1}
 .voile .mini-act{pointer-events:auto}
-.couvre{position:absolute;inset:0;display:block}
+.couvre{position:absolute;inset:0;display:block;width:100%;padding:0;border:0;background:none;cursor:pointer}
+.couvre:focus-visible{outline:2px solid var(--ambre);outline-offset:2px}
+.couvre .coche{display:none}
+.c[data-n="aime"] .cadre{box-shadow:0 0 0 3px var(--menthe)} .c[data-n="adore"] .cadre{box-shadow:0 0 0 3px var(--rouge)}
+.c[data-n="aime"] .pop-etat{color:var(--menthe)} .c[data-n="adore"] .pop-etat{color:var(--rouge)}
+.c .pop-etat{display:block}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 a.pct,a.moy{text-decoration:none;color:var(--blanc);transition:background .15s,border-color .15s}
 a.pct:hover,a.moy:hover{background:color-mix(in srgb,var(--noir) 95%,transparent);border-color:color-mix(in srgb,var(--texte) 35%,transparent)}
@@ -445,7 +450,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 <main id="main"></main>
 <footer><div><span>Pontil : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=8281c44f51"></script>
+<script src="langue.js?v=3ad1812d6a"></script>
 <script src="moteur.js?v=df91da5cef"></script>
 <script>
 let onglet = "film", data = null;
@@ -614,16 +619,13 @@ function boutonAvis(r, cls = "a5", texte = ""){
  return `<a class="${cls}" href="${lienFiche(r, WEB ? "avis" : "")}" title="Fiche et avis"${texte ? "" : ` aria-label="Fiche et avis : ${esc(r.titre)}"`}>${ico("bulle")}${texte}</a>`;
 }
 function carte(r){
- const b = (cls, note, icone, texte) => `<button class="${cls}" title="${texte}" aria-label="${texte} : ${esc(r.titre)}" onclick="noter('${r.id}','${note}')">${ico(icone)}</button>`;
  return `<article class="c" id="c-${r.id}">
   <div class="cadre">
-   <a class="couvre" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true">${couverture(r)}</a>
+   <button class="couvre" onclick="toucher('${r.id}', this)" aria-label="Noter ${esc(r.titre)}">${couverture(r)}<span class="coche">${ico("ok")}</span></button>
    ${r.match != null ? `<a class="pct" href="${lienFiche(r, "score")}" title="D'où vient ce score"><span class="vh">Correspondance :</span><i></i>${r.match} %</a>` : ""}${etoile(r)}
-   <div class="voile"><div class="mini-act">${b("a1","adore","coeur","J'adore")}${b("a2","aime","pouce","J'aime")}${b("a3","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("a4","bof","non","Pas pour moi")}${boutonAvis(r)}</div></div>
   </div>
   <div class="legende"><a class="titre" href="${lienFiche(r)}">${esc(r.titre)}</a><span>${lienAnnee(r.annee)}${r.annee ? ", " : ""}${r.themes?.[0] ? `<a href="${lienListe("theme", r.themes[0])}">${esc(r.themes[0])}</a>` : NOM[r.dom]}${badgeDuree(r)}${r.gratuit ? `<small class="gratuit">Gratuit</small>` : ""}</span>
-   ${ouCourt(r)}${r.parce_que?.length ? raisons(r) : r.communs?.length ? `<p class="pq">Thèmes communs : ${r.communs.map(t => `<a href="${lienListe("theme", t)}">${esc(t)}</a>`).join(", ")}</p>`
-    : ambiances(r.themes, 1).map(a => `<em><a href="${lienListe("ambiance", a)}">${esc(a)}</a></em>`).join("")}</div>
+   <span class="pop-etat"></span></div>
  </article>`;
 }
 
@@ -653,19 +655,23 @@ function rendre(){
  m.className = onglet;
  if (!data){ m.innerHTML = `<div class="scene chargement"></div><div class="section"><div class="grille">${'<div class="squelette"></div>'.repeat(12)}</div></div>`; charger(); return; }
  const [[t1, l1t], [t2, l2t]] = data[onglet], l1 = l1t.filter(garde), l2 = l2t.filter(garde);
- const autre = onglet === "jeu" ? "tes films et séries" : "tes jeux";
+ const vus = new Set(l1.map(r => r.id)), reste = [...l1.slice(1), ...l2.filter(r => !vus.has(r.id))];
  const vide = filtresOn.size && l1t.length ? `<div class="vide">${ico(ICONE[onglet])}<span>Rien avec ces filtres.</span></div>` : `<div class="vide">${ico(ICONE[onglet])}<span>Pas encore assez de goûts notés pour ça. <a href="#/gouts">Ajoute quelques titres</a> et les recos apparaissent.</span></div>`;
  m.innerHTML = `${l1.length ? scene(l1[0]) : `<div class="section">${vide}</div>`}
-  ${WEB && l1.length ? zoneDe() : ""}
-  <div class="section filtres-recos">${barreFiltres(onglet)}</div>
-  ${l1.length > 1 ? `<section class="section"><div class="tete"><h3>${t1}</h3>${barreTri()}</div><div class="grille">${trier(l1.slice(1)).map(carte).join("")}</div></section>` : ""}
+  ${reste.length ? `<section class="section"><div class="tete"><h3>${TITRE_ONGLET[onglet]}</h3>${barreTri()}</div>${barreFiltres(onglet)}<div class="grille">${trier(reste).map(carte).join("")}</div></section>` : ""}
   ${WEB ? railTendances(onglet) : ""}
-  <section class="section"><div class="tete"><h3>${t2}</h3></div>
-   ${l2.length ? `<div class="grille">${trier(l2).map(carte).join("")}</div>` : vide}</section>`;
+  ${WEB && l1.length ? zoneDe() : ""}`;
  appliquerDefile();
 }
 
 // En ce moment : tendances de la semaine (Wikipédia, Steam), celles qui te ressemblent d'abord
+const TITRE_ONGLET = {film: "Films pour toi", serie: "Séries pour toi", jeu: "Jeux pour toi"};
+// Toucher une affiche : 1 fois j'aime, 2 fois j'adore, 3 fois retirée (comme à l'accueil). La grille ne se recharge pas sous le doigt.
+function toucher(id, el){
+ const c = el.closest(".c"), n = c.dataset.n === "aime" ? "adore" : c.dataset.n === "adore" ? "" : "aime";
+ c.dataset.n = n; el.setAttribute("aria-pressed", !!n); c.querySelector(".pop-etat").textContent = ETAT_POP[n] || "";
+ api.noter(id, n); data = null; compter();
+}
 function railTendances(dom){
  const l = Moteur.tendances(dom);
  return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3></div>
