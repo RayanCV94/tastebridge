@@ -172,16 +172,18 @@ a.accroche:hover{color:var(--texte)}
 .pop[data-n="aime"] .pop-etat{color:var(--menthe)} .pop[data-n="adore"] .pop-etat{color:var(--rouge)}
 .rail-cartes .c{flex:none;width:clamp(150px,40vw,190px);scroll-snap-align:start}
 .aide-rail{margin:24px 0 0;color:var(--doux);font-size:13.5px}
-.mode{margin-top:48px}
-.mode h3{font:400 clamp(28px,3.2vw,44px)/1.05 var(--f-titre);margin:0 0 20px}
-.mode ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.mode li{display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:16px;background:var(--surface);border:1px solid var(--trait)}
-.mode li b{font:400 clamp(30px,3.6vw,48px)/1 var(--f-titre);color:var(--texte)}
-.mode li span{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:600}
-.mode li svg{width:22px;height:22px}
-.mode .m1 span{color:var(--menthe)} .mode .m2 span{color:var(--rouge)} .mode .m3 span{color:var(--doux)}
-.mode p{margin:16px 0 0;font-size:16px;color:var(--doux)}
-@media(max-width:600px){.mode li{padding:14px 12px}.mode li span{font-size:15px;gap:6px}.mode li svg{width:18px;height:18px}}
+.mode{margin-top:56px}
+.mode h3{font:400 clamp(28px,3.2vw,44px)/1.05 var(--f-titre);margin:0 0 24px}
+.mode ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,150px));gap:clamp(16px,4vw,40px)}
+.mode li{display:flex;flex-direction:column;gap:6px;min-width:0}
+.mode .cadre{margin-bottom:8px;cursor:default}
+.mode .m1 .cadre{box-shadow:0 0 0 3px var(--menthe)} .mode .m2 .cadre{box-shadow:0 0 0 3px var(--rouge)} .mode .m3 .cadre{opacity:.45}
+.mode .marque{position:absolute;z-index:2;top:8px;right:8px;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;color:var(--fond)}
+.mode .marque svg{width:17px;height:17px}
+.mode .m1 .marque{background:var(--menthe)} .mode .m2 .marque{background:var(--rouge);color:var(--blanc)}
+.mode li b{font:400 24px/1 var(--f-titre)}
+.mode li>span{font-size:15px;font-weight:600;color:var(--doux)}
+.mode .m1>span{color:var(--menthe)} .mode .m2>span{color:var(--rouge)}
 .pop .cadre{box-shadow:0 0 0 2px transparent}
 .pop:hover .cadre{transform:translateY(-4px)}
 .js .pop .coche{opacity:0;transform:scale(.6)}
@@ -438,7 +440,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 <main id="main"></main>
 <footer><div><span>Pontil : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=25de36c08b"></script>
+<script src="langue.js?v=9b48a0fb80"></script>
 <script src="moteur.js?v=0bb045583f"></script>
 <script>
 let onglet = "film", data = null;
@@ -638,9 +640,9 @@ function rendre(){
  const vide = `<div class="vide">${ico(ICONE[onglet])}<span>Pas encore assez de goûts notés pour ça. <a href="#/gouts">Ajoute quelques titres</a> et les recos apparaissent.</span></div>`;
  m.innerHTML = `${l1.length ? scene(l1[0]) : `<div class="section">${vide}</div>`}
   ${WEB && l1.length ? zoneDe() : ""}
-  ${l1.length > 1 ? `<section class="section"><div class="tete"><h3>${t1}</h3><p>Ce qui ressemble le plus à ce que tu aimes, les titres récents et acclamés d'abord.</p>${barreTri()}</div><div class="grille">${trier(l1.slice(1)).map(carte).join("")}</div></section>` : ""}
+  ${l1.length > 1 ? `<section class="section"><div class="tete"><h3>${t1}</h3>${barreTri()}</div><div class="grille">${trier(l1.slice(1)).map(carte).join("")}</div></section>` : ""}
   ${WEB ? railTendances(onglet) : ""}
-  <section class="section"><div class="tete"><h3>${t2}</h3><p>Mêmes ambiances, autre support : ce que ${autre} disent de toi.</p></div>
+  <section class="section"><div class="tete"><h3>${t2}</h3></div>
    ${l2.length ? `<div class="grille">${trier(l2).map(carte).join("")}</div>` : vide}</section>`;
  appliquerDefile();
 }
@@ -648,7 +650,7 @@ function rendre(){
 // En ce moment : tendances de la semaine (Wikipédia, Steam), celles qui te ressemblent d'abord
 function railTendances(dom){
  const l = Moteur.tendances(dom);
- return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3><p>Les plus lus sur Wikipédia ou les plus joués sur Steam cette semaine, ceux qui te ressemblent d'abord.</p></div>
+ return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3></div>
   <div class="rail rail-cartes">${l.map(carte).join("")}</div></section>` : "";
 }
 
@@ -658,8 +660,7 @@ let typeDe = "tout"; try { typeDe = localStorage.getItem("tastebridge-de") || "t
 function zoneDe(){
  return `<section class="section zone-de"><div class="barre-de">
   <button class="lancer" id="lancer" onclick="lancerDe()">${ico("de")}<span>Un coup de dé</span></button>
-  <div class="segments" role="radiogroup" aria-label="Type de découverte">${TYPES_DE.map(([k, v]) => `<button role="radio" aria-checked="${k === typeDe}" class="${k === typeDe ? "on" : ""}" onclick="choisirTypeDe('${k}')">${v}</button>`).join("")}</div>
-  <p>Une œuvre au hasard qui colle à tes goûts, hors de ce que tu connais déjà.</p></div><div id="res-de"></div></section>`;
+  <div class="segments" role="radiogroup" aria-label="Type de découverte">${TYPES_DE.map(([k, v]) => `<button role="radio" aria-checked="${k === typeDe}" class="${k === typeDe ? "on" : ""}" onclick="choisirTypeDe('${k}')">${v}</button>`).join("")}</div></div><div id="res-de"></div></section>`;
 }
 function choisirTypeDe(k){
  typeDe = k; try { localStorage.setItem("tastebridge-de", k); } catch {}
@@ -712,19 +713,18 @@ function accueil(pret = true){
   <button class="pop-note" onclick="choisir('${x.id}', this.parentElement)" aria-pressed="${!!x.note}" aria-label="${esc(x.titre)}"><div class="cadre">${couverture(x)}<span class="coche">${ico("ok")}</span></div></button>
   <a class="pop-titre" href="${lienFiche(x)}" title="Voir la fiche">${esc(x.titre)}</a><span class="pop-etat">${x.note ? esc(ETAT_POP[x.note] || TEXTE[x.note]) : ""}</span></div>`).join("")}</div></section>`;
  const murHtml = mur.map(x=>`<div class="tuile">${couverture(x, "eager")}</div>`).join("");
- const rails = `<section class="mode" aria-label="Comment noter"><h3>Touche une affiche pour la noter</h3><ol>
-  <li class="m1"><b>1 fois</b><span>${ico("pouce")}J'aime</span></li>
-  <li class="m2"><b>2 fois</b><span>${ico("coeur")}J'adore</span></li>
-  <li class="m3"><b>3 fois</b><span>${ico("relance")}J'enlève</span></li></ol>
-  <p>Le nom sous l'affiche ouvre sa fiche.</p></section>${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}`;
+ const demo = pret ? Moteur.populaires("film", 1)[0] : null;
+ const etape = (n, cls, icone, mot) => `<li class="${cls}"><div class="cadre">${demo ? couverture(demo) : ""}${icone ? `<span class="marque">${ico(icone)}</span>` : ""}</div><b>${n}</b><span>${mot}</span></li>`;
+ const rails = `<section class="mode" aria-label="Comment noter"><h3>Touche une affiche</h3><ol>
+  ${etape("1 fois", "m1", "pouce", "J'aime")}${etape("2 fois", "m2", "coeur", "J'adore")}${etape("3 fois", "m3", "", "Retirée")}</ol></section>${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}`;
  // Déjà affiché sans catalogue : on complète le mur et les rails sans retoucher le texte (pas de nouveau rendu du titre)
  if (pret && $(".accueil[data-attente]")) { $(".accueil").removeAttribute("data-attente"); $(".mur").innerHTML = murHtml; $("#choix").innerHTML = rails; majProgres(); return; }
  m.innerHTML = `<section class="accueil"${pret ? "" : " data-attente"}>
    <div class="mur" aria-hidden="true">${murHtml}</div>
    <h2>Tes films, séries et jeux, <em>enfin reliés.</em></h2>
-   <p>Dis ce que tu as aimé, et Pontil te recommande quoi regarder et à quoi jouer, même d'un écran à l'autre : des jeux d'après tes films, des films d'après tes jeux.</p>
+   <p>Note ce que tu aimes, Pontil trouve la suite.</p>
    <div class="actions"><button class="bt plein" onclick="document.getElementById('choix').scrollIntoView({behavior:'smooth'})">Commencer ${ico("fleche")}</button><button class="bt" onclick="aller('gouts')">${ico("televerse")}Importer Netflix, IMDb, Letterboxd</button></div>
-   <div class="preuves"><span>${ico("cadenas")}Sans inscription, tes goûts restent dans ton navigateur</span><span>${ico("eclair")}Recos instantanées, sans IA lourde</span></div>
+   <div class="preuves"><span>${ico("cadenas")}Sans inscription</span></div>
   </section>
   <div id="choix">${rails}</div>
   <div class="progres"><div class="barre-p"><i id="jauge"></i></div><small id="nb">0 / 5</small><button class="bt plein" id="voir" disabled onclick="aller('film')">Voir mes recos ${ico("fleche")}</button></div>`;
@@ -747,10 +747,10 @@ async function gouts(){
  const vus = liste.filter(r => filtre === "tout" || r.dom === filtre);
  m.innerHTML = `<div class="colonnes">
   <div>
-   <section class="panneau"><h3>Ajouter un titre</h3><p class="aide">Un film, une série ou un jeu que tu as vu ou fait.</p>
+   <section class="panneau"><h3>Ajouter un titre</h3>
     <div class="champ">${ico("loupe")}<input id="q" placeholder="Interstellar, The Last of Us, Elden Ring..." autocomplete="off"></div>
     <div class="lignes" id="res"></div></section>
-   ${WEB ? `<section class="panneau"><h3>Mes services</h3><p class="aide">Ce que tu as : les recos disponibles chez toi passent un peu devant, et sont signalées « Chez toi ».</p>
+   ${WEB ? `<section class="panneau"><h3>Mes services</h3>
     <div class="services">${SERVICES_NOMS.map(([k, v]) => `<button data-k="${k}" aria-pressed="${mesServices().includes(k)}" onclick="reglerServices('${k}')">${v}</button>`).join("")}</div></section>` : ""}
    <section class="panneau"><h3>Importer ton historique</h3><p class="aide">Le fichier est lu ${WEB ? "dans ton navigateur" : "sur ton PC"}, rien n'est envoyé.</p>
     <label class="depot" id="depot"><input type="file" accept=".csv" multiple hidden id="fichier">${ico("televerse")}<strong>Glisse un fichier CSV ici</strong>ou clique pour le choisir</label>
@@ -839,11 +839,10 @@ function notesExternes(r){
 }
 function pourToiBloc(r){
  const p = r.pour_toi;
- if (!p) return `<p class="aide">Note quelques titres que tu aimes : Pontil t'expliquera ici ce qui te rapproche de celui-ci.</p>`;
+ if (!p) return `<p class="aide">Note des titres pour voir ce qui vous relie.</p>`;
  return `<p class="score"><b>${p.match} %</b>de correspondance avec tes goûts</p>
   ${p.parce_que.length ? `<p>Le plus proche de ce que tu as aimé : ${p.parce_que.map(x => `<a href="${lienFiche(x)}">${esc(x.titre)}</a> (${x.sim} %)`).join(", ")}</p>` : ""}
-  ${p.communs.length ? `<p>Thèmes en commun avec ton profil : ${p.communs.map(t => chip(t)).join(" ")}</p>` : ""}
-  <p class="aide">Le pourcentage compare les thèmes de ce titre à ceux des titres que tu as notés (les thèmes rares comptent plus). C'est le meilleur score entre ton profil entier et ton titre aimé le plus proche.</p>`;
+  ${p.communs.length ? `<p>Thèmes en commun avec ton profil : ${p.communs.map(t => chip(t)).join(" ")}</p>` : ""}`;
 }
 function liensExt(r){
  const l = [];
@@ -915,7 +914,7 @@ async function fichePage(dom, id, ancre){
     <section class="bloc" id="liens"><h2>Ailleurs</h2><div class="liens-ext">${liensExt(r)}</div></section>
    </div>
   </div>
-  <section class="section" id="proches"><div class="tete"><h3>Dans le même esprit</h3><p>Les titres aux thèmes les plus proches, sur le même support puis sur les autres.</p></div>
+  <section class="section" id="proches"><div class="tete"><h3>Dans le même esprit</h3></div>
    ${r.similaires.length ? `<div class="grille">${r.similaires.map(carte).join("")}</div>` : `<div class="vide">${ico(ICONE[r.dom])}<span>Aucun titre assez proche dans le catalogue.</span></div>`}</section>
  </article>`;
  // Lien vers une partie de la fiche (#/film/ID/score ou /avis) : le résumé arrive après coup et pousse la page,
