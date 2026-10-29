@@ -71,6 +71,7 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 .scene .affiche:hover{transform:rotate(0) scale(1.02)}
 .scene .texte{max-width:640px;display:flex;flex-direction:column;gap:14px;animation:entre .9s var(--sortie) both}
 .etiquette{align-self:flex-start;display:flex;align-items:center;gap:8px;font:600 12px var(--f-texte);color:var(--texte);padding:6px 13px 6px 10px;border-radius:var(--r);background:color-mix(in srgb,var(--texte) 8%,transparent);border:1px solid color-mix(in srgb,var(--texte) 10%,transparent);}
+a.etiquette{text-decoration:none;transition:border-color .2s}a.etiquette:hover{border-color:var(--ambre)}
 .etiquette i{width:8px;height:8px;border-radius:50%;background:var(--dom);box-shadow:0 0 0 3px color-mix(in srgb,var(--dom) 25%,transparent)}
 .scene h2{font:600 var(--t-page)/1 var(--f-titre);letter-spacing:-.02em;margin:0;text-wrap:balance}
 .scene h2.long{font-size:var(--t-page-long);line-height:1.05}
@@ -518,7 +519,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  <ul class="pied-liens"><li><a href="#/film">Films</a></li><li><a href="#/serie">Séries</a></li><li><a href="#/jeu">Jeux</a></li><li><a href="#/gouts">Mes goûts</a></li><li><a href="#/listes">Mes listes</a></li></ul>
 </div><div class="pied-bas"><span>Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=16642c66db"></script>
+<script src="langue.js?v=cee39ac65a"></script>
 <script src="moteur.js?v=17ad970de8"></script>
 <script>
 let onglet = "film", data = null;
@@ -1001,6 +1002,7 @@ async function fichePage(dom, id, ancre){
   <header class="fiche-tete"${visuel(r) ? ` style="--img:url('${esc(visuel(r))}')"` : ""}>
     <div class="aff-fiche">${couverture(r)}</div>
    <div class="texte">
+    ${r.pour_toi ? `<a class="etiquette" href="${lienFiche(r, "score")}" title="D'où vient ce score"><i></i>${r.pour_toi.match} % pour toi</a>` : ""}
     <p class="type-fiche">${ico(ICONE[r.dom])}${NOM[r.dom]}${r.annee ? ", " : ""}${lienAnnee(r.annee)}${r.duree ? `, ${duree(r)}${r.dom === "jeu" ? " d'histoire" : ""}` : ""}${r.gratuit ? ", gratuit" : ""}</p>
     <h1>${esc(r.titre)}</h1>
     ${autre ? `<p class="autre-titre">${enAnglais() ? "Titre français" : "Titre anglais"} : <i>${esc(autre)}</i></p>` : ""}
