@@ -847,7 +847,10 @@ function recherche(){
 }
 $("#chercher").onclick = recherche;
 // Nouvelle page dans #main : fondu d'entrée (pas pour une simple mise à jour d'une carte)
-new MutationObserver(() => { const m = $("#main"); m.classList.remove("entre"); void m.offsetWidth; m.classList.add("entre"); }).observe($("#main"), {childList: true});
+// Seulement quand l'adresse change : un nouveau rendu de la même page (avis des visiteurs, note) ne doit rien faire bouger sous le doigt
+let pageAnimee = location.hash;
+new MutationObserver(() => { const m = $("#main"); if (location.hash === pageAnimee) return; pageAnimee = location.hash;
+ m.classList.remove("entre"); void m.offsetWidth; m.classList.add("entre"); }).observe($("#main"), {childList: true});
 // Le dé de l'en-tête : va sur l'onglet en cours (Films par défaut), descend jusqu'au dé et le lance
 $("#de-tete").onclick = () => {
  const lance = () => { const z = $(".zone-de"); if (!z) return false; z.scrollIntoView({behavior: "smooth", block: "start"}); lancerDe(); return true; };
