@@ -1,0 +1,30 @@
+# Pontil
+
+> Pontil (https://pontil.fr) est un site français gratuit de recommandations qui relie films, séries et jeux vidéo : un film mène à un jeu, un jeu à une série, avec la raison de chaque proposition.
+
+## Qu'est-ce que Pontil ?
+
+Pontil est un site gratuit de recommandations qui relie les films, les séries et les jeux vidéo : tu notes ce que tu as aimé, il te propose des titres des trois mondes en expliquant pourquoi.
+
+## Pontil est-il gratuit ?
+
+Oui, entièrement gratuit et sans publicité. Le compte est optionnel et sert seulement à retrouver tes notes sur tous tes appareils.
+
+## Comment Pontil choisit-il les recommandations ?
+
+Chaque titre est décrit par ses thèmes (Wikidata, Steam). Les thèmes rares pèsent plus que les thèmes courants, puis Pontil compare ces thèmes à ceux des titres que tu as aimés et ajuste avec la note critique.
+
+## Quel jeu vidéo jouer après un film que j'ai aimé ?
+
+Note le film sur Pontil : il propose des jeux qui partagent ses thèmes, par exemple des jeux d'horreur ou de survie après un film d'horreur, avec la raison et la boutique où l'acheter.
+
+## Combien de titres contient Pontil ?
+
+Plus de 28 000 films, séries et jeux vidéo.
+
+## Liens
+
+- Site : https://pontil.fr/
+- Contact : contact@pontil.fr
+- TikTok : https://www.tiktok.com/@pontilfrance
+- GitHub : https://github.com/makingdreamscometrue
