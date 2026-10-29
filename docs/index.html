@@ -121,6 +121,7 @@ a.etiquette{text-decoration:none;transition:border-color .2s}a.etiquette:hover{b
 .aff-fiche .sans-image,.scene .affiche .sans-image,.tirage .sans-image{font-size:30px;padding:22px}
 .affiche-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}
 .affiche-img.ok{opacity:1}
+.affiche-img.logo{object-fit:contain;padding:18%;filter:drop-shadow(0 2px 6px rgb(0 0 0/.5))}  /* jeux hors Steam : logo Wikimedia sur la tuile colorée */
 .pct{position:absolute;z-index:2;top:10px;left:10px;display:flex;align-items:center;gap:6px;font:600 12px var(--f-texte);font-variant-numeric:tabular-nums;color:var(--blanc);padding:4px 9px 4px 8px;border-radius:var(--r-petit);background:color-mix(in srgb,var(--noir) 72%,transparent);border:1px solid color-mix(in srgb,var(--texte) 10%,transparent)}
 .pct i{width:7px;height:7px;border-radius:50%;background:var(--dom)}
 /* Survol : la raison et les avis apparaissent sur l'affiche */
@@ -214,6 +215,12 @@ a.accroche:hover{color:var(--texte)}
 .pop-titre:hover{text-decoration:underline;text-underline-offset:3px}
 .pop-etat{min-height:18px;font-size:12px;font-weight:600;color:var(--pale)}
 .pop[data-n="aime"] .pop-etat{color:var(--menthe)} .pop[data-n="adore"] .pop-etat{color:var(--rouge)}
+.rail.glisse{scroll-snap-type:none;cursor:grabbing;user-select:none}
+.rail.glisse *{pointer-events:none}
+.rail-fleche{position:absolute;top:calc(50% - 40px);z-index:2;width:40px;height:40px;border-radius:50%;border:1px solid var(--trait);background:var(--surface);color:var(--texte);font-size:22px;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s}
+.rail-fleche.g{left:-6px} .rail-fleche.d{right:-6px}
+@media (hover:hover){.rail-boite:hover .rail-fleche:not([hidden]){opacity:.92}}
+.rail-boite{position:relative}
 .rail-cartes .c{flex:none;width:clamp(150px,40vw,190px);scroll-snap-align:start}
 .aide-rail{margin:24px 0 0;color:var(--doux);font-size:14px}
 .mode{margin-top:56px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(24px,5vw,64px);align-items:center;padding:clamp(22px,4vw,48px);border-radius:var(--r);background:var(--surface);border:1px solid var(--trait)}
@@ -530,8 +537,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  <ul class="pied-liens"><li><a href="#/film">Films</a></li><li><a href="#/serie">Séries</a></li><li><a href="#/jeu">Jeux</a></li><li><a href="#/gouts">Mes goûts</a></li><li><a href="#/listes">Mes listes</a></li></ul>
 </div><div class="pied-bas"><span>Données Wikidata, SteamSpy et Wikipédia.</span><a href="mailto:contact@pontil.fr">contact@pontil.fr</a><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=cee39ac65a"></script>
-<script src="moteur.js?v=20e789e2f0"></script>
+<script src="langue.js?v=7c13586cf5"></script>
+<script src="moteur.js?v=dd93466fbf"></script>
 <script>
 let onglet = "film", data = null;
 const $ = s => document.querySelector(s);
@@ -569,7 +576,7 @@ const TEINTE = {film:"var(--ambre)", serie:"var(--violet)", jeu:"var(--menthe)"}
 const angle = id => 120 + [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 100;
 const visuel = r => r.dom === "jeu" && r.steam ? `https://cdn.akamai.steamstatic.com/steam/apps/${r.steam}/library_600x900.jpg` : r.image;
 const repli = r => r.dom === "jeu" && r.image ? `this.onerror=()=>this.remove();this.src='${esc(r.image)}'` : "this.remove()";
-const affiche = (r, charge = "lazy") => visuel(r) ? `<img class="affiche-img" src="${esc(visuel(r))}" loading="${charge}" alt="" onload="this.classList.add('ok')" onerror="${repli(r)}">` : "";
+const affiche = (r, charge = "lazy") => visuel(r) ? `<img class="affiche-img${/\.svg\//.test(visuel(r)) ? " logo" : ""}" src="${esc(visuel(r))}" loading="${charge}" alt="" onload="this.classList.add('ok')" onerror="${repli(r)}">` : "";
 const couverture = (r, charge) => `<div class="sans-image" style="--dom:${TEINTE[r.dom]};--a:${angle(r.id)}deg">${ico(ICONE[r.dom])}<span>${esc(r.titre)}</span><svg class="filigrane" aria-hidden="true"><use href="#${ICONE[r.dom]}"/></svg></div>${affiche(r, charge)}`;
 // Ambiances à la Letterboxd : des combinaisons de thèmes décrites en une phrase (affichage seulement)
 const AMBIANCES = [
@@ -737,12 +744,14 @@ function rendre(){
  m.className = onglet;
  if (!data){ m.innerHTML = `<div class="scene chargement"></div><div class="section"><div class="grille">${'<div class="squelette"></div>'.repeat(12)}</div></div>`; charger(); return; }
  const [[t1, l1t], [t2, l2t]] = data[onglet], l1 = l1t.filter(garde), l2 = l2t.filter(garde);
- const vus = new Set(l1.map(r => r.id)), reste = [...l1.slice(1), ...l2.filter(r => !vus.has(r.id))];
- const vide = filtresOn.size && l1t.length ? `<div class="vide">${ico(ICONE[onglet])}<span>Rien avec ces filtres.</span></div>` : `<div class="vide">${ico(ICONE[onglet])}<span>Pas encore assez de goûts notés pour ça. <a href="#/gouts">Ajoute quelques titres</a> et les recos apparaissent.</span></div>`;
- m.innerHTML = `${l1.length ? scene(l1[0]) : `<div class="section">${vide}</div>`}
+ // Vedette : la meilleure reco du même support, sinon celle tirée de l'autre support (avant : message « pas assez » alors que la grille était pleine)
+ const tete = l1[0] || l2[0], vus = new Set([tete?.id]), reste = [...l1, ...l2].filter(r => !vus.has(r.id) && vus.add(r.id));
+ const vide = filtresOn.size && (l1t.length || l2t.length) ? `<div class="vide">${ico(ICONE[onglet])}<span>Rien avec ces filtres.</span></div>`
+  : `<div class="vide">${ico(ICONE[onglet])}<span>${WEB && !Moteur.aimes().length ? "Il suffit d'un titre noté J'aime ou J'adore (Sans plus et Non merci ne comptent pas)." : "Rien d'assez proche de tes goûts ici pour l'instant."} <a href="#/gouts">Ajoute quelques titres</a> et les recos apparaissent.</span></div>`;
+ m.innerHTML = `${tete ? scene(tete) : `<div class="section">${vide}</div>`}
   ${reste.length ? `<section class="section"><div class="tete"><h3>${TITRE_ONGLET[onglet]}</h3>${barreTri()}</div>${barreFiltres(onglet)}<div class="grille">${pleine(trier(reste)).map(carte).join("")}</div></section>` : ""}
   ${WEB ? railTendances(onglet) : ""}
-  ${WEB && l1.length ? zoneDe() : ""}`;
+  ${WEB && tete ? zoneDe() : ""}`;
  appliquerDefile();
 }
 
@@ -849,6 +858,45 @@ function avis(id, v, el){
 }
 addEventListener("click", e => { if (!e.target.closest(".ouvert")) fermer(); });
 addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
+// Rails : à la souris, on attrape les affiches pour faire défiler (avec élan), et des flèches au survol ;
+// un glissement n'ouvre pas la carte attrapée. Au doigt, le défilement natif reste.
+let tir = null;
+addEventListener("pointerdown", e => {
+ const r = e.pointerType === "mouse" && e.button === 0 && e.target.closest(".rail");
+ if (r) tir = {r, x: e.clientX, g: r.scrollLeft, v: 0, t: e.timeStamp, bouge: false};
+});
+addEventListener("pointermove", e => {
+ if (!tir) return;
+ const dx = e.clientX - tir.x;
+ if (!tir.bouge && Math.abs(dx) < 6) return;
+ if (!tir.bouge) { tir.bouge = true; tir.r.classList.add("glisse"); }
+ const avant = tir.r.scrollLeft; tir.r.scrollLeft = tir.g - dx;
+ tir.v = (tir.r.scrollLeft - avant) / Math.max(1, e.timeStamp - tir.t); tir.t = e.timeStamp;
+});
+addEventListener("pointerup", () => {
+ if (!tir) return;
+ const {r, bouge} = tir; let v = tir.v * 16; tir = null;
+ if (!bouge) return;
+ const bloque = e => { e.preventDefault(); e.stopPropagation(); };  // le clic qui suit le relâchement, s'il y en a un
+ addEventListener("click", bloque, {capture: true, once: true}); setTimeout(() => removeEventListener("click", bloque, true));
+ const elan = () => { if (Math.abs(v) < 0.5) return r.classList.remove("glisse"); r.scrollLeft += v; v *= 0.94; requestAnimationFrame(elan); };
+ requestAnimationFrame(elan);
+});
+addEventListener("dragstart", e => { if (e.target.closest?.(".rail")) e.preventDefault(); });
+function flechesRails(){
+ for (const r of document.querySelectorAll(".rail:not(.fleches)")) {
+  r.classList.add("fleches");
+  const b = document.createElement("div"); b.className = "rail-boite"; r.before(b); b.append(r);
+  const f = (c, sens, nom) => { const x = document.createElement("button"); x.className = `rail-fleche ${c}`; x.textContent = sens < 0 ? "‹" : "›"; x.setAttribute("aria-label", nom); x.tabIndex = -1;
+   x.onclick = () => r.scrollBy({left: sens * r.clientWidth * 0.8, behavior: "smooth"}); b.append(x); return x; };
+  const g = f("g", -1, "Défiler à gauche"), d = f("d", 1, "Défiler à droite");
+  const maj = () => { g.hidden = r.scrollLeft < 8; d.hidden = r.scrollLeft + r.clientWidth > r.scrollWidth - 8; };
+  r.addEventListener("scroll", maj, {passive: true}); maj();
+ }
+}
+new MutationObserver(flechesRails).observe(document.documentElement, {childList: true, subtree: true});
+// « / » ouvre la recherche, comme sur la plupart des sites
+addEventListener("keydown", e => { if (e.key === "/" && !e.target.closest("input,textarea,[contenteditable]") && !document.querySelector(".fond-recherche")) { e.preventDefault(); recherche(); } });
 
 let filtre = "tout";
 async function gouts(){

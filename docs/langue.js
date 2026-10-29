@@ -37,7 +37,7 @@
     "Avis et commentaires": "Reviews and comments",
     "Un coup de dé": "Roll the dice", "Coup de dé": "Dice", "Touche une affiche": "Tap a poster", "Retirée": "Removed", "Note ce que tu aimes, Pontil trouve la suite.": "Rate what you love, Pontil finds what's next.", "Sans inscription": "No sign-up", "Note des titres pour voir ce qui vous relie.": "Rate a few titles to see the link.", "Touche une affiche pour la noter": "Tap a poster to rate it", "1 fois": "Once", "2 fois": "Twice", "3 fois": "3 times", "J'enlève": "Remove", "Le nom sous l'affiche ouvre sa fiche.": "The name under the poster opens its page.", "Un titre au hasard qui colle à tes goûts": "A random pick that fits your taste", "Tout": "All", "Film": "Movie", "Série": "Show", "Jeu": "Game", "Relancer": "Roll again",
     "Type de découverte": "Discovery type", "Trier": "Sort", "Pour toi": "For you", "Mieux notés": "Top rated",
-    "Non merci": "No thanks", "Sans plus": "Meh",
+    "Non merci": "No thanks", "Sans plus": "Meh", "Défiler à gauche": "Scroll left", "Défiler à droite": "Scroll right",
     "Choisis ton avis": "Pick how you felt", "C'est noté": "Saved", "Retouche pour l'enlever": "Tap again to undo", "Ta première liste": "Your first list", "Ton profil": "Your profile", "pour toi": "for you", "Mélange films, séries et jeux, puis partage-la d'un lien.": "Mix movies, shows and games, then share it with a link.", "À voir": "To watch", "Soirée frissons": "Scary night", "À jouer à deux": "Two-player games", "Quatre avis, de Non merci à J'adore. Cinq titres suffisent pour tes premières recos.": "Four takes, from No thanks to Love it. Five titles are enough for your first picks.", "Ton avis": "Your take",
     "Films pour toi": "Movies for you", "Séries pour toi": "Shows for you", "Jeux pour toi": "Games for you",
     "Critique": "Critics", "Récents": "Newest", "Tendance": "Trending", "Visiteurs": "Visitors", "Acclamés": "Acclaimed",
@@ -47,7 +47,8 @@
     "Une œuvre au hasard qui colle à tes goûts, hors de ce que tu connais déjà.": "A random pick that fits your taste, outside what you already know.",
     "D'après tes films et séries": "Based on your movies and shows", "D'après tes jeux": "Based on your games",
     "Ce qui ressemble le plus à ce que tu aimes, les titres récents et acclamés d'abord.": "Closest to what you love, recent and acclaimed titles first.",
-    "Pas encore assez de goûts notés pour ça.": "Not enough ratings for this yet.", "Ajoute quelques titres": "Add a few titles",
+    "Rien d'assez proche de tes goûts ici pour l'instant.": "Nothing close enough to your taste here yet.",
+    "Il suffit d'un titre noté J'aime ou J'adore (Sans plus et Non merci ne comptent pas).": "One title rated Like or Love is enough (Meh and No thanks don't count).", "Ajoute quelques titres": "Add a few titles",
     "et les recos apparaissent.": "and picks will show up.",
     "Rien à tirer ici pour l'instant : note quelques titres de plus.": "Nothing to roll yet: rate a few more titles.",
     // Mes goûts
