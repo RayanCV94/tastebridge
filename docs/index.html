@@ -67,7 +67,8 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 /* Grande affiche (meilleure reco) */
 .scene{position:relative;margin:24px 0 8px;border-radius:var(--r);overflow:hidden;isolation:isolate;min-height:clamp(380px,52vh,560px);display:grid;grid-template-columns:1fr auto;align-items:end;gap:40px;padding:clamp(24px,4vw,56px);border:1px solid color-mix(in srgb,var(--texte) 7%,transparent)}
 .scene::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,color-mix(in srgb,var(--noir) 94%,transparent) 0%,color-mix(in srgb,var(--noir) 70%,transparent) 45%,color-mix(in srgb,var(--noir) 15%,transparent) 100%),linear-gradient(0deg,color-mix(in srgb,var(--noir) 60%,transparent),transparent 40%)}
-.scene::after,.fiche-tete::after{content:"";position:absolute;inset:-60px;z-index:-2;background:var(--img,none) center/cover;filter:blur(48px) saturate(1.3);opacity:.5}
+.scene::after,.fiche-tete::after{content:"";position:absolute;inset:-60px;z-index:-2;background:var(--img,none) center/cover;filter:blur(40px) saturate(1.4);opacity:.75}
+.scene .affiche:hover{transform:rotate(0) scale(1.02)}
 .scene .texte{max-width:640px;display:flex;flex-direction:column;gap:14px;animation:entre .9s var(--sortie) both}
 .etiquette{align-self:flex-start;display:flex;align-items:center;gap:8px;font:600 12px var(--f-texte);color:var(--texte);padding:6px 13px 6px 10px;border-radius:var(--r);background:color-mix(in srgb,var(--texte) 8%,transparent);border:1px solid color-mix(in srgb,var(--texte) 10%,transparent);}
 .etiquette i{width:8px;height:8px;border-radius:50%;background:var(--dom);box-shadow:0 0 0 3px color-mix(in srgb,var(--dom) 25%,transparent)}
@@ -77,7 +78,7 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 .scene h2 span{color:var(--doux);font-size:.5em;letter-spacing:0;margin-left:10px;font-variant-numeric:tabular-nums}
 .scene .pq{font-size:16px;color:var(--texte2);max-width:56ch}
 .scene .pq b{color:var(--blanc);font-weight:600}
-.scene .affiche{display:block;position:relative;width:clamp(170px,19vw,270px);aspect-ratio:2/3;border-radius:var(--r);overflow:hidden;box-shadow:0 30px 60px -18px color-mix(in srgb,var(--noir) 90%,transparent),0 0 0 1px color-mix(in srgb,var(--texte) 8%,transparent);animation:monte 1s .1s var(--sortie) both;background:var(--surface2)}
+.scene .affiche{display:block;position:relative;width:clamp(200px,24vw,340px);margin-right:clamp(0px,4vw,64px);transform:rotate(2deg);transition:transform .6s var(--sortie);aspect-ratio:2/3;border-radius:var(--r);overflow:hidden;box-shadow:0 30px 60px -18px color-mix(in srgb,var(--noir) 90%,transparent),0 0 0 1px color-mix(in srgb,var(--texte) 8%,transparent);animation:monte 1s .1s var(--sortie) both;background:var(--surface2)}
 @keyframes entre{from{opacity:0;transform:translateY(14px)}}
 @keyframes monte{from{opacity:0;transform:translateY(24px) scale(.97)}}
 
@@ -308,7 +309,7 @@ footer a{color:var(--doux)}
  header .connexion{padding:0 10px;font-size:12px} .langue{min-width:0;padding:0 8px} .barre{gap:8px}
  .logo{font-size:20px;margin-right:auto}
  .scene{grid-template-columns:1fr;min-height:0;gap:22px;padding:22px}
- .scene .affiche{order:-1;width:150px}
+ .scene .affiche{order:-1;width:150px;margin-right:0;transform:none}
  .scene .actions .bt{padding:10px 13px}
  .grille{grid-template-columns:repeat(2,1fr);gap:20px 13px}
  .mur{grid-template-columns:repeat(4,1fr)}
