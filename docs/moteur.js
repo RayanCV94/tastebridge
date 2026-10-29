@@ -190,6 +190,17 @@ const Moteur = (() => {
     // Le premier tour (un titre par ancre) est rangé par score : la vedette est le meilleur du lot, pas le voisin du dernier titre noté
     const note = i => Math.max(...ancres.map(j => dot(i, j) * qual.get(i) * ton(i, j)));
     choix.unshift(...choix.splice(0, Math.min(listes.length, choix.length)).sort((a, b) => note(b[1]) - note(a[1])));
+    // Adaptations : aimer la série The Last of Us doit proposer d'abord le jeu The Last of Us (autre format, même licence)
+    const licence = t => simple((t || "").split(/[:–(]| - /)[0]).replace(/^the /, "").replace(/ (\d+|ii|iii|iv|v|vi)( .*)?$/, "").trim();
+    const lic = new Set(ancres.filter(j => CAT[j].dom !== cible).flatMap(j => [licence(CAT[j].titre), licence(CAT[j].titre_en)]).filter(l => l.length >= 4));
+    if (lic.size) {
+      const proche = i => Math.max(...ancres.map(j => dot(i, j)));
+      const adapt = Object.keys(CAT).filter(i => CAT[i].dom === cible && CAT[i].image && !(i in p.notes) && [CAT[i].titre, CAT[i].titre_en].some(t => [...lic].some(l => (" " + simple(t) + " ").includes(" " + l + " "))))
+        .sort((x, y) => proche(y) - proche(x)).slice(0, 2);
+      for (const i of adapt) { const k = choix.findIndex(r => r[1] === i); if (k >= 0) choix.splice(k, 1); }
+      choix.unshift(...adapt.map(i => [1, i, proche(i)]));
+      choix.length = Math.min(choix.length, n);
+    }
     return choix.map(([, i, sim]) => {
       const it = CAT[i];
       const pourquoi = Object.keys(poids).filter(j => poids[j] > 0).map(j => [dot(i, j), j]).sort((a, b) => b[0] - a[0]).slice(0, 2);
