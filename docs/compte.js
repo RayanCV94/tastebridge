@@ -14,7 +14,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
 
   const css = document.createElement("style");
   css.textContent = `
-.connexion{display:flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:12px;border:1px solid var(--trait);background:var(--surface);color:var(--texte);font:500 13px Onest,sans-serif;cursor:pointer;white-space:nowrap;transition:border-color .2s}
+.connexion{display:flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:12px;border:1px solid var(--trait);background:var(--surface);color:var(--texte);font:500 12px var(--f-texte);cursor:pointer;white-space:nowrap;transition:border-color .2s}
 .connexion:hover{border-color:var(--ambre)}
 .connexion i{width:8px;height:8px;border-radius:50%;background:var(--menthe)}
 .voile-compte{position:fixed;inset:0;z-index:40;background:rgba(5,5,8,.7);backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px}
