@@ -72,6 +72,7 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 .scene .texte{max-width:640px;display:flex;flex-direction:column;gap:14px;animation:entre .9s var(--sortie) both}
 .etiquette{align-self:flex-start;display:flex;align-items:center;gap:8px;font:600 12px var(--f-texte);color:var(--texte);padding:6px 13px 6px 10px;border-radius:var(--r);background:color-mix(in srgb,var(--texte) 8%,transparent);border:1px solid color-mix(in srgb,var(--texte) 10%,transparent);}
 .actions.secondaires{margin-top:-4px;gap:4px;margin-left:-8px}
+.avis-sel[data-n=adore]{background:var(--rouge);color:var(--fond);border-color:var(--rouge)}.avis-sel[data-n=aime],.avis-sel[data-n=regarde]{background:var(--menthe);color:var(--fond);border-color:var(--menthe)}.avis-sel[data-n=vu]{background:var(--bleu);color:var(--fond);border-color:var(--bleu)}
 .bt.discret{background:none;border-color:transparent;color:var(--doux);padding-left:8px;padding-right:8px}.bt.discret:hover{color:var(--texte);background:color-mix(in srgb,var(--texte) 6%,transparent)}
 a.etiquette{text-decoration:none;transition:border-color .2s}a.etiquette:hover{border-color:var(--ambre)}
 .etiquette i{width:8px;height:8px;border-radius:50%;background:var(--dom);box-shadow:0 0 0 3px color-mix(in srgb,var(--dom) 25%,transparent)}
@@ -846,7 +847,7 @@ let filtre = "tout";
 async function gouts(){
  const m = $("#main"); m.className = "";
  const liste = await api.gouts();
- const sel = r => `<select aria-label="Ton avis sur ${esc(r.titre)}" onchange="noter('${r.id}',this.value)">${r.note ? "" : `<option value="">Ton avis...</option>`}${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}" ${k===r.note?"selected":""}>${v}</option>`).join("")}${r.note ? `<option value="">Retirer</option>` : ""}</select>`;
+ const sel = r => `<select class="avis-sel" data-n="${r.note || ""}" aria-label="Ton avis sur ${esc(r.titre)}" onchange="this.dataset.n=this.value;noter('${r.id}',this.value)">${r.note ? "" : `<option value="">Ton avis...</option>`}${Object.entries(TEXTE).map(([k,v])=>`<option value="${k}" ${k===r.note?"selected":""}>${v}</option>`).join("")}${r.note ? `<option value="">Retirer</option>` : ""}</select>`;
  const ligne = r => `<div class="l"><a class="mini" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true" style="--dom:${TEINTE[r.dom]};${visuel(r) ? `background:center/cover url('${esc(visuel(r))}')` : ""}">${visuel(r) ? "" : ico(ICONE[r.dom])}</a><div class="nom"><a href="${lienFiche(r)}">${esc(r.titre)}</a><small>${NOM[r.dom]}${r.annee ? ", " + r.annee : ""}</small></div>${r.heures ? `<span class="h">${r.heures} h</span>` : ""}${sel(r)}</div>`;
  const vus = liste.filter(r => filtre === "tout" || r.dom === filtre);
  // En tête : ton profil en un coup d'œil (affiches de ce que tu aimes le plus, vrais comptes)
