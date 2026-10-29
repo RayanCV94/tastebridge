@@ -142,7 +142,7 @@
     "Des films, des séries et des jeux dans une même liste. Partage-la d'un lien, sans compte.": "Movies, shows and games in one list. Share it with a link, no account needed.",
     "Pas encore de liste. Crée-en une ici, ou depuis la fiche d'un titre (« Ajouter à une liste »).": "No list yet. Create one here, or from a title page (\u201cAdd to a list\u201d).",
     "Liste": "List", "Partager": "Share", "Garder dans mes listes": "Save to my lists", "Cette liste est vide. Ajoute des titres depuis leur fiche.": "This list is empty. Add titles from their page.",
-    "Liste indisponible pour le moment.": "List unavailable right now.", "Lien copié": "Link copied", "Liste gardée": "List saved", "Retiré de la liste": "Removed from the list", "Mes listes": "My lists",
+    "Liste indisponible pour le moment.": "List unavailable right now.", "Lien copié": "Link copied", "Liste gardée": "List saved", "Retiré de la liste": "Removed from the list", "Mes listes": "My lists", "Un seul profil de goûts pour films, séries et jeux.": "One taste profile for movies, shows and games.", "Données Wikidata, SteamSpy et Wikipédia.": "Data from Wikidata, SteamSpy and Wikipedia.",
     // Où regarder, où jouer
     "Où jouer": "Where to play", "Où regarder": "Where to watch", "Chez toi": "You have it", "Plateformes non disponibles.": "Platforms not available.",
     "Plateformes et boutiques : Wikidata (incomplet, surtout pour les consoles).": "Platforms and stores: Wikidata (incomplete, especially for consoles).",

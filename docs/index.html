@@ -303,7 +303,13 @@ a.mini{display:block}
 @keyframes luit{to{background-position:-150% 0}}
 
 footer{border-top:1px solid color-mix(in srgb,var(--texte) 6%,transparent);color:var(--pale);font-size:12px}
-footer div{max-width:1480px;margin:auto;padding:26px var(--marge);display:flex;gap:18px;justify-content:space-between;flex-wrap:wrap}
+footer>div{max-width:1480px;margin:auto;padding:26px var(--marge);display:flex;gap:18px;justify-content:space-between;flex-wrap:wrap}
+footer .pied{padding-top:56px;padding-bottom:40px;align-items:flex-start;gap:40px}
+.pied-marque p{margin:12px 0 0;color:var(--doux);font-size:14px;max-width:32ch}
+.pied-liens{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 28px;font-size:14px}
+.pied-liens a{color:var(--doux);text-decoration:none;transition:color .2s}.pied-liens a:hover{color:var(--texte)}
+.pied-liens a:focus-visible{outline:2px solid var(--ambre);outline-offset:3px;border-radius:4px}
+footer .pied-bas{border-top:1px solid color-mix(in srgb,var(--texte) 6%,transparent);padding-top:20px}
 footer a{color:var(--doux)}
 
 .toast{position:fixed;z-index:30;bottom:24px;left:50%;display:flex;align-items:center;gap:10px;transform:translateX(-50%) translateY(120px);background:var(--surface2);border:1px solid var(--trait2);box-shadow:var(--ombre);padding:11px 18px 11px 14px;border-radius:var(--r);transition:transform .45s var(--sortie);font-size:14px;font-weight:500}
@@ -507,9 +513,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  <span class="compte" id="compte"></span>
 </div></header>
 <main id="main"></main>
-<footer><div><span>Pontil : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
+<footer><div class="pied">
+ <div class="pied-marque"><a class="logo" href="#/accueil" aria-label="Pontil, accueil"><b><svg aria-hidden="true"><use href="#pont"/></svg></b>Pontil</a><p>Un seul profil de goûts pour films, séries et jeux.</p></div>
+ <ul class="pied-liens"><li><a href="#/film">Films</a></li><li><a href="#/serie">Séries</a></li><li><a href="#/jeu">Jeux</a></li><li><a href="#/gouts">Mes goûts</a></li><li><a href="#/listes">Mes listes</a></li></ul>
+</div><div class="pied-bas"><span>Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=9ef15e214f"></script>
+<script src="langue.js?v=16642c66db"></script>
 <script src="moteur.js?v=17ad970de8"></script>
 <script>
 let onglet = "film", data = null;
