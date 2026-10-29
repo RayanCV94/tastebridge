@@ -816,7 +816,7 @@ function accueil(pret = true){
  const demo = pret ? Moteur.populaires("film", 1)[0] : null;
  const demoPal = c => `<div class="palette" aria-hidden="true">${AVIS.map(([k, i, t]) => `<span data-v="${k}"${k === "adore" ? ` class="${c}"` : ""}>${ico(i)}${t}</span>`).join("")}</div>`;
  const etape = (cls, mot, dedans) => `<li class="${cls}"><div class="cadre">${demo ? couverture(demo) : ""}${dedans}</div><span>${mot}</span></li>`;
- const rails = `<section class="mode" aria-label="Comment noter"><div><h3>Touche une affiche</h3><p>Quatre avis, de Non merci à J'adore. Cinq titres suffisent pour tes premières recos.</p></div><ol>
+ const rails = `<section class="mode" aria-label="Comment noter"><div><h3>Touche une affiche</h3><p>Quatre avis, de J'adore à Non merci. Cinq titres suffisent pour tes premières recos.</p></div><ol>
   ${etape("m1", "Choisis ton avis", demoPal(""))}${etape("m2", "C'est noté", `<span class="marque">${ico("coeur")}</span>`)}${etape("m3", "Retouche pour l'enlever", demoPal("choisi"))}</ol></section>${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}`;
  // Déjà affiché sans catalogue : on complète le mur et les rails sans retoucher le texte (pas de nouveau rendu du titre)
  if (pret && $(".accueil[data-attente]")) { $(".accueil").removeAttribute("data-attente"); $(".mur").innerHTML = murHtml; $("#choix").innerHTML = rails; majProgres(); return; }
@@ -835,14 +835,20 @@ async function majProgres(){ const n = await compter(); if (!$("#jauge")) return
  $("#jauge").style.transform = `scaleX(${Math.min(1, n / 5)})`; $("#nb").textContent = `${Math.min(n,5)} / 5`; $("#voir").disabled = n < 5; $(".progres").classList.toggle("actif", n > 0); }
 // Toucher une affiche ouvre 4 avis, du moins bon au meilleur ; retoucher l'avis choisi l'enlève. Même geste à l'accueil et dans les onglets.
 // « Vu, sans plus » : vu sans aimer ; « Pas pour moi » : pas aimé ou pas envie, ne revient plus.
-const AVIS = [["bof", "non", "Non merci"], ["vu", "oeil", "Sans plus"], ["aime", "pouce", "J'aime"], ["adore", "coeur", "J'adore"]];
+const AVIS = [["adore", "coeur", "J'adore"], ["aime", "pouce", "J'aime"], ["vu", "oeil", "Sans plus"], ["bof", "non", "Non merci"]];
 const ICO_AVIS = Object.fromEntries(AVIS.map(([k, i]) => [k, i]));
 const ETAT_POP = Object.fromEntries(AVIS.map(([k, , t]) => [k, t]));
 const palette = id => `<div class="palette" role="group" aria-label="Ton avis">${AVIS.map(([k, i, t]) => `<button data-v="${k}" onclick="avis('${id}','${k}',this)">${ico(i)}${t}</button>`).join("")}</div>`;
 function fermer(sauf){ document.querySelectorAll(".ouvert").forEach(x => { if (x !== sauf) { x.classList.remove("ouvert"); x.querySelector(".couvre")?.setAttribute("aria-expanded", "false"); } }); }
-function ouvrir(el){ const b = el.closest("[data-n]"), o = !b.classList.contains("ouvert"); fermer(b);
+// Double clic (ou double appui) sur une affiche : ouvre directement la fiche, sans passer par le titre.
+// Le 1er clic ouvre la palette qui recouvre l'affiche : un 2e clic dans les 350 ms (affiche ou palette) mène à la fiche.
+function ficheDirecte(el){ const l = el.closest("[data-n]").querySelector("a.titre, a.pop-titre"); if (l) location.href = l.href; }
+const vite = b => Date.now() - (b._clic || 0) < 350;
+function ouvrir(el){ const b = el.closest("[data-n]"); if (vite(b)) return ficheDirecte(el);
+ const o = !b.classList.contains("ouvert"); fermer(b); b._clic = o ? Date.now() : 0;
  b.classList.toggle("ouvert", o); el.setAttribute("aria-expanded", o); }
 function avis(id, v, el){
+ if (vite(el.closest("[data-n]"))) return ficheDirecte(el);
  const b = el.closest("[data-n]"), n = b.dataset.n === v ? "" : v;
  b.dataset.n = n; fermer(); b.querySelector(".pop-etat").textContent = ETAT_POP[n] || ""; b.querySelector(".coche").innerHTML = n ? ico(ICO_AVIS[n]) : "";
  api.noter(id, n); data = null; if (vue === "accueil") majProgres(); else compter();
