@@ -103,7 +103,9 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 .tete p{margin:0;color:var(--doux);font-size:14px;max-width:62ch}
 
 /* Grille d'affiches */
-.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:26px 18px}
+.grille{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:26px 18px}
+@media(max-width:1200px){.grille{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:900px){.grille{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .c{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0}
 .c.note{opacity:.3;pointer-events:none;transition:opacity .3s}
 .cadre{position:relative;aspect-ratio:2/3;border-radius:var(--r);overflow:hidden;background:linear-gradient(155deg,var(--surface3),var(--surface0));box-shadow:0 0 0 1px color-mix(in srgb,var(--texte) 6%,transparent);transition:transform .45s var(--sortie),box-shadow .45s var(--sortie)}
@@ -508,7 +510,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 <footer><div><span>Pontil : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="langue.js?v=9ef15e214f"></script>
-<script src="moteur.js?v=6f2f9e1032"></script>
+<script src="moteur.js?v=17ad970de8"></script>
 <script>
 let onglet = "film", data = null;
 const $ = s => document.querySelector(s);
@@ -675,6 +677,8 @@ addEventListener("notes-moyennes", () => {
 function boutonAvis(r, cls = "a5", texte = ""){
  return `<a class="${cls}" href="${lienFiche(r, WEB ? "avis" : "")}" title="Fiche et avis"${texte ? "" : ` aria-label="Fiche et avis : ${esc(r.titre)}"`}>${ico("bulle")}${texte}</a>`;
 }
+// Grille sans trou en fin de rangée : un multiple de 12 tombe juste en 2, 3, 4 ou 6 colonnes
+const pleine = l => l.length > 12 ? l.slice(0, l.length - l.length % 12) : l;
 function carte(r){
  return `<article class="c" id="c-${r.id}" data-n="">
   <div class="cadre">
@@ -715,7 +719,7 @@ function rendre(){
  const vus = new Set(l1.map(r => r.id)), reste = [...l1.slice(1), ...l2.filter(r => !vus.has(r.id))];
  const vide = filtresOn.size && l1t.length ? `<div class="vide">${ico(ICONE[onglet])}<span>Rien avec ces filtres.</span></div>` : `<div class="vide">${ico(ICONE[onglet])}<span>Pas encore assez de goûts notés pour ça. <a href="#/gouts">Ajoute quelques titres</a> et les recos apparaissent.</span></div>`;
  m.innerHTML = `${l1.length ? scene(l1[0]) : `<div class="section">${vide}</div>`}
-  ${reste.length ? `<section class="section"><div class="tete"><h3>${TITRE_ONGLET[onglet]}</h3>${barreTri()}</div>${barreFiltres(onglet)}<div class="grille">${trier(reste).map(carte).join("")}</div></section>` : ""}
+  ${reste.length ? `<section class="section"><div class="tete"><h3>${TITRE_ONGLET[onglet]}</h3>${barreTri()}</div>${barreFiltres(onglet)}<div class="grille">${pleine(trier(reste)).map(carte).join("")}</div></section>` : ""}
   ${WEB ? railTendances(onglet) : ""}
   ${WEB && l1.length ? zoneDe() : ""}`;
  appliquerDefile();

@@ -249,9 +249,9 @@ const Moteur = (() => {
     recos() {
       const p = profil(), ecrans = ["film", "serie"];
       return {
-        film: [["D'après tes films et séries", recos(p, "film", ecrans)], ["D'après tes jeux", recos(p, "film", ["jeu"], 8)]],
-        serie: [["D'après tes films et séries", recos(p, "serie", ecrans)], ["D'après tes jeux", recos(p, "serie", ["jeu"], 8)]],
-        jeu: [["D'après tes jeux", recos(p, "jeu", ["jeu"])], ["D'après tes films et séries", recos(p, "jeu", ecrans, 8)]],
+        film: [["D'après tes films et séries", recos(p, "film", ecrans, 25)], ["D'après tes jeux", recos(p, "film", ["jeu"], 12)]],
+        serie: [["D'après tes films et séries", recos(p, "serie", ecrans, 25)], ["D'après tes jeux", recos(p, "serie", ["jeu"], 12)]],
+        jeu: [["D'après tes jeux", recos(p, "jeu", ["jeu"], 25)], ["D'après tes films et séries", recos(p, "jeu", ecrans, 12)]],
       };
     },
     // Le dé : une œuvre au hasard parmi celles qui collent à tes goûts, hors titres notés, déjà affichés
