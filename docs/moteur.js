@@ -156,7 +156,12 @@ const Moteur = (() => {
       const a = it.annee || (it.dom === "jeu" && it.steam > 500000 ? 2016 : 2008);
       let recence = a >= 2015 ? 1 : a >= 2005 ? 0.85 : 0.7;
       if (it.qualite > 0.9) recence = Math.max(recence, 0.95);  // grands classiques gardés
-      res.push([sim * (0.35 + 0.65 * it.qualite) * recence, i, sim]);
+      // Qualité = notoriété mêlée à la critique quand elle existe (sinon un remake connu mais mal reçu passe devant un film acclamé)
+      // sans critique connue : 60, valeur neutre servant au classement seulement, jamais affichée
+      const crit = noteCritique(it) ?? 60, q = 0.5 * it.qualite + 0.5 * Math.min(1, crit / 100);
+      // Un seul thème connu : ressemblance « parfaite » trompeuse (fiche pauvre), confiance réduite
+      const info = Object.keys(V()[i]).length > 1 ? 1 : 0.8;
+      res.push([sim * (0.35 + 0.65 * q) * recence * info, i, sim]);
     }
     res.sort((a, b) => b[0] - a[0]);
     return [res, prof];
@@ -182,6 +187,9 @@ const Moteur = (() => {
         while (l.length && pris.has(l[0])) l.shift();
         if (l.length && choix.length < n) { const i = l.shift(); pris.add(i); choix.push(ok.find(r => r[1] === i)); }
       }
+    // Le premier tour (un titre par ancre) est rangé par score : la vedette est le meilleur du lot, pas le voisin du dernier titre noté
+    const note = i => Math.max(...ancres.map(j => dot(i, j) * qual.get(i) * ton(i, j)));
+    choix.unshift(...choix.splice(0, Math.min(listes.length, choix.length)).sort((a, b) => note(b[1]) - note(a[1])));
     return choix.map(([, i, sim]) => {
       const it = CAT[i];
       const pourquoi = Object.keys(poids).filter(j => poids[j] > 0).map(j => [dot(i, j), j]).sort((a, b) => b[0] - a[0]).slice(0, 2);
