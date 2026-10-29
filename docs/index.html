@@ -521,7 +521,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 <footer><div class="pied">
  <div class="pied-marque"><a class="logo" href="#/accueil" aria-label="Pontil, accueil"><b><svg aria-hidden="true"><use href="#pont"/></svg></b>Pontil</a><p>Un seul profil de goûts pour films, séries et jeux.</p></div>
  <ul class="pied-liens"><li><a href="#/film">Films</a></li><li><a href="#/serie">Séries</a></li><li><a href="#/jeu">Jeux</a></li><li><a href="#/gouts">Mes goûts</a></li><li><a href="#/listes">Mes listes</a></li></ul>
-</div><div class="pied-bas"><span>Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
+</div><div class="pied-bas"><span>Données Wikidata, SteamSpy et Wikipédia.</span><a href="mailto:contact@pontil.fr">contact@pontil.fr</a><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="langue.js?v=cee39ac65a"></script>
 <script src="moteur.js?v=0e6593a780"></script>
@@ -1110,7 +1110,7 @@ function mentions(){
  const en = enAnglais(), t = (fr, an) => en ? an : fr;
  m.innerHTML = `<section class="section mentions"><div class="tete"><h3>${t("Mentions légales et licences", "Legal notice and licences")}</h3></div>
   <h4>${t("Éditeur", "Publisher")}</h4>
-  <p>Rayan Achmahou. ${t("Contact", "Contact")} : <a href="https://github.com/makingdreamscometrue" target="_blank" rel="noopener">github.com/makingdreamscometrue</a>.</p>
+  <p>Rayan Achmahou. ${t("Contact", "Contact")} : <a href="mailto:contact@pontil.fr">contact@pontil.fr</a> ${t("ou", "or")} <a href="https://github.com/makingdreamscometrue" target="_blank" rel="noopener">github.com/makingdreamscometrue</a>.</p>
   <h4>${t("Hébergement", "Hosting")}</h4>
   <p>${t("Site", "Website")} : GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, ${t("États-Unis", "USA")}. ${t("Comptes", "Accounts")} : Supabase, Inc.</p>
   <h4>${t("Données personnelles", "Personal data")}</h4>
