@@ -224,7 +224,8 @@ a.accroche:hover{color:var(--texte)}
 .mode li>span{font-size:14px;font-weight:600;color:var(--doux)}
 .mode .m1>span{color:var(--menthe)} .mode .m2>span{color:var(--rouge)}
 .pop:hover .cadre{transform:translateY(-4px)}
-.progres{position:sticky;bottom:18px;z-index:10;margin:28px auto 0;width:min(560px,100%);display:flex;align-items:center;gap:16px;padding:13px 13px 13px 20px;border-radius:var(--r);background:color-mix(in srgb,var(--surface2) 90%,transparent);box-shadow:var(--ombre)}
+.js .progres:not(.actif){opacity:0;transform:translateY(16px);pointer-events:none}
+.progres{transition:opacity .35s var(--sortie),transform .45s var(--sortie);position:sticky;bottom:18px;z-index:10;margin:28px auto 0;width:min(560px,100%);display:flex;align-items:center;gap:16px;padding:13px 13px 13px 20px;border-radius:var(--r);background:color-mix(in srgb,var(--surface2) 90%,transparent);box-shadow:var(--ombre)}
 .progres .barre-p{flex:1;height:6px;border-radius:var(--r);background:var(--trait);overflow:hidden}
 .progres .barre-p i{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,var(--ambre),var(--rouge));border-radius:var(--r);transition:transform .4s var(--sortie)}
 .progres small{color:var(--doux);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -806,7 +807,7 @@ function accueil(pret = true){
  if (pret) majProgres();
 }
 async function majProgres(){ const n = await compter(); if (!$("#jauge")) return;
- $("#jauge").style.transform = `scaleX(${Math.min(1, n / 5)})`; $("#nb").textContent = `${Math.min(n,5)} / 5`; $("#voir").disabled = n < 5; }
+ $("#jauge").style.transform = `scaleX(${Math.min(1, n / 5)})`; $("#nb").textContent = `${Math.min(n,5)} / 5`; $("#voir").disabled = n < 5; $(".progres").classList.toggle("actif", n > 0); }
 // Toucher une affiche ouvre 4 avis, du moins bon au meilleur ; retoucher l'avis choisi l'enlève. Même geste à l'accueil et dans les onglets.
 // « Vu, sans plus » : vu sans aimer ; « Pas pour moi » : pas aimé ou pas envie, ne revient plus.
 const AVIS = [["bof", "non", "Non merci"], ["vu", "oeil", "Sans plus"], ["aime", "pouce", "J'aime"], ["adore", "coeur", "J'adore"]];
