@@ -71,6 +71,8 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 .scene .affiche:hover{transform:rotate(0) scale(1.02)}
 .scene .texte{max-width:640px;display:flex;flex-direction:column;gap:14px;animation:entre .9s var(--sortie) both}
 .etiquette{align-self:flex-start;display:flex;align-items:center;gap:8px;font:600 12px var(--f-texte);color:var(--texte);padding:6px 13px 6px 10px;border-radius:var(--r);background:color-mix(in srgb,var(--texte) 8%,transparent);border:1px solid color-mix(in srgb,var(--texte) 10%,transparent);}
+.actions.secondaires{margin-top:-4px;gap:4px;margin-left:-8px}
+.bt.discret{background:none;border-color:transparent;color:var(--doux);padding-left:8px;padding-right:8px}.bt.discret:hover{color:var(--texte);background:color-mix(in srgb,var(--texte) 6%,transparent)}
 a.etiquette{text-decoration:none;transition:border-color .2s}a.etiquette:hover{border-color:var(--ambre)}
 .etiquette i{width:8px;height:8px;border-radius:50%;background:var(--dom);box-shadow:0 0 0 3px color-mix(in srgb,var(--dom) 25%,transparent)}
 .scene h2{font:600 var(--t-page)/1 var(--f-titre);letter-spacing:-.02em;margin:0;text-wrap:balance}
@@ -710,8 +712,8 @@ function scene(r){
    ${raisons(r)}
    <div class="chips">${r.themes.map(t => chip(t)).join("")}${ambiances(r.themes).map(t => chip(t, "ambiance")).join("")}</div>
    ${r.avis ? `<div class="avis">${esc(r.avis)}</div>` : ""}
-   <div class="actions">${AVIS.map(([k, i, t]) => b(k === "aime" ? "plein" : "", k, i, t)).join("")}
-    ${boutonAvis(r, "bt", "Fiche et avis")}<a class="bt" href="${lien(r)}" target="_blank" rel="noopener">${ico("lien")}${r.steam ? "Sur Steam" : "En savoir plus"}</a></div>
+   <div class="actions">${AVIS.map(([k, i, t]) => b(k === "aime" ? "plein" : "", k, i, t)).join("")}</div>
+   <div class="actions secondaires">${boutonAvis(r, "bt discret", "Fiche et avis")}<a class="bt discret" href="${lien(r)}" target="_blank" rel="noopener">${ico("lien")}${r.steam ? "Sur Steam" : "En savoir plus"}</a></div>
   </div>
   <a class="affiche" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true">${couverture(r)}</a>
  </section>`;
