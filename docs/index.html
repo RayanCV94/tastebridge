@@ -648,7 +648,7 @@ function scene(r){
    ${raisons(r)}
    <div class="chips">${r.themes.map(t => chip(t)).join("")}${ambiances(r.themes).map(t => chip(t, "ambiance")).join("")}</div>
    ${r.avis ? `<div class="avis">${esc(r.avis)}</div>` : ""}
-   <div class="actions">${b("plein","aime","pouce","J'aime")}${b("","adore","coeur","J'adore")}${b("","vu","oeil",`Déjà ${VERBE[r.dom]}`)}${b("","bof","non","Pas pour moi")}
+   <div class="actions">${AVIS.map(([k, i, t]) => b(k === "aime" ? "plein" : "", k, i, t)).join("")}
     ${boutonAvis(r, "bt", "Fiche et avis")}<a class="bt" href="${lien(r)}" target="_blank" rel="noopener">${ico("lien")}${r.steam ? "Sur Steam" : "En savoir plus"}</a></div>
   </div>
   <a class="affiche" href="${lienFiche(r)}" tabindex="-1" aria-hidden="true">${couverture(r)}</a>
