@@ -1004,7 +1004,7 @@ async function fichePage(dom, id, ancre){
   <header class="fiche-tete"${visuel(r) ? ` style="--img:url('${esc(visuel(r))}')"` : ""}>
     <div class="aff-fiche">${couverture(r)}</div>
    <div class="texte">
-    ${r.pour_toi ? `<a class="etiquette" href="${lienFiche(r, "score")}" title="D'où vient ce score"><i></i>${r.pour_toi.match} % pour toi</a>` : ""}
+    ${r.pour_toi ? `<a class="etiquette" href="${lienFiche(r, "score")}" title="D'où vient ce score"><i></i>${r.pour_toi.match} %&nbsp;<span>pour toi</span></a>` : ""}
     <p class="type-fiche">${ico(ICONE[r.dom])}${NOM[r.dom]}${r.annee ? ", " : ""}${lienAnnee(r.annee)}${r.duree ? `, ${duree(r)}${r.dom === "jeu" ? " d'histoire" : ""}` : ""}${r.gratuit ? ", gratuit" : ""}</p>
     <h1>${esc(r.titre)}</h1>
     ${autre ? `<p class="autre-titre">${enAnglais() ? "Titre français" : "Titre anglais"} : <i>${esc(autre)}</i></p>` : ""}
