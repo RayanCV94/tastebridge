@@ -67,13 +67,21 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
   <label for="c-mdp">Mot de passe${nouveau ? " (8 caractères minimum)" : ""}</label>
   <input id="c-mdp" type="password" minlength="${nouveau ? 8 : 1}" autocomplete="${nouveau ? "new-password" : "current-password"}" required>
   <button class="principal">${nouveau ? "Créer mon compte" : "Se connecter"}</button>
-  <div class="msg" role="status"></div>
+  <div class="msg" role="status"></div>${nouveau ? "" : `<button type="button" class="lien oubli">Mot de passe oublié ?</button>`}
   <div class="bas"><span>${nouveau ? "Déjà un compte ?" : "Pas encore de compte ?"}</span>
    <button type="button" class="lien">${nouveau ? "Se connecter" : "Créer un compte"}</button></div>
 </form>`;
     document.body.append(v);
     v.onclick = e => { if (e.target === v) fermer(); };
-    v.querySelector(".lien").onclick = () => fenetre(nouveau ? "entrer" : "creer");
+    v.querySelector(".bas .lien").onclick = () => fenetre(nouveau ? "entrer" : "creer");
+    // Mot de passe oublié : Supabase envoie un lien, qui ramène ici avec l'événement PASSWORD_RECOVERY
+    v.querySelector(".oubli")?.addEventListener("click", async () => {
+      const email = v.querySelector("#c-mail").value.trim();
+      if (!email) { msg.className = "msg"; msg.textContent = "Écris d'abord ton e-mail."; return; }
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+      msg.className = error ? "msg" : "msg ok";
+      msg.textContent = error ? traduire(error.message) : "E-mail envoyé. Clique le lien « Supabase » pour choisir un nouveau mot de passe (regarde aussi les spams).";
+    });
     v.querySelector("#c-mail").focus();
     const msg = v.querySelector(".msg"), go = v.querySelector(".principal");
     v.querySelector("form").onsubmit = async e => {
@@ -87,6 +95,26 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
       if (error) { msg.textContent = traduire(error.message); return; }
       if (nouveau && !data.session) { msg.className = "msg ok"; msg.textContent = "Compte créé. Clique le lien de l'e-mail « Supabase » pour l'activer (regarde aussi les spams)."; return; }
       fermer();
+    };
+  }
+
+  function nouveauMdp() {
+    fermer();
+    const v = document.createElement("div");
+    v.className = "voile-compte";
+    v.innerHTML = `<form class="boite"><h3>Nouveau mot de passe</h3>
+  <label for="c-mdp">Mot de passe (8 caractères minimum)</label>
+  <input id="c-mdp" type="password" minlength="8" autocomplete="new-password" required>
+  <button class="principal">Enregistrer</button><div class="msg" role="status"></div></form>`;
+    document.body.append(v);
+    v.querySelector("#c-mdp").focus();
+    const msg = v.querySelector(".msg");
+    v.querySelector("form").onsubmit = async e => {
+      e.preventDefault();
+      const { error } = await sb.auth.updateUser({ password: v.querySelector("#c-mdp").value });
+      if (error) { msg.textContent = traduire(error.message); return; }
+      msg.className = "msg ok"; msg.textContent = "Mot de passe changé, tu es connecté.";
+      setTimeout(fermer, 1500);
     };
   }
 
@@ -253,6 +281,7 @@ ${a.texte ? `<p>${echap(a.texte)}</p>` : ""}${user && a.user_id === user.id ? `<
     const avant = user?.id;
     user = session?.user || null;
     maj();
+    if (evt === "PASSWORD_RECOVERY") nouveauMdp();
     if (user && user.id !== avant) setTimeout(recuperer, 0);
   });
   maj();
