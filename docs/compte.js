@@ -10,6 +10,15 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
   // Supabase injoignable (bloqueur, hors ligne) : le site marche sans compte, les avis s'affichent « indisponibles »
   if (typeof supabase === "undefined") { window.NOTES = null; return; }
   const sb = supabase.createClient(SUPA_URL, SUPA_CLE);
+  // Statistiques : une visite par onglet ouvert, sans IP ni identifiant (table « visites », lisible par personne)
+  try {
+    if (!sessionStorage.getItem("pontil-vu")) {
+      sessionStorage.setItem("pontil-vu", "1");
+      let origine = "";
+      try { const h = new URL(document.referrer).hostname; if (h !== location.hostname) origine = h.slice(0, 100); } catch (e) { /* arrivée directe */ }
+      sb.from("visites").insert({page: (location.hash || "#/").slice(0, 40), origine, langue: (navigator.language || "").slice(0, 10), mobile: matchMedia("(max-width: 700px)").matches}).then(() => {});
+    }
+  } catch (e) { /* stockage bloqué : la visite n'est pas comptée */ }
   let user = null, envoi = null, applique = false;
 
   const css = document.createElement("style");
