@@ -273,6 +273,17 @@ a.mini{display:block}
 .filtres button.on{background:var(--texte);color:var(--fond);border-color:transparent}
 
 /* États */
+.liste-vide{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(24px,5vw,64px);align-items:center;padding:clamp(24px,4vw,48px);border-radius:var(--r);background:var(--surface);border:1px solid var(--trait)}
+.liste-vide h4{font:600 var(--t-section)/1.1 var(--f-titre);letter-spacing:-.02em;margin:0 0 8px}
+.liste-vide p{margin:0 0 20px;color:var(--doux);font-size:16px}
+.liste-vide .chip{display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;padding:8px 14px}
+.liste-vide .chip svg{width:14px;height:14px}
+.eventail{position:relative;width:260px;height:190px}
+.eventail i{position:absolute;bottom:0;left:50%;width:104px;aspect-ratio:2/3;border-radius:var(--r-petit);overflow:hidden;background:var(--surface2);box-shadow:0 18px 36px -12px color-mix(in srgb,var(--noir) 90%,transparent),0 0 0 1px color-mix(in srgb,var(--texte) 10%,transparent);transform-origin:50% 120%;transition:transform .5s var(--sortie)}
+.eventail i:nth-child(1){transform:translateX(-50%) rotate(-24deg)}.eventail i:nth-child(2){transform:translateX(-50%) rotate(-12deg)}.eventail i:nth-child(3){transform:translateX(-50%);z-index:2}.eventail i:nth-child(4){transform:translateX(-50%) rotate(12deg)}.eventail i:nth-child(5){transform:translateX(-50%) rotate(24deg)}
+.liste-vide:hover .eventail i:nth-child(1){transform:translateX(-50%) rotate(-30deg)}.liste-vide:hover .eventail i:nth-child(5){transform:translateX(-50%) rotate(30deg)}
+@media(max-width:760px){.liste-vide{grid-template-columns:1fr;justify-items:center;text-align:center}.liste-vide .chips{justify-content:center}}
+@media(prefers-reduced-motion:reduce){.eventail i{transition:none}}
 .vide{display:flex;align-items:center;gap:18px;color:var(--doux);padding:26px;border-radius:var(--r);border:1px dashed var(--trait2);background:color-mix(in srgb,var(--texte) 2%,transparent)}
 .vide svg{width:28px;height:28px;color:var(--dom)}
 .squelette{border-radius:var(--r);aspect-ratio:2/3;background:linear-gradient(100deg,var(--surface) 30%,var(--surface2) 50%,var(--surface) 70%) 0 0/300% 100%;animation:luit 1.4s linear infinite}
@@ -485,7 +496,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 <main id="main"></main>
 <footer><div><span>Pontil : un seul profil de goûts pour films, séries et jeux. Données Wikidata, SteamSpy et Wikipédia.</span><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=73d6860c06"></script>
+<script src="langue.js?v=7308de4bbb"></script>
 <script src="moteur.js?v=6f2f9e1032"></script>
 <script>
 let onglet = "film", data = null;
@@ -1100,7 +1111,9 @@ async function mesListes(){
     <a href="${lienPartage(l)}">${esc(l.titre)}<small>${resumeListe(t)}</small></a>
     <button class="bt" onclick="partagerListe(lireListes()[${k}])" aria-label="Partager ${esc(l.titre)}">${ico("partage")}</button>
     <button class="bt" onclick="if(confirm('Supprimer cette liste ?')){const l=lireListes();l.splice(${k},1);ecrireListes(l);mesListes()}" aria-label="Supprimer ${esc(l.titre)}">${ico("corbeille")}</button></div>`; }).join("")}</div>`
-   : `<div class="vide">${ico("liste")}<span>Pas encore de liste. Crée-en une ici, ou depuis la fiche d'un titre (« Ajouter à une liste »).</span></div>`}</section>`;
+   : `<div class="liste-vide"><div class="eventail" aria-hidden="true">${(() => { try { return ["film", "serie", "jeu"].flatMap(d => Moteur.populaires(d, 2)).slice(0, 5).map(x => `<i>${couverture(x)}</i>`).join(""); } catch { return ""; } })()}</div>
+   <div><h4>Ta première liste</h4><p>Mélange films, séries et jeux, puis partage-la d'un lien.</p>
+   <div class="chips">${["À voir", "Soirée frissons", "À jouer à deux"].map(n => `<button class="chip" onclick="nouvelleListe('${n}'); mesListes()">${ico("liste")}${n}</button>`).join("")}</div></div></div>`}</section>`;
  appliquerDefile();
 }
 async function listePartagee(titre, ids){
