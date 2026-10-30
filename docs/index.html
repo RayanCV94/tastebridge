@@ -110,7 +110,7 @@ a.etiquette{text-decoration:none;transition:border-color .2s}a.etiquette:hover{b
 .section{margin-top:52px}
 .tete{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
 .tete h3{font:500 var(--t-section)/1.1 var(--f-titre);letter-spacing:-.01em;margin:0}
-.rang{position:relative;isolation:isolate} .rang::before{content:"";position:absolute;inset:-40px -10% auto;height:320px;z-index:-1;pointer-events:none;background:radial-gradient(60% 70% at 15% 30%,color-mix(in srgb,var(--dom-r) 14%,transparent),transparent 70%)}
+.rang{position:relative;isolation:isolate}
 .rang .tete h3{display:flex;align-items:center;gap:12px} .rang .tete h3 svg{width:26px;height:26px;color:var(--dom-r)}
 .rang-film{--dom-r:var(--ambre)} .rang-serie{--dom-r:var(--violet)} .rang-jeu{--dom-r:var(--menthe)}
 .tete p{margin:0;color:var(--doux);font-size:14px;max-width:62ch}
@@ -205,7 +205,7 @@ a.accroche:hover{color:var(--texte)}
 @media(hover:none){.voile{opacity:1;background:linear-gradient(transparent 55%,color-mix(in srgb,var(--noir) 92%,transparent))}.mini-act button,.mini-act a{height:32px}}
 
 /* Accueil (premier passage, version site) */
-.accueil{position:relative;margin:24px 0 0;border-radius:var(--r);overflow:hidden;isolation:isolate;padding:clamp(36px,7vw,96px) clamp(24px,5vw,72px);border:1px solid color-mix(in srgb,var(--texte) 7%,transparent);min-height:clamp(420px,60vh,620px);display:flex;flex-direction:column;justify-content:center}
+.accueil{position:relative;margin:24px 0 0;border-radius:var(--r);overflow:hidden;isolation:isolate;padding:clamp(36px,7vw,96px) clamp(24px,5vw,72px);-webkit-mask-image:linear-gradient(#000 72%,transparent);mask-image:linear-gradient(#000 72%,transparent);min-height:clamp(420px,60vh,620px);display:flex;flex-direction:column;justify-content:center}
 .mur{position:absolute;inset:-10%;z-index:-2;display:grid;grid-template-columns:repeat(8,1fr);gap:13px;transform:rotate(-8deg) scale(1.15);opacity:.85;animation:defile 28s linear infinite alternate}
 .accueil .actions .bt:not(.plein){background:color-mix(in srgb,var(--surface) 92%,transparent)}
 .mur .tuile{position:relative;aspect-ratio:2/3;border-radius:var(--r);overflow:hidden;background:var(--surface2)}
@@ -220,7 +220,7 @@ a.accroche:hover{color:var(--texte)}
 .preuves svg{width:16px;height:16px;color:var(--ambre)}
 
 /* Démarrage rapide */
-.rail{display:flex;gap:14px;overflow-x:auto;padding:6px 2px 16px;scroll-snap-type:x proximity;scrollbar-width:thin}
+.rail{display:flex;gap:14px;overflow-x:auto;padding:6px 2px 16px;scroll-snap-type:x proximity;scrollbar-width:none} .rail::-webkit-scrollbar{display:none}
 .pop{flex:none;width:clamp(160px,15vw,236px);scroll-snap-align:start;display:flex;flex-direction:column;gap:6px}
 .pop-note{display:block;width:100%;background:none;border:0;padding:0;cursor:pointer;border-radius:var(--r)}
 .pop-titre{font-size:14px;font-weight:500;color:var(--texte);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -905,16 +905,20 @@ function fermer(sauf){ document.querySelectorAll(".ouvert").forEach(x => { if (x
 // ou entre deux boutons de la palette, mène à la fiche.
 function ficheDirecte(el){ const l = el.closest("[data-n]").querySelector("a.titre, a.pop-titre"); if (l) location.href = l.href; }
 const vite = b => Date.now() - (b._clic || 0) < 500;
-function ouvrir(el){ const b = el.closest("[data-n]"); if (vite(b)) return ficheDirecte(el);
- const o = !b.classList.contains("ouvert"); fermer(b); b._clic = o ? Date.now() : 0;
+// Palette déjà ouverte : le 1er clic d'un double clic tombe sur un avis. Le 2e clic l'annule (b._annule) et ouvre la fiche.
+const double = () => (window.event?.detail || 0) >= 2;  // 2e clic d'un vrai double clic (délai et position du système)
+function ouvrir(el){ const b = el.closest("[data-n]"); if (vite(b) || double()) { if (double()) b._annule?.(); return ficheDirecte(el); }
+ const o = !b.classList.contains("ouvert"); fermer(b); b._clic = o ? Date.now() : 0; b._annule = null;
  b.classList.toggle("ouvert", o); el.setAttribute("aria-expanded", o); }
 function avis(id, v, el){
- if (vite(el.closest("[data-n]"))) return ficheDirecte(el);
- const b = el.closest("[data-n]"), n = b.dataset.n === v ? "" : v, avant = b.dataset.n;
- b.dataset.n = n; fermer(); b.querySelector(".pop-etat").textContent = ETAT_POP[n] || ""; b.querySelector(".coche").innerHTML = n ? ico(ICO_AVIS[n]) : "";
- api.noter(id, n); data = null; if (vue === "accueil") majProgres(); else compter();
- if (vue !== "accueil") toast(n ? ETAT_POP[n] : "Avis retiré", () => { b.dataset.n = avant; b.querySelector(".pop-etat").textContent = ETAT_POP[avant] || ""; b.querySelector(".coche").innerHTML = avant ? ico(ICO_AVIS[avant]) : "";
-  api.noter(id, avant); data = null; if (vue === "accueil") majProgres(); else compter(); });
+ const b = el.closest("[data-n]");
+ if (vite(b) || double()) { if (double()) b._annule?.(); return ficheDirecte(el); }
+ const n = b.dataset.n === v ? "" : v, avant = b.dataset.n;
+ const poser = x => { b.dataset.n = x; b.querySelector(".pop-etat").textContent = ETAT_POP[x] || ""; b.querySelector(".coche").innerHTML = x ? ico(ICO_AVIS[x]) : "";
+  api.noter(id, x); data = null; if (vue === "accueil") majProgres(); else compter(); };
+ fermer(); poser(n);
+ b._annule = () => { poser(avant); $("#toast").classList.remove("v"); };
+ if (vue !== "accueil") toast(n ? ETAT_POP[n] : "Avis retiré", () => poser(avant));
 }
 addEventListener("click", e => { if (!e.target.closest(".ouvert")) fermer(); });
 addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
