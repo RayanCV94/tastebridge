@@ -217,9 +217,10 @@ a.accroche:hover{color:var(--texte)}
 .pop[data-n="aime"] .pop-etat{color:var(--menthe)} .pop[data-n="adore"] .pop-etat{color:var(--rouge)}
 .rail.glisse{scroll-snap-type:none;cursor:grabbing;user-select:none}
 .rail.glisse *{pointer-events:none}
-.rail-fleche{position:absolute;top:calc(50% - 40px);z-index:2;width:40px;height:40px;border-radius:50%;border:1px solid var(--trait);background:var(--surface);color:var(--texte);font-size:22px;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s}
+.rail-fleche{position:absolute;top:calc(50% - 40px);z-index:2;width:40px;height:40px;border-radius:50%;border:1px solid var(--trait);background:var(--surface);color:var(--texte);font-size:22px;line-height:1;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .15s;display:none}
 .rail-fleche.g{left:-6px} .rail-fleche.d{right:-6px}
-@media (hover:hover){.rail-boite:hover .rail-fleche:not([hidden]){opacity:.92}}
+/* invisibles, elles ne doivent pas capter les touchers (au doigt : pas de flèches) */
+@media (hover:hover){.rail-fleche{display:block} .rail-boite:hover .rail-fleche:not([hidden]){opacity:.92;pointer-events:auto}}
 .rail-boite{position:relative}
 .rail-cartes .c{flex:none;width:clamp(150px,40vw,190px);scroll-snap-align:start}
 .aide-rail{margin:24px 0 0;color:var(--doux);font-size:14px}
@@ -1291,7 +1292,7 @@ if (WEB) {
 else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); compter().then(router); }
 </script>
 <script src="vendor/supabase.js?v=34035ac76d"></script>
-<script src="compte.js?v=0b5f964fdf"></script>
+<script src="compte.js?v=eb28fa4e4e"></script>
 <script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
 </body>
 </html>
