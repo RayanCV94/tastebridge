@@ -39,7 +39,10 @@ main.serie{--dom:var(--violet)} main.jeu{--dom:var(--menthe)}
 html,body{overflow-x:clip}
 [hidden]{display:none!important}
 html{scrollbar-color:var(--trait2) var(--fond);-webkit-text-size-adjust:100%}
-body{margin:0;min-height:100vh;background:var(--fond);color:var(--texte);font:16px/1.55 var(--f-texte);letter-spacing:-.011em;font-optical-sizing:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;caret-color:var(--ambre);display:flex;flex-direction:column}
+html{background:var(--fond)}
+body::before{content:"";position:fixed;inset:-15%;z-index:-1;pointer-events:none;background:var(--amb,none) center/cover;filter:blur(110px) saturate(1.7);opacity:.42;transition:opacity .8s}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(120% 90% at 50% 0%,transparent 30%,color-mix(in srgb,var(--fond) 80%,transparent) 100%)}
+body{margin:0;min-height:100vh;background:transparent;color:var(--texte);font:16px/1.55 var(--f-texte);letter-spacing:-.011em;font-optical-sizing:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;caret-color:var(--ambre);display:flex;flex-direction:column}
 ::selection{background:color-mix(in srgb,var(--ambre) 38%,transparent);color:var(--blanc)}
 ::-webkit-scrollbar{width:10px;height:8px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:var(--trait2);border-radius:var(--r);border:2px solid var(--fond)}
 :focus-visible{outline:2px solid var(--ambre);outline-offset:3px;border-radius:var(--r)}
@@ -107,13 +110,15 @@ a.etiquette{text-decoration:none;transition:border-color .2s}a.etiquette:hover{b
 .section{margin-top:52px}
 .tete{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
 .tete h3{font:500 var(--t-section)/1.1 var(--f-titre);letter-spacing:-.01em;margin:0}
-.rang{position:relative} .rang::before{content:"";position:absolute;inset:-40px -10% auto;height:320px;z-index:-1;pointer-events:none;background:radial-gradient(60% 70% at 15% 30%,color-mix(in srgb,var(--dom-r) 14%,transparent),transparent 70%)}
+.rang{position:relative;isolation:isolate} .rang::before{content:"";position:absolute;inset:-40px -10% auto;height:320px;z-index:-1;pointer-events:none;background:radial-gradient(60% 70% at 15% 30%,color-mix(in srgb,var(--dom-r) 14%,transparent),transparent 70%)}
 .rang .tete h3{display:flex;align-items:center;gap:12px} .rang .tete h3 svg{width:26px;height:26px;color:var(--dom-r)}
 .rang-film{--dom-r:var(--ambre)} .rang-serie{--dom-r:var(--violet)} .rang-jeu{--dom-r:var(--menthe)}
 .tete p{margin:0;color:var(--doux);font-size:14px;max-width:62ch}
 
 /* Grille d'affiches */
-.grille{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:26px 18px}
+.grille{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:32px 22px}
+.c img,.pop .cadre img{transition:transform .6s var(--sortie)} .c:hover .cadre img,.pop:hover .cadre img{transform:scale(1.05)}
+.pop .cadre{transition:transform .35s var(--sortie),box-shadow .35s} .pop:hover .cadre{transform:translateY(-6px);box-shadow:0 24px 40px -18px var(--voile)}
 @media(max-width:1200px){.grille{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:900px){.grille{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .c{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0}
@@ -201,7 +206,7 @@ a.accroche:hover{color:var(--texte)}
 
 /* Accueil (premier passage, version site) */
 .accueil{position:relative;margin:24px 0 0;border-radius:var(--r);overflow:hidden;isolation:isolate;padding:clamp(36px,7vw,96px) clamp(24px,5vw,72px);border:1px solid color-mix(in srgb,var(--texte) 7%,transparent);min-height:clamp(420px,60vh,620px);display:flex;flex-direction:column;justify-content:center}
-.mur{position:absolute;inset:-10%;z-index:-2;display:grid;grid-template-columns:repeat(8,1fr);gap:13px;transform:rotate(-8deg) scale(1.15);opacity:.85;animation:defile 60s linear infinite alternate}
+.mur{position:absolute;inset:-10%;z-index:-2;display:grid;grid-template-columns:repeat(8,1fr);gap:13px;transform:rotate(-8deg) scale(1.15);opacity:.85;animation:defile 28s linear infinite alternate}
 .accueil .actions .bt:not(.plein){background:color-mix(in srgb,var(--surface) 92%,transparent)}
 .mur .tuile{position:relative;aspect-ratio:2/3;border-radius:var(--r);overflow:hidden;background:var(--surface2)}
 .mur .sans-image{font-size:16px;padding:13px}
@@ -216,7 +221,7 @@ a.accroche:hover{color:var(--texte)}
 
 /* Démarrage rapide */
 .rail{display:flex;gap:14px;overflow-x:auto;padding:6px 2px 16px;scroll-snap-type:x proximity;scrollbar-width:thin}
-.pop{flex:none;width:clamp(150px,13vw,196px);scroll-snap-align:start;display:flex;flex-direction:column;gap:6px}
+.pop{flex:none;width:clamp(160px,15vw,236px);scroll-snap-align:start;display:flex;flex-direction:column;gap:6px}
 .pop-note{display:block;width:100%;background:none;border:0;padding:0;cursor:pointer;border-radius:var(--r)}
 .pop-titre{font-size:14px;font-weight:500;color:var(--texte);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pop-titre:hover{text-decoration:underline;text-underline-offset:3px}
@@ -767,7 +772,9 @@ function rendre(){
  const tete = l1[0] || l2[0], vus = new Set([tete?.id]), reste = [...l1, ...l2].filter(r => !vus.has(r.id) && vus.add(r.id));
  const vide = filtresOn.size && (l1t.length || l2t.length) ? `<div class="vide">${ico(ICONE[onglet])}<span>Rien avec ces filtres.</span></div>`
   : `<div class="vide">${ico(ICONE[onglet])}<span>${WEB && !Moteur.aimes().length ? "Il suffit d'un titre noté J'aime ou J'adore (Sans plus et Non merci ne comptent pas)." : "Rien d'assez proche de tes goûts ici pour l'instant."} <a href="#/gouts">Ajoute quelques titres</a> et les recos apparaissent.</span></div>`;
- m.innerHTML = `${tete ? scene(tete) : `<div class="section">${vide}</div>`}
+ // Sans goûts : on montre les incontournables à noter plutôt qu'un message
+ const sansGouts = WEB && !tete && !filtresOn.size && !Moteur.aimes().length;
+ m.innerHTML = `${tete ? scene(tete) : sansGouts ? `<section class="section rang rang-${onglet}"><div class="tete"><h3>${ico(ICONE[onglet])}Les incontournables</h3></div><div class="grille">${Moteur.populaires(onglet, 60).filter(x => x.image).slice(0, 30).map(carte).join("")}</div></section>` : `<div class="section">${vide}</div>`}
   ${reste.length ? `<section class="section"><div class="tete"><h3>${TITRE_ONGLET[onglet]}</h3>${barreTri()}</div>${barreFiltres(onglet)}<div class="grille">${pleine(trier(reste)).map(carte).join("")}</div></section>` : ""}
   ${WEB ? railTendances(onglet) : ""}
   ${WEB && tete ? zoneDe() : ""}`;
@@ -778,7 +785,7 @@ function rendre(){
 const TITRE_ONGLET = {film: "Films pour toi", serie: "Séries pour toi", jeu: "Jeux pour toi"};
 function railTendances(dom){
  const l = Moteur.tendances(dom);
- return l.length ? `<section class="section"><div class="tete"><h3>En ce moment</h3></div>
+ return l.length ? `<section class="section rang rang-${dom}"><div class="tete"><h3>${ico(ICONE[dom])}En ce moment : ${{film: "films", serie: "séries", jeu: "jeux"}[dom]}</h3></div>
   <div class="rail rail-cartes">${l.map(carte).join("")}</div></section>` : "";
 }
 
@@ -841,7 +848,7 @@ function accueil(pret = true){
   <div class="cadre"><button class="pop-note couvre" onclick="ouvrir(this)" aria-expanded="false" aria-label="Donner ton avis : ${esc(x.titre)}">${couverture(x)}</button><span class="coche">${x.note && ICO_AVIS[x.note] ? ico(ICO_AVIS[x.note]) : ""}</span>${palette(x.id)}</div>
   <a class="pop-titre" href="${lienFiche(x)}" title="Voir la fiche">${esc(x.titre)}</a><span class="pop-etat">${x.note ? esc(ETAT_POP[x.note] || TEXTE[x.note]) : ""}</span></div>`).join("")}</div></section>`;
  const murHtml = mur.map(x=>`<div class="tuile">${couverture(x, "eager")}</div>`).join("");
- const rails = `${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}`;
+ const rails = `${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}${pret && WEB ? ["film", "serie", "jeu"].map(railTendances).join("") : ""}`;
  // Déjà affiché sans catalogue : on complète le mur et les rails sans retoucher le texte (pas de nouveau rendu du titre)
  // Idem quand l'accueil est déjà là (rechargement du profil par compte.js) : un titre redessiné repousse l'affichage mesuré (LCP)
  if (pret && $(".accueil")) { if ($(".accueil[data-attente]")) { $(".accueil").removeAttribute("data-attente"); $(".mur").innerHTML = murHtml; } $("#choix").innerHTML = rails; majProgres(); montrerGeste(); return; }
@@ -861,8 +868,10 @@ function accueil(pret = true){
 function montrerGeste(){
  const p = $(".rang .pop[data-n='']"); if (!p || !("IntersectionObserver" in window)) return;
  try { if (localStorage.getItem("pontil-geste")) return; } catch {}
+ // Dès que le visiteur touche quoi que ce soit, la démonstration n'a plus lieu d'être
+ let touche = false; addEventListener("pointerdown", () => touche = true, {once: true, capture: true});
  const o = new IntersectionObserver(e => { if (!e[0].isIntersecting) return; o.disconnect();
-  setTimeout(() => { if (!document.querySelector(".ouvert")) { p.classList.add("ouvert"); try { localStorage.setItem("pontil-geste", "1"); } catch {} } }, 500); }, {threshold: .8});
+  setTimeout(() => { if (!touche && p.dataset.n === "" && !document.querySelector(".ouvert")) { p.classList.add("ouvert"); try { localStorage.setItem("pontil-geste", "1"); } catch {} } }, 500); }, {threshold: .8});
  o.observe(p);
 }
 async function majProgres(){ const n = await compter(); if (!$("#jauge")) return;
@@ -998,6 +1007,12 @@ $("#chercher").onclick = recherche;
 // Nouvelle page dans #main : fondu d'entrée (pas pour une simple mise à jour d'une carte)
 // Seulement quand l'adresse change : un nouveau rendu de la même page (avis des visiteurs, note) ne doit rien faire bouger sous le doigt
 let pageAnimee = location.hash;
+function majAmbiance(){
+ const v = document.querySelector("#main .scene, #main .fiche-tete")?.style.getPropertyValue("--img")
+  || ((i => i ? `url('${i.src}')` : "")(document.querySelector("#main .mur img, #main .cadre img")));
+ if (v) document.body.style.setProperty("--amb", v);
+}
+new MutationObserver(majAmbiance).observe($("#main"), {childList: true, subtree: true});
 new MutationObserver(() => { const m = $("#main"); if (location.hash === pageAnimee) return; pageAnimee = location.hash;
  m.classList.remove("entre"); void m.offsetWidth; m.classList.add("entre"); }).observe($("#main"), {childList: true});
 // Le dé de l'en-tête : va sur l'onglet en cours (Films par défaut), descend jusqu'au dé et le lance
