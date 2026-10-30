@@ -40,7 +40,7 @@ html,body{overflow-x:clip}
 [hidden]{display:none!important}
 html{scrollbar-color:var(--trait2) var(--fond);-webkit-text-size-adjust:100%}
 html{background:var(--fond)}
-body::before{content:"";position:fixed;inset:-15%;z-index:-1;pointer-events:none;background:var(--amb,none) center/cover;filter:blur(110px) saturate(1.7);opacity:.42;transition:opacity .8s}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(90% 55% at 50% -10%,color-mix(in srgb,var(--texte) 7%,transparent),transparent 70%)}
 body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(120% 90% at 50% 0%,transparent 30%,color-mix(in srgb,var(--fond) 80%,transparent) 100%)}
 body{margin:0;min-height:100vh;background:transparent;color:var(--texte);font:16px/1.55 var(--f-texte);letter-spacing:-.011em;font-optical-sizing:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;caret-color:var(--ambre);display:flex;flex-direction:column}
 ::selection{background:color-mix(in srgb,var(--ambre) 38%,transparent);color:var(--blanc)}
@@ -73,7 +73,7 @@ main{flex:1;min-height:100vh;width:100%;max-width:1480px;margin:auto;padding:0 v
 /* Grande affiche (meilleure reco) */
 .scene{position:relative;margin:24px 0 8px;border-radius:var(--r);overflow:hidden;isolation:isolate;min-height:clamp(380px,52vh,560px);display:grid;grid-template-columns:1fr auto;align-items:end;gap:40px;padding:clamp(24px,4vw,56px);border:1px solid color-mix(in srgb,var(--texte) 7%,transparent)}
 .scene::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,color-mix(in srgb,var(--noir) 94%,transparent) 0%,color-mix(in srgb,var(--noir) 70%,transparent) 45%,color-mix(in srgb,var(--noir) 15%,transparent) 100%),linear-gradient(0deg,color-mix(in srgb,var(--noir) 60%,transparent),transparent 40%)}
-.scene::after,.fiche-tete::after{content:"";position:absolute;inset:-60px;z-index:-2;background:var(--img,none) center/cover;filter:blur(40px) saturate(1.4);opacity:.75}
+.scene::after,.fiche-tete::after{content:"";position:absolute;inset:-60px;z-index:-2;background:var(--img,none) center/cover;filter:blur(50px) saturate(1.05);opacity:.5}
 .scene .affiche:hover{transform:rotate(0) scale(1.02)}
 .scene .texte{max-width:640px;display:flex;flex-direction:column;gap:14px;animation:entre .9s var(--sortie) both}
 .etiquette{align-self:flex-start;display:flex;align-items:center;gap:8px;font:600 12px var(--f-texte);color:var(--texte);padding:6px 13px 6px 10px;border-radius:var(--r);background:color-mix(in srgb,var(--texte) 8%,transparent);border:1px solid color-mix(in srgb,var(--texte) 10%,transparent);}
@@ -432,7 +432,7 @@ header .connexion:hover{background:var(--blanc)}
 @media(prefers-reduced-motion:reduce){.lancer.roule svg,.tirage{animation:none}}
 
 /* Fiche d'un titre (page entière, #/film/ID) */
-.fiche-tete{position:relative;margin:24px 0 0;border-radius:var(--r);overflow:hidden;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:start;padding:clamp(22px,4vw,52px);border:1px solid color-mix(in srgb,var(--texte) 7%,transparent)}
+.fiche-tete{position:relative;margin:24px 0 0;border-radius:var(--r);overflow:hidden;isolation:isolate;display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:start;padding:clamp(22px,4vw,52px)}
 .fiche-tete::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,color-mix(in srgb,var(--noir) 96%,transparent) 10%,color-mix(in srgb,var(--noir) 60%,transparent))}
 .aff-fiche{position:relative;width:clamp(150px,18vw,250px);aspect-ratio:2/3;border-radius:var(--r);overflow:hidden;background:var(--surface2);box-shadow:0 30px 60px -18px color-mix(in srgb,var(--noir) 90%,transparent),0 0 0 1px color-mix(in srgb,var(--texte) 8%,transparent)}
 .fiche-tete .texte{display:flex;flex-direction:column;gap:13px;min-width:0}
@@ -898,12 +898,13 @@ async function majProgres(){ const n = await compter(); if (!$("#jauge")) return
 const AVIS = [["adore", "coeur", "J'adore"], ["aime", "pouce", "J'aime"], ["vu", "oeil", "Sans plus"], ["bof", "non", "Non merci"]];
 const ICO_AVIS = Object.fromEntries(AVIS.map(([k, i]) => [k, i]));
 const ETAT_POP = Object.fromEntries(AVIS.map(([k, , t]) => [k, t]));
-const palette = id => `<div class="palette" role="group" aria-label="Ton avis">${AVIS.map(([k, i, t]) => `<button data-v="${k}" onclick="avis('${id}','${k}',this)">${ico(i)}${t}</button>`).join("")}</div>`;
+const palette = id => `<div class="palette" role="group" aria-label="Ton avis" onclick="if(event.target===this&&vite(this.closest('[data-n]')))ficheDirecte(this)">${AVIS.map(([k, i, t]) => `<button data-v="${k}" onclick="avis('${id}','${k}',this)">${ico(i)}${t}</button>`).join("")}</div>`;
 function fermer(sauf){ document.querySelectorAll(".ouvert").forEach(x => { if (x !== sauf) { x.classList.remove("ouvert"); x.querySelector(".couvre")?.setAttribute("aria-expanded", "false"); } }); }
 // Double clic (ou double appui) sur une affiche : ouvre directement la fiche, sans passer par le titre.
-// Le 1er clic ouvre la palette qui recouvre l'affiche : un 2e clic dans les 350 ms (affiche ou palette) mène à la fiche.
+// Le 1er clic ouvre la palette qui recouvre l'affiche : un 2e clic dans les 500 ms (délai Windows), sur un bouton
+// ou entre deux boutons de la palette, mène à la fiche.
 function ficheDirecte(el){ const l = el.closest("[data-n]").querySelector("a.titre, a.pop-titre"); if (l) location.href = l.href; }
-const vite = b => Date.now() - (b._clic || 0) < 350;
+const vite = b => Date.now() - (b._clic || 0) < 500;
 function ouvrir(el){ const b = el.closest("[data-n]"); if (vite(b)) return ficheDirecte(el);
  const o = !b.classList.contains("ouvert"); fermer(b); b._clic = o ? Date.now() : 0;
  b.classList.toggle("ouvert", o); el.setAttribute("aria-expanded", o); }
