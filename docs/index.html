@@ -48,7 +48,7 @@ body{margin:0;min-height:100vh;background:transparent;color:var(--texte);font:16
 :focus-visible{outline:2px solid var(--ambre);outline-offset:3px;border-radius:var(--r)}
 a{color:inherit;text-underline-offset:3px}
 button{font-family:inherit}
-svg{flex:none}
+svg{flex:none;fill:color-mix(in srgb,currentColor 16%,transparent)}
 
 /* En-tête */
 /* Barre façon Apple : translucide et floutée, liens en texte, aucune boîte */
@@ -123,8 +123,8 @@ a.etiquette{text-decoration:none;transition:border-color .2s}a.etiquette:hover{b
 @media(max-width:900px){.grille{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .c{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0}
 .c.note{opacity:.3;pointer-events:none;transition:opacity .3s}
-.cadre{position:relative;aspect-ratio:2/3;border-radius:var(--r);overflow:hidden;background:linear-gradient(155deg,var(--surface3),var(--surface0));box-shadow:0 0 0 1px color-mix(in srgb,var(--texte) 6%,transparent);transition:transform .45s var(--sortie),box-shadow .45s var(--sortie)}
-.c:hover .cadre,.c:focus-within .cadre{transform:translateY(-5px);box-shadow:var(--ombre),0 0 0 1px color-mix(in srgb,var(--texte) 12%,transparent)}
+.cadre{position:relative;aspect-ratio:2/3;border-radius:var(--r);overflow:hidden;background:color-mix(in srgb,var(--texte) 4%,transparent);transition:transform .45s var(--sortie),box-shadow .45s var(--sortie)}
+.c:hover .cadre,.c:focus-within .cadre{transform:translateY(-5px);box-shadow:var(--ombre)}
 .sans-image{position:absolute;inset:0;display:flex;flex-direction:column;gap:13px;padding:16px;overflow:hidden;font:500 20px/1.12 var(--f-titre);color:var(--texte);background:linear-gradient(var(--a,150deg),color-mix(in srgb,var(--dom) 38%,var(--surface2)),var(--surface2) 72%)}
 .sans-image span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;text-wrap:balance}
 .sans-image svg{width:24px;height:24px;flex:none;color:var(--dom)}
@@ -341,6 +341,18 @@ footer a{color:var(--doux)}
 
 .toast{position:fixed;z-index:30;bottom:24px;left:50%;display:flex;align-items:center;gap:10px;transform:translateX(-50%) translateY(120px);background:var(--surface2);border:1px solid var(--trait2);box-shadow:var(--ombre);padding:11px 18px 11px 14px;border-radius:var(--r);transition:transform .45s var(--sortie);font-size:14px;font-weight:500}
 .toast svg{width:17px;height:17px;color:var(--menthe)}
+.toast button{margin-left:6px;background:none;border:0;color:var(--ambre);font:600 14px var(--f-texte);cursor:pointer;padding:4px 6px;border-radius:6px}
+.toast button:hover{background:color-mix(in srgb,var(--ambre) 14%,transparent)} .toast button:focus-visible{outline:2px solid var(--ambre)}
+.garde{position:absolute;z-index:4;bottom:8px;right:8px;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:0;cursor:pointer;color:var(--blanc);background:color-mix(in srgb,var(--noir) 62%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);opacity:0;transform:translateY(4px);transition:opacity .2s,transform .25s var(--sortie),background-color .2s}
+.garde svg{width:17px;height:17px} .garde.on{opacity:1;transform:none;color:var(--ambre)}
+.c:hover .garde,.pop:hover .garde,.garde:focus-visible{opacity:1;transform:none} .garde:hover{background:color-mix(in srgb,var(--noir) 82%,transparent)}
+.garde:focus-visible{outline:2px solid var(--ambre);outline-offset:2px}
+@media(hover:none){.garde{opacity:1;transform:none;width:30px;height:30px}}
+.ouvert .garde{display:none}
+.haut{position:fixed;z-index:25;right:24px;bottom:24px;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;border:0;cursor:pointer;color:var(--fond);background:var(--texte);box-shadow:var(--ombre);opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .25s,transform .3s var(--sortie),visibility 0s .3s}
+.haut.v{opacity:1;visibility:visible;transform:none;transition:opacity .25s,transform .3s var(--sortie)} .haut svg{width:20px;height:20px}
+.haut:focus-visible{outline:2px solid var(--ambre);outline-offset:3px}
+.indice-r{grid-column:1/-1;margin:4px 0 0;color:var(--doux);font-size:14px}
 .toast:not(.v){visibility:hidden;transition:transform .45s var(--sortie),visibility 0s .45s}
 .toast.v{transform:translateX(-50%) translateY(0)}
 
@@ -518,30 +530,33 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 -->
 <svg style="display:none" aria-hidden="true">
- <symbol id="film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></symbol>
- <symbol id="tv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="15" x="2" y="7" rx="2"/><path d="m17 2-5 5-5-5"/></symbol>
- <symbol id="manette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59l-.9 7.2A3 3 0 0 0 4.78 19c.98 0 1.88-.48 2.44-1.27l1.15-1.64A2 2 0 0 1 10 15.25h4a2 2 0 0 1 1.63.84l1.15 1.64A3 3 0 0 0 19.22 19a3 3 0 0 0 2.98-3.21l-.9-7.2A4 4 0 0 0 17.32 5z"/></symbol>
- <symbol id="coeur" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
- <symbol id="pouce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></symbol>
- <symbol id="oeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></symbol>
- <symbol id="non" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></symbol>
- <symbol id="pont" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6v12M20 6v12M4 10c3 0 5 3 8 3s5-3 8-3"/></symbol>
- <symbol id="televerse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
- <symbol id="bulle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
- <symbol id="de" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M16 8h.01M8 8h.01M8 16h.01M16 16h.01M12 12h.01"/></symbol>
- <symbol id="relance" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
- <symbol id="etoile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 2.3a.53.53 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.1l5.2.8a.53.53 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.53.53 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.53.53 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.8a.53.53 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.1z"/></symbol>
- <symbol id="loupe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
- <symbol id="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
- <symbol id="ecran" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
- <symbol id="liste" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h13M3 12h13M3 18h9M19 14v6M16 17h6"/></symbol>
- <symbol id="partage" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
- <symbol id="corbeille" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></symbol>
- <symbol id="lien" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
- <symbol id="cadenas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
- <symbol id="horloge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol><symbol id="eclair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+ <symbol id="film" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></symbol>
+ <symbol id="tv" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="15" x="2" y="7" rx="2"/><path d="m17 2-5 5-5-5"/></symbol>
+ <symbol id="manette" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59l-.9 7.2A3 3 0 0 0 4.78 19c.98 0 1.88-.48 2.44-1.27l1.15-1.64A2 2 0 0 1 10 15.25h4a2 2 0 0 1 1.63.84l1.15 1.64A3 3 0 0 0 19.22 19a3 3 0 0 0 2.98-3.21l-.9-7.2A4 4 0 0 0 17.32 5z"/></symbol>
+ <symbol id="garde-vide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></symbol>
+ <symbol id="garde-plein" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></symbol>
+ <symbol id="haut" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></symbol>
+ <symbol id="coeur" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+ <symbol id="pouce" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></symbol>
+ <symbol id="oeil" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></symbol>
+ <symbol id="non" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></symbol>
+ <symbol id="pont" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6v12M20 6v12M4 10c3 0 5 3 8 3s5-3 8-3"/></symbol>
+ <symbol id="televerse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
+ <symbol id="bulle" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+ <symbol id="de" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M16 8h.01M8 8h.01M8 16h.01M16 16h.01M12 12h.01"/></symbol>
+ <symbol id="relance" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+ <symbol id="etoile" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 2.3a.53.53 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.1l5.2.8a.53.53 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.53.53 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.53.53 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.8a.53.53 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.1z"/></symbol>
+ <symbol id="loupe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+ <symbol id="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+ <symbol id="ecran" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+ <symbol id="liste" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h13M3 12h13M3 18h9M19 14v6M16 17h6"/></symbol>
+ <symbol id="partage" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
+ <symbol id="corbeille" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></symbol>
+ <symbol id="lien" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+ <symbol id="cadenas" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+ <symbol id="horloge" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol><symbol id="eclair" viewBox="0 0 24 24" class="plein" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
  <symbol id="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
- <symbol id="telecharge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 10l5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
+ <symbol id="telecharge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 10l5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
 </svg>
 <header><div class="barre">
  <a class="logo" href="#/accueil" aria-label="Pontil, accueil"><b><svg aria-hidden="true"><use href="#pont"/></svg></b>Pontil</a>
@@ -561,8 +576,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  <ul class="pied-liens"><li><a href="#/film">Films</a></li><li><a href="#/serie">Séries</a></li><li><a href="#/jeu">Jeux</a></li><li><a href="#/gouts">Mes goûts</a></li><li><a href="#/listes">Mes listes</a></li></ul>
 </div><div class="pied-bas"><span>Données Wikidata, SteamSpy et Wikipédia.</span><a href="mailto:contact@pontil.fr">contact@pontil.fr</a><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="haut" id="haut" aria-label="Revenir en haut" onclick="scrollTo({top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'})"><svg aria-hidden="true"><use href="#haut"/></svg></button>
 <script src="langue.js?v=8de6320df8"></script>
-<script src="moteur.js?v=e7551bc643"></script>
+<script src="moteur.js?v=68cf85b687"></script>
 <script>
 let onglet = "film", data = null;
 const $ = s => document.querySelector(s);
@@ -590,7 +606,7 @@ const api = WEB ? {
  liste: q => json(`/api/liste?themes=${encodeURIComponent((q.themes || []).join("|"))}&annee=${q.annee || ""}&tri=${q.tri || ""}`),
  importer: async (nom, texte) => (await poster("/api/import",{nom, texte})).json(),
 };
-function toast(t){const e=$("#toast");e.innerHTML=ico("ok")+esc(t);e.classList.add("v");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("v"),1900)}
+function toast(t, annuler){const e=$("#toast");e.innerHTML=ico("ok")+esc(t);if(annuler){const b=document.createElement("button");b.textContent="Annuler";b.onclick=()=>{e.classList.remove("v");annuler();};e.append(b);}e.classList.add("v");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("v"),annuler?4500:1900)}
 // Wikipédia dans la langue affichée (r.wiki = article anglais, connu depuis Wikidata)
 function lien(r){return r.steam?`https://store.steampowered.com/app/${r.steam}`:enAnglais()?(r.wiki?`https://en.wikipedia.org/wiki/${r.wiki}`:`https://en.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`):`https://fr.wikipedia.org/wiki/Special:Search/${encodeURIComponent(r.titre)}`}
 // Vraie affiche (jaquette verticale Steam pour les jeux), posée sur une couverture dessinée qui sert de repli
@@ -734,7 +750,7 @@ const pleine = l => l.length > 12 ? l.slice(0, l.length - l.length % 12) : l;
 function carte(r){
  return `<article class="c" id="c-${r.id}" data-n="">
   <div class="cadre">
-   <button class="couvre" onclick="ouvrir(this)" aria-expanded="false" aria-label="Donner ton avis : ${esc(r.titre)}">${couverture(r)}</button><span class="coche"></span>${palette(r.id)}
+   <button class="couvre" onclick="ouvrir(this)" aria-expanded="false" aria-label="Donner ton avis : ${esc(r.titre)}">${couverture(r)}</button><span class="coche"></span>${palette(r.id)}${boutonAVoir(r.id)}
    ${r.match != null ? `<a class="pct" href="${lienFiche(r, "score")}" title="D'où vient ce score"><span class="vh">Correspondance :</span><i></i>${r.match} %</a>` : ""}${etoile(r)}
   </div>
   <div class="legende"><a class="titre" href="${lienFiche(r)}">${esc(r.titre)}</a><span><span><span class="type-c">${NOM[r.dom]}, </span>${lienAnnee(r.annee)}${r.annee ? ", " : ""}${r.themes?.[0] ? `<a href="${lienListe("theme", r.themes[0])}">${esc(r.themes[0])}</a>` : NOM[r.dom]}</span>${badgeDuree(r)}${r.gratuit ? `<small class="gratuit">Gratuit</small>` : ""}</span>
@@ -825,11 +841,12 @@ async function charger(){ if (enCours) return; enCours = true; try { data = awai
 let nbNotes = 0;
 async function compter(){ const n = nbNotes = (await api.gouts()).length; $("#compte").innerHTML = n ? `<b>${n}</b> titres notés` : ""; return n; }
 
-async function noter(id, note){
+async function noter(id, note, retour){
+ const avant = document.getElementById("c-"+id)?.dataset.n ?? (FICHE?.id === id ? FICHE.note || "" : "");
  await api.noter(id, note);
  data = null;
  const c = document.getElementById("c-"+id); if (c) c.classList.add("note");
- toast(note==="bof" ? "Noté, il ne reviendra plus" : note ? "Noté, recos mises à jour" : "Retiré");
+ toast(retour ? "Note annulée" : note==="bof" ? "Noté, il ne reviendra plus" : note ? "Noté, recos mises à jour" : "Retiré", retour ? null : () => noter(id, avant, true));
  compter();
  if (vue === "fiche" && FICHE?.id === id){ FICHE.note = note; $("#actions-fiche").innerHTML = actionsFiche(FICHE); return; }
  if (vue !== "onglet") return;
@@ -845,7 +862,7 @@ function accueil(pret = true){
  const mur = pret ? ["film","serie","film","jeu"].flatMap(d => Moteur.populaires(d, 12)).filter(x => x.image).slice(0, 40) : [];
  // L'affiche note (geste rapide), le titre en dessous ouvre la fiche, l'état est écrit sous chaque affiche
  const rang = (d, nom) => `<section class="section rang rang-${d}"><div class="tete"><h3>${ico(ICONE[d])}${nom}</h3></div><div class="rail">${!pret ? '<div class="pop" aria-hidden="true"><div class="squelette"></div><span class="pop-titre">&nbsp;</span><span class="pop-etat"></span></div>'.repeat(10) : Moteur.populaires(d, 40).map(x=>`<div class="pop" data-n="${x.note || ""}">
-  <div class="cadre"><button class="pop-note couvre" onclick="ouvrir(this)" aria-expanded="false" aria-label="Donner ton avis : ${esc(x.titre)}">${couverture(x)}</button><span class="coche">${x.note && ICO_AVIS[x.note] ? ico(ICO_AVIS[x.note]) : ""}</span>${palette(x.id)}</div>
+  <div class="cadre"><button class="pop-note couvre" onclick="ouvrir(this)" aria-expanded="false" aria-label="Donner ton avis : ${esc(x.titre)}">${couverture(x)}</button><span class="coche">${x.note && ICO_AVIS[x.note] ? ico(ICO_AVIS[x.note]) : ""}</span>${palette(x.id)}${boutonAVoir(x.id)}</div>
   <a class="pop-titre" href="${lienFiche(x)}" title="Voir la fiche">${esc(x.titre)}</a><span class="pop-etat">${x.note ? esc(ETAT_POP[x.note] || TEXTE[x.note]) : ""}</span></div>`).join("")}</div></section>`;
  const murHtml = mur.map(x=>`<div class="tuile">${couverture(x, "eager")}</div>`).join("");
  const rails = `${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}${pret && WEB ? ["film", "serie", "jeu"].map(railTendances).join("") : ""}`;
@@ -892,9 +909,11 @@ function ouvrir(el){ const b = el.closest("[data-n]"); if (vite(b)) return fiche
  b.classList.toggle("ouvert", o); el.setAttribute("aria-expanded", o); }
 function avis(id, v, el){
  if (vite(el.closest("[data-n]"))) return ficheDirecte(el);
- const b = el.closest("[data-n]"), n = b.dataset.n === v ? "" : v;
+ const b = el.closest("[data-n]"), n = b.dataset.n === v ? "" : v, avant = b.dataset.n;
  b.dataset.n = n; fermer(); b.querySelector(".pop-etat").textContent = ETAT_POP[n] || ""; b.querySelector(".coche").innerHTML = n ? ico(ICO_AVIS[n]) : "";
  api.noter(id, n); data = null; if (vue === "accueil") majProgres(); else compter();
+ if (vue !== "accueil") toast(n ? ETAT_POP[n] : "Avis retiré", () => { b.dataset.n = avant; b.querySelector(".pop-etat").textContent = ETAT_POP[avant] || ""; b.querySelector(".coche").innerHTML = avant ? ico(ICO_AVIS[avant]) : "";
+  api.noter(id, avant); data = null; if (vue === "accueil") majProgres(); else compter(); });
 }
 addEventListener("click", e => { if (!e.target.closest(".ouvert")) fermer(); });
 addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
@@ -988,6 +1007,9 @@ async function gouts(){
 }
 
 // Recherche globale : n'importe quel titre du catalogue, à noter ou à commenter directement
+// Avant de taper : ce dont tout le monde parle cette semaine, pour ne jamais tomber sur une page vide
+const suggestions = () => { if (!WEB) return ""; const l = ["film", "serie", "jeu"].flatMap(d => Moteur.tendances(d).slice(0, 4));
+ return l.length ? `<p class="indice-r">En ce moment</p>${l.map(x => carte({...x, parce_que: []})).join("")}` : ""; };
 function recherche(){
  const v = document.createElement("div"); v.className = "fond-recherche";
  v.innerHTML = `<div class="panneau-recherche"><label class="champ">${ico("loupe")}<input id="qg" placeholder="Un film, une série, un jeu..." autocomplete="off"></label><div class="grille" id="rg"></div></div>`;
@@ -995,9 +1017,9 @@ function recherche(){
  const fermer = () => { v.classList.add("part"); document.body.style.overflow = ""; setTimeout(() => v.remove(), 180); };
  v.onclick = e => { if (e.target === v) fermer(); };
  v.onkeydown = e => { if (e.key === "Escape") fermer(); };
- const q = v.querySelector("#qg"); q.focus();
+ const q = v.querySelector("#qg"); q.focus(); v.querySelector("#rg").innerHTML = suggestions();
  let t; q.oninput = () => { clearTimeout(t); t = setTimeout(async () => {
-  if (!q.value.trim()){ v.querySelector("#rg").innerHTML = ""; return; }
+  if (!q.value.trim()){ v.querySelector("#rg").innerHTML = suggestions(); return; }
   const r = await api.cherche(q.value);
   if (!v.dataset.compte){ v.dataset.compte = 1; dispatchEvent(new CustomEvent("action-visiteur")); }
   v.querySelector("#rg").innerHTML = r.length ? r.map(x => carte({...x, parce_que: []})).join("") : `<p class="indice">Rien trouvé pour « ${esc(q.value)} ».</p>`;
@@ -1007,6 +1029,7 @@ $("#chercher").onclick = recherche;
 // Nouvelle page dans #main : fondu d'entrée (pas pour une simple mise à jour d'une carte)
 // Seulement quand l'adresse change : un nouveau rendu de la même page (avis des visiteurs, note) ne doit rien faire bouger sous le doigt
 let pageAnimee = location.hash;
+addEventListener("scroll", () => $("#haut").classList.toggle("v", scrollY > 1400), {passive: true});
 function majAmbiance(){
  const v = document.querySelector("#main .scene, #main .fiche-tete")?.style.getPropertyValue("--img")
   || ((i => i ? `url('${i.src}')` : "")(document.querySelector("#main .mur img, #main .cadre img")));
@@ -1204,6 +1227,18 @@ function menuListe(bouton, id){
  const listes = lireListes();
  m.innerHTML = `<div class="listes-menu">${listes.map((l, k) => `<label><input type="checkbox" ${l.items.includes(id) ? "checked" : ""} onchange="basculerDansListe(${k}, '${id}', this.checked)">${esc(l.titre)}</label>`).join("")}
   <form onsubmit="event.preventDefault(); nouvelleListe(this.nom.value, '${id}')"><input type="text" name="nom" maxlength="60" placeholder="Nouvelle liste : Ma liste d'automne" aria-label="Nom de la nouvelle liste" required><button class="bt plein">Créer</button></form></div>`;
+}
+// « À voir » en un clic, depuis n'importe quelle affiche : une liste créée d'office, la première de Mes listes
+const A_VOIR = "À voir";
+const dansAVoir = id => lireListes().some(l => l.titre === A_VOIR && l.items.includes(id));
+const boutonAVoir = id => { const on = dansAVoir(id); return `<button class="garde${on ? " on" : ""}" onclick="basculerAVoir('${id}')" aria-pressed="${on}" aria-label="${on ? "Retirer de" : "Ajouter à"} la liste À voir" title="À voir">${ico(on ? "garde-plein" : "garde-vide")}</button>`; };
+function basculerAVoir(id){
+ const l = lireListes(); let k = l.findIndex(x => x.titre === A_VOIR);
+ if (k < 0) { l.unshift({titre: A_VOIR, items: [], cree: Date.now()}); k = 0; }
+ const dedans = !l[k].items.includes(id);
+ l[k].items = l[k].items.filter(x => x !== id); if (dedans) l[k].items.push(id); ecrireListes(l);
+ document.querySelectorAll(`.garde[onclick*="'${id}'"]`).forEach(g => { g.classList.toggle("on", dedans); g.setAttribute("aria-pressed", dedans); g.innerHTML = ico(dedans ? "garde-plein" : "garde-vide"); });
+ toast(dedans ? "Ajouté à À voir" : "Retiré de À voir", () => basculerAVoir(id));
 }
 function basculerDansListe(k, id, dedans){
  const l = lireListes(); if (!l[k]) return;
