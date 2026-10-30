@@ -64,12 +64,22 @@ function courbe(parJour) {
   return `<svg id="courbe" viewBox="0 0 ${L} ${H}" preserveAspectRatio="none" role="img" aria-label="Visites des 30 derniers jours">${barres}${ax}</svg>`;
 }
 
+// Clé secrète du propriétaire (lien #cle=... ouvert une fois) : gardée dans ce navigateur, retirée de l'adresse.
+// Avec elle, pas besoin de se connecter (fonction SQL stats_cle) ; sinon, compte du propriétaire (stats).
+let cle = null;
+try { const m = location.hash.match(/cle=([0-9a-f]{20,})/); if (m) { localStorage.setItem("pontil-cle-stats", m[1]); history.replaceState(null, "", location.pathname); } cle = localStorage.getItem("pontil-cle-stats"); } catch (e) { /* stockage bloqué */ }
+
 async function charger() {
-  const {data: {session}} = await sb.auth.getSession();
-  if (!session) { $("#contenu").innerHTML = '<p id="porte">Connecte-toi d\'abord sur <a href="./">pontil.fr</a>, puis reviens ici.</p>'; return; }
-  const {data: s, error} = await sb.rpc("stats");
+  let s, error;
+  if (cle) ({data: s, error} = await sb.rpc("stats_cle", {cle}));
+  else {
+    const {data: {session}} = await sb.auth.getSession();
+    if (!session) { $("#contenu").innerHTML = '<p id="porte">Connecte-toi d\'abord sur <a href="./">pontil.fr</a>, puis reviens ici.</p>'; return; }
+    ({data: s, error} = await sb.rpc("stats"));
+  }
   if (error) { $("#contenu").innerHTML = '<p id="porte">Page réservée au propriétaire du site.</p>'; return; }
-  try { const c = await (await fetch("catalogue.json")).json(); for (const [id, it] of Object.entries(c)) titres[id] = it.titre || it.t || id; } catch (e) { /* noms bruts */ }
+  // Catalogue compact (site.py) : une ligne par titre, [id, domaine, titre, ...]
+  if (!Object.keys(titres).length) try { const c = await (await fetch("catalogue.json")).json(); for (const l of c.lignes || []) titres[l[0]] = l[2]; } catch (e) { /* noms bruts */ }
   $("#maj").textContent = "Mis à jour " + new Date().toLocaleTimeString("fr-FR", {hour: "2-digit", minute: "2-digit"});
   $("#contenu").innerHTML = `
   <div class="kpis">
@@ -86,6 +96,7 @@ async function charger() {
   <div class="bloc"><h2>Titres les plus notés par les comptes</h2>${liste(s.notes, k => titres[k] || k)}</div>`;
 }
 charger();
+setInterval(charger, 60000);  // l'appli reste ouverte : chiffres rafraîchis chaque minute
 </script>
 </body>
 </html>

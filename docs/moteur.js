@@ -9,12 +9,15 @@ const Moteur = (() => {
       "The Hangover", "Your Name", "John Wick", "Titanic", "Parasite", "Shrek", "Mad Max: Fury Road", "Hereditary", "The Wolf of Wall Street",
       "Spirited Away", "Gladiator", "The Notebook", "Dune", "It", "Deadpool", "Coco", "Joker", "A Quiet Place", "Pulp Fiction", "Toy Story 3",
       "The Matrix", "Whiplash", "Fast & Furious 7", "Intouchables", "Avengers: Endgame", "Mean Girls", "Oppenheimer", "Harry Potter and the Philosopher's Stone",
-      "Top Gun: Maverick", "Knives Out", "Everything Everywhere All at Once", "The Lord of the Rings: The Fellowship of the Ring"],
+      "Top Gun: Maverick", "Knives Out", "Everything Everywhere All at Once", "The Lord of the Rings: The Fellowship of the Ring",
+      // Réserve : remplace ceux que le catalogue n'a pas (sans affiche), avant de compléter par les plus connus
+      "Up", "Fight Club", "Forrest Gump", "The Lion King", "Inside Out", "Barbie", "Back to the Future", "The Shawshank Redemption"],
     serie: ["Breaking Bad", "Stranger Things", "The Office", "Attack on Titan", "Game of Thrones", "Friends", "The Haunting of Hill House",
       "Squid Game", "Brooklyn Nine-Nine", "Arcane", "Peaky Blinders", "Bridgerton", "The Walking Dead", "Rick and Morty", "Money Heist",
       "The Witcher", "Sex Education", "Dark", "One Piece", "The Boys", "Modern Family", "Sherlock", "Grey's Anatomy", "Chernobyl",
       "Death Note", "Wednesday", "How I Met Your Mother", "Narcos", "The Last of Us", "Lupin", "Black Mirror", "The Simpsons",
-      "Euphoria", "Prison Break", "The Mandalorian", "Demon Slayer: Kimetsu no Yaiba", "Succession", "Kaamelott", "True Detective", "Severance"],
+      "Euphoria", "Prison Break", "The Mandalorian", "Demon Slayer: Kimetsu no Yaiba", "Succession", "Kaamelott", "True Detective", "Severance",
+      "Better Call Saul", "Dexter", "Lost", "The Crown", "Vikings", "Lucifer"],
     jeu: ["Red Dead Redemption 2", "Stardew Valley", "ELDEN RING", "It Takes Two", "Resident Evil 4", "Hades", "The Witcher 3: Wild Hunt — Remastered",
       "Portal 2", "Counter-Strike 2", "Hollow Knight", "Baldur's Gate 3", "Phasmophobia", "Rocket League", "Cyberpunk 2077", "Terraria",
       "Grand Theft Auto V Legacy", "Celeste", "Forza Horizon 5", "Dead by Daylight", "God of War", "Sekiro: Shadows Die Twice - GOTY Edition",
@@ -37,7 +40,7 @@ const Moteur = (() => {
     // Tendances de la semaine (tendances.py), mises à jour chaque jour : facultatives, le site marche sans.
     const facultatif = url => fetch(url).then(r => r.ok ? r.json() : {}).catch(() => ({}));
     const signaux = Promise.all([facultatif("tendances.json?v=f7fb36aa15")]);
-    const brut = await (await fetch("catalogue.json?v=88007cb890")).json();
+    const brut = await (await fetch("catalogue.json?v=fb6160e43f")).json();
     TENDANCES = {};
     for (const s of await signaux) for (const l of Object.values(s)) if (Array.isArray(l)) for (const [i, t] of l) TENDANCES[i] = Math.max(TENDANCES[i] || 0, t);
     CAT = brut.v === 1 ? deplier(brut) : brut;
@@ -56,14 +59,14 @@ const Moteur = (() => {
   // Catalogue compact du site (site.py) : on reconstruit les objets
   function deplier({themes, prefixes, lignes}) {
     const cat = {}, milliers = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    for (const [id, d, titre, titre_en, annee, q, th, img, wiki, imdb, steam, avis, metacritic, rt, note_imdb, votes_imdb, plateformes, boutiques, dispo, duree, gratuit, modes] of lignes) {
+    for (const [id, d, titre, titre_en, annee, q, th, img, wiki, imdb, steam, avis, metacritic, rt, note_imdb, votes_imdb, plateformes, boutiques, dispo, duree, gratuit, modes, liens, bande] of lignes) {
       const dom = ["film", "serie", "jeu"][d];
       const image = dom === "jeu" && steam ? `https://cdn.akamai.steamstatic.com/steam/apps/${steam}/header.jpg` : !img ? undefined : /^\d:/.test(img) ? prefixes[+img[0]] + img.slice(2) : img;
       cat[id] = {id, dom, titre, titre_en: titre_en || titre, annee: annee || undefined, qualite: q / 1e4, themes: th.map(k => themes[k]), image,
         wiki: wiki || undefined, imdb: imdb || undefined, steam: steam || undefined, avis: avis ? `${avis[0]} % positifs sur ${milliers(avis[1])} avis` : undefined,
         metacritic: metacritic ?? undefined, rt: rt ?? undefined, note_imdb: note_imdb ?? undefined, votes_imdb: votes_imdb ?? undefined,
         plateformes: plateformes || undefined, boutiques: boutiques || undefined, dispo: dispo || undefined,
-        duree: duree || undefined, gratuit: gratuit || undefined, modes: modes || undefined};
+        duree: duree || undefined, gratuit: gratuit || undefined, modes: modes || undefined, liens: liens || undefined, bande: bande || undefined};
     }
     return cat;
   }
@@ -167,6 +170,10 @@ const Moteur = (() => {
     return [res, prof];
   }
 
+  // Notoriété d'un titre de 0 à 1 : Wikipédias qui en parlent (films, séries ; 80 et plus = très connu) ou avis Steam (jeux ; un million = 1)
+  const connu = it => it.dom === "jeu" ? Math.min(1, Math.log10(1 + +((it.avis || "").match(/sur ([\d ]+) avis/)?.[1] || "0").replace(/ /g, "")) / 6)
+    : Math.min(1, (it.liens || 0) / 80);
+
   function recos(p, cible, sources, n = 12) {
     const poids = {};
     for (const [i, note] of Object.entries(p.notes)) if (CAT[i] && NOTES[note] && sources.includes(CAT[i].dom)) poids[i] = NOTES[note];
@@ -175,9 +182,11 @@ const Moteur = (() => {
     // Un seul profil additionné laisse un titre aux thèmes rares tout écraser (un Disney => que du Disney).
     // Chaque titre aimé a donc sa propre liste, et on pioche à tour de rôle (les « adoré » et les plus récents d'abord).
     const ok = res.filter(r => r[2] > 0.15 && CAT[r[1]].image);  // sans affiche, une reco donne une carte vide
+    // Un titre connu passe devant un titre confidentiel à ressemblance égale (×0,75 inconnu, ×1 très connu)
+    const notoriete = i => 0.75 + 0.25 * connu(CAT[i]);
     const services = mesServices();
     // Bonus : disponible sur un de tes services (×1,1), en tendance cette semaine (jusqu'à ×1,1)
-    const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim * (services.length && chezMoi(CAT[i], services).length ? 1.1 : 1) * (1 + 0.1 * (TENDANCES[i] || 0)) * ensemble(i)]));
+    const qual = new Map(ok.map(([s, i, sim]) => [i, s / sim * (services.length && chezMoi(CAT[i], services).length ? 1.1 : 1) * (1 + 0.1 * (TENDANCES[i] || 0)) * ensemble(i) * notoriete(i)]));
     const ancres = Object.keys(poids).filter(j => poids[j] > 0).reverse().sort((a, b) => poids[b] - poids[a]).slice(0, 15);
     const ton = (i, j) => TONS.some(t => (t in V()[i]) !== (t in V()[j])) ? 0.4 : 1;
     const listes = ancres.map(j => ok.map(([, i]) => [dot(i, j) * qual.get(i) * ton(i, j), i]).filter(([s]) => s > 0.12).sort((a, b) => b[0] - a[0]).map(([, i]) => i));
@@ -193,21 +202,24 @@ const Moteur = (() => {
     // Adaptations : aimer la série The Last of Us doit proposer d'abord le jeu The Last of Us (autre format, même licence)
     const licence = t => simple((t || "").split(/[:–(]| - /)[0]).replace(/^the /, "").replace(/ (\d+|ii|iii|iv|v|vi)( .*)?$/, "").trim();
     const lic = new Set(ancres.filter(j => CAT[j].dom !== cible).flatMap(j => [licence(CAT[j].titre), licence(CAT[j].titre_en)]).filter(l => l.length >= 4));
+    let adapt = [];
     if (lic.size) {
       const proche = i => Math.max(...ancres.map(j => dot(i, j)));
-      const adapt = Object.keys(CAT).filter(i => CAT[i].dom === cible && CAT[i].image && !(i in p.notes) && [CAT[i].titre, CAT[i].titre_en].some(t => [...lic].some(l => (" " + simple(t) + " ").includes(" " + l + " "))))
+      adapt = Object.keys(CAT).filter(i => CAT[i].dom === cible && CAT[i].image && !(i in p.notes) && [CAT[i].titre, CAT[i].titre_en].some(t => [...lic].some(l => (" " + simple(t) + " ").includes(" " + l + " "))))
         .sort((x, y) => proche(y) - proche(x)).slice(0, 2);
       for (const i of adapt) { const k = choix.findIndex(r => r[1] === i); if (k >= 0) choix.splice(k, 1); }
       choix.unshift(...adapt.map(i => [1, i, proche(i)]));
       choix.length = Math.min(choix.length, n);
     }
+    // Affichage du plus au moins ressemblant (le pourcentage montré), adaptations d'une licence aimée toujours en tête
+    const adaptes = new Set(adapt);
     return choix.map(([, i, sim]) => {
       const it = CAT[i];
       const pourquoi = Object.keys(poids).filter(j => poids[j] > 0).map(j => [dot(i, j), j]).sort((a, b) => b[0] - a[0]).slice(0, 2);
       const communs = Object.keys(V()[i]).sort((a, b) => (prof[b] || 0) * V()[i][b] - (prof[a] || 0) * V()[i][a]).slice(0, 3);
       return {id: i, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, avis: it.avis, steam: it.steam, wiki: it.wiki, ...notesExt(it),
         themes: communs.filter(t => (prof[t] || 0) > 0), parce_que: pourquoi.filter(([s]) => s > 0).map(([, j]) => ({id: j, dom: CAT[j].dom, titre: CAT[j].titre})), match: Math.round(Math.max(sim, pourquoi[0]?.[0] || 0) * 100)};
-    });
+    }).sort((a, b) => adaptes.has(b.id) - adaptes.has(a.id) || b.match - a.match);
   }
 
   // ---------- Imports CSV ----------
@@ -315,7 +327,8 @@ const Moteur = (() => {
     populaires(dom, n = 18) {
       const notes = profil().notes;
       const connus = (CELEBRES[dom] || []).map(t => trouver(dom, t)).filter(Boolean).map(i => CAT[i]);
-      const reste = Object.values(CAT).filter(it => it.dom === dom && it.image && (it.annee || 0) >= 2008).sort((a, b) => b.qualite - a.qualite);
+      // Complément par notoriété : le mieux noté seul sortait des titres que personne ne connaît
+      const reste = Object.values(CAT).filter(it => it.dom === dom && it.image && (it.annee || 0) >= 2008).sort((a, b) => connu(b) - connu(a) || b.qualite - a.qualite);
       // Les titres déjà notés restent, avec leur note : en revenant sur l'accueil, on voit où on en est
       return [...new Set([...connus, ...reste])].filter(it => it.image).slice(0, n)
         .map(it => ({id: it.id, dom: it.dom, titre: it.titre, annee: it.annee, image: it.image, steam: it.steam, note: notes[it.id] || ""}));

@@ -417,6 +417,13 @@ footer a{color:var(--doux)}
 .etat b{color:var(--texte)}
 .fiche-corps{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,1fr);gap:20px;margin-top:20px;align-items:start}
 .fiche-corps>div{display:flex;flex-direction:column;gap:20px;min-width:0}
+.bande{display:block;position:relative;width:100%;aspect-ratio:16/9;border:0;border-radius:calc(var(--r) - 4px);overflow:hidden;background:#000;padding:0;cursor:pointer}
+.bande img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85;transition:opacity .2s}
+.bande:hover img{opacity:1}
+.bande .lire{position:absolute;inset:0;margin:auto;width:64px;height:64px;border-radius:50%;background:var(--ambre);color:#000;display:grid;place-items:center;box-shadow:0 6px 24px rgba(0,0,0,.5);transition:transform .2s}
+.bande:hover .lire{transform:scale(1.08)}
+.bande .lire svg{width:28px;height:28px;margin-left:3px}
+.bande:focus-visible{outline:2px solid var(--ambre);outline-offset:2px}
 .bloc{background:var(--surface);border:1px solid var(--trait);border-radius:var(--r);padding:22px;scroll-margin-top:90px}
 .bloc h2{margin:0 0 14px}
 .bloc p{margin:0 0 10px}
@@ -537,8 +544,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  <ul class="pied-liens"><li><a href="#/film">Films</a></li><li><a href="#/serie">Séries</a></li><li><a href="#/jeu">Jeux</a></li><li><a href="#/gouts">Mes goûts</a></li><li><a href="#/listes">Mes listes</a></li></ul>
 </div><div class="pied-bas"><span>Données Wikidata, SteamSpy et Wikipédia.</span><a href="mailto:contact@pontil.fr">contact@pontil.fr</a><a href="#/mentions">Mentions légales et licences</a></div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="langue.js?v=7c13586cf5"></script>
-<script src="moteur.js?v=a5f29a4858"></script>
+<script src="langue.js?v=8de6320df8"></script>
+<script src="moteur.js?v=72ce1e4420"></script>
 <script>
 let onglet = "film", data = null;
 const $ = s => document.querySelector(s);
@@ -828,13 +835,14 @@ function accueil(pret = true){
  const rails = `<section class="mode" aria-label="Comment noter"><div><h3>Touche une affiche</h3><p>Quatre avis, de J'adore à Non merci. Cinq titres suffisent pour tes premières recos.</p></div><ol>
   ${etape("m1", "Choisis ton avis", demoPal(""))}${etape("m2", "C'est noté", `<span class="marque">${ico("coeur")}</span>`)}${etape("m3", "Retouche pour l'enlever", demoPal("choisi"))}</ol></section>${rang("film","Films que tu as aimés ?")}${rang("serie","Séries que tu as aimées ?")}${rang("jeu","Jeux que tu as aimés ?")}`;
  // Déjà affiché sans catalogue : on complète le mur et les rails sans retoucher le texte (pas de nouveau rendu du titre)
- if (pret && $(".accueil[data-attente]")) { $(".accueil").removeAttribute("data-attente"); $(".mur").innerHTML = murHtml; $("#choix").innerHTML = rails; majProgres(); return; }
+ // Idem quand l'accueil est déjà là (rechargement du profil par compte.js) : un titre redessiné repousse l'affichage mesuré (LCP)
+ if (pret && $(".accueil")) { if ($(".accueil[data-attente]")) { $(".accueil").removeAttribute("data-attente"); $(".mur").innerHTML = murHtml; } $("#choix").innerHTML = rails; majProgres(); return; }
  m.innerHTML = `<section class="accueil"${pret ? "" : " data-attente"}>
    <div class="mur" aria-hidden="true">${murHtml}</div>
    <h2>Tes films, séries et jeux, <em>enfin reliés.</em></h2>
    <p>Note ce que tu aimes, Pontil trouve la suite.</p>
    <div class="actions"><button class="bt plein" onclick="document.getElementById('choix').scrollIntoView({behavior:'smooth'})">Commencer ${ico("fleche")}</button><button class="bt" onclick="aller('gouts')">${ico("televerse")}Importer Netflix, IMDb, Letterboxd</button></div>
-   <div class="preuves"><span>${ico("cadenas")}Sans inscription</span></div>
+   <div class="preuves"><span>${ico("cadenas")}Sans inscription</span><span>${ico("ok")}Gratuit, sans pub</span><span>${ico("etoile")}28 000 films, séries et jeux</span></div>
   </section>
   <div id="choix">${rails}</div>
   <div class="progres"><div class="barre-p"><i id="jauge"></i></div><small id="nb">0 / 5</small><button class="bt plein" id="voir" disabled onclick="aller('film')">Voir mes recos ${ico("fleche")}</button></div>`;
@@ -1052,6 +1060,19 @@ async function resumeWiki(r, recaler){
    <p class="aide">Texte extrait de Wikipédia, par ses contributeurs, sous licence <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</p>`);
  } catch { fin(`<p class="aide">Résumé indisponible pour le moment : Wikipédia ne répond pas.</p>`); }
 }
+// Bande-annonce : vignette d'abord, la vidéo YouTube (sans cookie) ne se charge qu'au clic.
+// Sans vidéo connue (bandes.py), un lien vers la recherche YouTube.
+function bandeAnnonce(r){
+ if (r.bande) return `<button class="bande" onclick="lireBande(this, '${esc(r.bande)}')" aria-label="Lire la bande-annonce de ${esc(r.titre)}"><img src="https://i.ytimg.com/vi/${esc(r.bande)}/hqdefault.jpg" alt="" loading="lazy"><span class="lire"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span></button>`;
+ const q = encodeURIComponent(`${r.titre_en || r.titre} ${r.annee || ""} ${r.dom === "jeu" ? "trailer" : enAnglais() ? "trailer" : "bande annonce VF"}`);
+ return `<a class="bt" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">${ico("ecran")}Chercher la bande-annonce sur YouTube</a>`;
+}
+function lireBande(b, v){
+ const f = document.createElement("iframe");
+ f.className = "bande"; f.src = `https://www.youtube-nocookie.com/embed/${v}?autoplay=1&rel=0`;
+ f.title = b.getAttribute("aria-label"); f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen = true;
+ b.replaceWith(f);
+}
 async function fichePage(dom, id, ancre){
  vue = "fiche"; marquerNav(dom);
  const m = $("#main"); m.className = dom;
@@ -1080,6 +1101,7 @@ async function fichePage(dom, id, ancre){
   </header>
   <div class="fiche-corps">
    <div>
+    <section class="bloc" id="bande"><h2>Bande-annonce</h2>${bandeAnnonce(r)}</section>
     <section class="bloc" id="resume"><h2>Résumé</h2><div class="contenu"><p class="aide">Chargement du résumé…</p></div></section>
     <section class="bloc" id="score"><h2>Pourquoi ce titre pour toi</h2>${pourToiBloc(r)}</section>
     <section class="bloc" id="avis"><h2>Avis des visiteurs</h2><div class="avis-zone">${WEB ? `<p class="aide">Chargement des avis…</p>`
@@ -1269,7 +1291,7 @@ if (WEB) {
 else { setInterval(()=>fetch("/api/ping").catch(()=>{}), 10000); compter().then(router); }
 </script>
 <script src="vendor/supabase.js?v=34035ac76d"></script>
-<script src="compte.js?v=5e6d26f098"></script>
+<script src="compte.js?v=0b5f964fdf"></script>
 <script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
 </body>
 </html>

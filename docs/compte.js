@@ -16,7 +16,7 @@ const SUPA_CLE = "sb_publishable_HzOqlGPtg9qhTVESavdHGw_ZLKp95f4";
       sessionStorage.setItem("pontil-vu", "1");
       let origine = "";
       try { const h = new URL(document.referrer).hostname; if (h !== location.hostname) origine = h.slice(0, 100); } catch (e) { /* arrivée directe */ }
-      sb.from("visites").insert({page: (location.hash || "#/").slice(0, 40), origine, langue: (navigator.language || "").slice(0, 10), mobile: matchMedia("(max-width: 700px)").matches}).then(() => {});
+      sb.from("visites").insert({page: (/^#\//.test(location.hash) ? location.hash : "#/").slice(0, 40),  // retours de connexion (#access_token=...) jamais enregistrés origine, langue: (navigator.language || "").slice(0, 10), mobile: matchMedia("(max-width: 700px)").matches}).then(() => {});
     }
   } catch (e) { /* stockage bloqué : la visite n'est pas comptée */ }
   let user = null, envoi = null, applique = false;
